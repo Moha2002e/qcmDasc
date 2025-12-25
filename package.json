@@ -1,0 +1,18 @@
+{
+  "name": "vue-qcm",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "dev": "vite",
+  "build": "vite build",
+  "preview": "vite preview",
+  "start": "vite preview --host"
+},
+"dependencies": {
+  "vue": "^3.5.24"
+},
+"devDependencies": {
+  "@vitejs/plugin-vue": "^6.0.1",
+  "vite": "^7.2.4"
+}
+}

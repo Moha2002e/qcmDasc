@@ -14,7 +14,14 @@ const handleSelect = (index) => {
 
 <template>
   <div class="quiz-card">
-    <h2 class="question-text">{{ question.question }}</h2>
+    <div class="header-section">
+      <h2 class="question-text">{{ question.question }}</h2>
+      
+      <!-- Code Snippet Section -->
+      <div v-if="question.code" class="code-block">
+        <pre><code>{{ question.code }}</code></pre>
+      </div>
+    </div>
     
     <div class="options-container">
       <button 
@@ -53,20 +60,43 @@ const handleSelect = (index) => {
   border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 2rem;
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   color: white;
   animation: fadeIn 0.5s ease-out;
 }
 
 .question-text {
-  font-size: 1.5rem;
-  margin-bottom: 2rem;
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
   font-weight: 600;
-  text-align: center;
+  text-align: left;
+  line-height: 1.4;
   background: linear-gradient(to right, #fff, #b3d5ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* Code Block Styling */
+.code-block {
+  background: #1e1e1e;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  border: 1px solid #333;
+  overflow-x: auto;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.code-block pre {
+  margin: 0;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.95rem;
+  color: #d4d4d4;
+}
+
+.code-block code {
+  white-space: pre-wrap;
 }
 
 .options-container {
@@ -84,16 +114,14 @@ const handleSelect = (index) => {
   border-radius: 12px;
   color: #fff;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   text-align: left;
   position: relative;
-  overflow: hidden;
 }
 
 .option-btn:hover:not(.disabled) {
   background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  transform: translateX(5px);
 }
 
 .option-btn.selected {
@@ -112,20 +140,22 @@ const handleSelect = (index) => {
 }
 
 .option-letter {
-  background: rgba(255, 255, 255, 0.2);
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  min-width: 32px;
+  height: 32px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-right: 15px;
-  font-weight: bold;
+  font-weight: 700;
   font-size: 0.9rem;
+  color: #e0e0e0;
 }
 
 .option-text {
   flex-grow: 1;
+  font-size: 1rem;
 }
 
 .icon-result {
@@ -135,13 +165,13 @@ const handleSelect = (index) => {
 }
 
 .explanation {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  margin-top: 2rem;
+  padding: 1.2rem;
+  background: rgba(100, 181, 246, 0.1);
+  border-radius: 12px;
   border-left: 4px solid #64b5f6;
   font-size: 0.95rem;
-  line-height: 1.5;
+  line-height: 1.6;
   animation: slideDown 0.3s ease-out;
 }
 
