@@ -104,8 +104,8 @@ const handleAnswerSelection = (index) => {
     isCorrect: isCorrect
   })
 
-  // Auto-advance
-  setTimeout(() => nextQuestion(), 2500)
+  // Auto-advance removed to allow reading explanation
+  // setTimeout(() => nextQuestion(), 2500)
 }
 
 const nextQuestion = () => {
@@ -159,6 +159,10 @@ const restartQuiz = () => {
           :showResult="showResult"
           @select-answer="handleAnswerSelection"
         />
+
+        <button v-if="showResult" class="next-btn" @click="nextQuestion">
+          Question Suivante →
+        </button>
       </div>
 
       <div v-else class="result-container">
@@ -321,6 +325,27 @@ h1 {
   background: rgba(255,255,255,0.1);
   color: white;
   border-color: white;
+}
+
+.next-btn {
+  background: #3a7bd5;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  margin-top: 1rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.next-btn:hover {
+  background: #00d2ff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
 }
 
 /* Utility */
