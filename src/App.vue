@@ -37,8 +37,11 @@ const shuffleArray = (array) => {
 
 const initQuiz = () => {
   // Deep clone and shuffle questions
-  // In a real app, we would filter by activeChapter.id here
-  const rawQuestions = JSON.parse(JSON.stringify(questionsData))
+  let validQuestions = questionsData
+  if (activeChapter.value) {
+    validQuestions = questionsData.filter(q => q.chapterId === activeChapter.value.id)
+  }
+  const rawQuestions = JSON.parse(JSON.stringify(validQuestions))
   
   const shuffled = shuffleArray(rawQuestions).map(q => {
     // Determine original correct answer text

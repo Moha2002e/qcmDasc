@@ -1,0 +1,564 @@
+1️⃣ La classe Class et le chargement du driver JDBC
+🔹 Nature de Class
+•	Class est une classe du JDK
+•	Elle appartient au package :
+java.lang
+➡️ donc import automatique
+________________________________________
+🔹 Rôle fondamental de Class.forName()
+Class.forName("com.mysql.cj.jdbc.Driver");
+Cette instruction permet :
+✅ de localiser une classe à partir de son nom
+✅ de charger cette classe en mémoire
+✅ d’exécuter son bloc statique
+✅ d’enregistrer le driver JDBC dans DriverManager
+⚠️ Important QCM
+Class.forName() ne crée pas de connexion à la base de données.
+________________________________________
+🔹 Type de mécanisme utilisé
+•	C’est un mécanisme de chargement dynamique
+•	Basé sur l’introspection
+•	La classe est connue à l’exécution, pas à la compilation
+________________________________________
+🔹 Signature exacte à reconnaître en QCM
+public static native Class forName(String className)
+    throws ClassNotFoundException
+________________________________________
+🔹 Exception associée
+•	ClassNotFoundException
+➡️ levée si :
+•	le JAR du driver n’est pas dans le classpath
+•	la classe est mal orthographiée
+________________________________________
+🔹 Effet réel sur le driver
+Quand Class.forName() est exécuté :
+✔ la classe du driver est chargée
+✔ son bloc static {} s’exécute
+✔ le driver s’auto-enregistre auprès de DriverManager
+👉 C’est pour cela que DriverManager peut le retrouver plus tard.
+________________________________________
+🔹 Pièges classiques QCM
+❌ Class.forName() crée une connexion
+❌ Class.forName() retourne un Driver
+❌ Class.forName() appartient à java.sql
+✔ Class.forName() retourne un objet de type Class
+✔ le driver doit être présent dans le projet
+✔ un driver = une classe Java
+________________________________________
+2️⃣ La classe DriverManager
+________________________________________
+🔹 Nature de DriverManager
+•	Classe abstraite ? ❌ NON
+•	Classe utilitaire avec méthodes statiques ✔
+•	Package :
+java.sql
+________________________________________
+🔹 Rôle de DriverManager
+DriverManager :
+✅ maintient une liste interne des drivers JDBC disponibles
+✅ joue le rôle d’intermédiaire entre Java et les drivers
+✅ choisit automatiquement le driver compatible avec l’URL JDBC
+✅ établit la connexion logique avec la base de données
+________________________________________
+🔹 Ce que DriverManager NE FAIT PAS
+❌ Il ne charge pas les drivers
+❌ Il n’exécute pas de SQL
+❌ Il ne représente pas la connexion
+________________________________________
+🔹 Méthode centrale à connaître PAR CŒUR
+public static synchronized Connection getConnection(
+    String url,
+    String user,
+    String password
+) throws SQLException
+________________________________________
+🔹 Mot-clé IMPORTANT pour QCM
+•	synchronized → thread-safe
+•	garantit qu’une seule connexion est créée à la fois
+________________________________________
+🔹 URL JDBC – analyse détaillée
+Format :
+jdbc:<sous-protocole>:<informations>
+Exemple MySQL :
+jdbc:mysql://192.168.228.167/PourStudent
+Décomposition QCM :
+Élément	Signification
+jdbc	protocole JDBC
+mysql	sous-protocole (driver)
+IP	serveur
+PourStudent	base de données
+________________________________________
+🔹 Sélection du driver
+➡️ DriverManager :
+•	parcourt la liste des drivers chargés
+•	teste leur compatibilité avec l’URL
+•	sélectionne le premier driver compatible
+⚠️ QCM classique :
+Si aucun driver compatible n’est trouvé → SQLException
+________________________________________
+🔹 Exceptions associées
+•	SQLException :
+o	URL invalide
+o	mauvais login/mot de passe
+o	base inexistante
+o	driver incompatible
+________________________________________
+3️⃣ L’interface Connection
+________________________________________
+🔹 Nature de Connection
+•	Connection est une interface
+•	Package :
+java.sql
+•	Elle est implémentée par le driver JDBC
+➡️ Le programmeur ne connaît jamais la classe concrète
+________________________________________
+🔹 Rôle conceptuel de Connection
+•	Représente une connexion logique
+•	Plus précisément une session
+•	Contient :
+o	l’état de la transaction
+o	les requêtes SQL
+o	les résultats
+o	les paramètres de connexion
+________________________________________
+🔹 Création d’un objet Connection
+Connection con = DriverManager.getConnection(...);
+✔ toujours retourné par DriverManager
+❌ jamais instancié avec new
+________________________________________
+🔹 Fermeture de la connexion
+con.close();
+Effets :
+•	libération des ressources
+•	fin de la session
+•	fermeture logique de la connexion
+⚠️ QCM :
+Une connexion non fermée peut provoquer une fuite de ressources.
+________________________________________
+🔹 Auto-commit (PIÈGE FRÉQUENT)
+Par défaut :
+autoCommit = true
+👉 Chaque requête INSERT, UPDATE, DELETE est validée automatiquement.
+________________________________________
+🔹 Désactivation de l’auto-commit
+con.setAutoCommit(false);
+➡️ Le programmeur doit gérer la transaction manuellement.
+________________________________________
+🔹 Méthodes de transaction
+Méthode	Effet
+commit()	valide définitivement
+rollback()	annule les modifications
+⚠️ QCM :
+rollback() n’a d’effet que si autoCommit est désactivé.
+________________________________________
+🔹 Création d’instructions SQL
+Statement stmt = con.createStatement();
+👉 Connection est le point d’entrée vers le SQL
+________________________________________
+🔁 CHAÎNE JDBC – À RECONNAÎTRE EN QCM
+Ordre logique obligatoire :
+1️⃣ Charger le driver
+Class.forName(...)
+2️⃣ Gérer les drivers
+DriverManager
+3️⃣ Obtenir une connexion
+Connection
+4️⃣ Exécuter du SQL
+Statement
+5️⃣ Fermer la connexion
+close()
+________________________________________
+❗ PIÈGES QCM CLASSIQUES (TRÈS IMPORTANTS)
+✔ Class.forName() n’établit pas de connexion
+✔ DriverManager ne représente pas la session
+✔ Connection est une interface
+✔ Un driver = une classe Java
+✔ L’URL JDBC détermine le driver
+✔ commit() n’est utile que si auto-commit est désactivé
+✔ Une connexion doit toujours être fermée
+________________________________________
+🧪 EXEMPLES DE QUESTIONS TYPE QCM
+✔ « Le rôle de Class.forName() est de charger le driver JDBC » → VRAI
+✔ « DriverManager contient la connexion à la base » → FAUX
+✔ « Connection est une classe concrète » → FAUX
+✔ « getConnection() peut lever une SQLException » → VRAI
+✔ « Le driver MySQL doit être présent dans le classpath » → VRAI
+________________________________________
+🧠 PHRASE À RÉCITER À L’EXAMEN
+« JDBC fonctionne par chargement dynamique du driver via Class.forName(), gestion des drivers par DriverManager, et communication avec la base via un objet Connection représentant une session. »
+________________________________________
+🧠 SYNTHÈSE JDBC – STATEMENT / RESULTSET
+🎯 Version EXAMEN QCM – très développée
+________________________________________
+1️⃣ L’interface Statement
+________________________________________
+🔹 Nature de Statement
+•	Statement est une interface
+•	Elle appartient au package :
+java.sql
+•	Elle est implémentée par le driver JDBC
+👉 On ne fait jamais :
+new Statement(); ❌
+________________________________________
+🔹 Rôle fondamental de Statement
+Un objet Statement :
+•	représente une instruction SQL
+•	permet d’envoyer des commandes SQL au SGBD
+•	agit comme un canal de communication SQL entre Java et la base
+________________________________________
+🔹 Création d’un Statement
+Statement stmt = con.createStatement();
+⚠️ QCM important :
+Un Statement ne peut exister que si une Connection existe.
+________________________________________
+🔹 Ce que Statement peut exécuter
+Type de requête SQL	Méthode
+SELECT	executeQuery()
+INSERT / UPDATE / DELETE	executeUpdate()
+Requête quelconque	execute()
+________________________________________
+🔹 Méthode executeQuery()
+public abstract ResultSet executeQuery(String sql)
+    throws SQLException
+Caractéristiques QCM :
+✔ accepte uniquement une requête SELECT
+✔ retourne obligatoirement un ResultSet
+❌ ne peut pas exécuter INSERT / UPDATE / DELETE
+________________________________________
+🔹 Méthode executeUpdate()
+public abstract int executeUpdate(String sql)
+    throws SQLException
+Caractéristiques QCM :
+✔ utilisée pour :
+•	INSERT
+•	UPDATE
+•	DELETE
+✔ retourne :
+•	le nombre de lignes affectées
+❌ ne retourne jamais de ResultSet
+________________________________________
+🔹 Méthode execute()
+public boolean execute(String sql)
+    throws SQLException
+Caractéristiques QCM TRÈS PIÉGEUSES :
+✔ peut exécuter n’importe quelle requête SQL
+✔ retourne :
+•	true → si un ResultSet est produit
+•	false → sinon
+⚠️ La valeur retournée ne dit PAS si la requête a réussi
+________________________________________
+🔹 Récupération du ResultSet après execute()
+ResultSet rs = stmt.getResultSet();
+⚠️ QCM :
+getResultSet() ne fonctionne que si execute() a retourné true.
+________________________________________
+🔥 PIÈGES QCM – Statement
+❌ Statement est une classe
+❌ executeQuery() retourne un int
+❌ executeUpdate() retourne un ResultSet
+❌ execute() indique le succès de la requête
+✔ Statement est une interface
+✔ executeUpdate() retourne un nombre de lignes
+✔ execute() indique la présence d’un ResultSet
+________________________________________
+2️⃣ L’interface ResultSet
+________________________________________
+🔹 Nature de ResultSet
+•	ResultSet est une interface
+•	Package :
+java.sql
+•	Implémentée par le driver JDBC
+________________________________________
+🔹 Rôle de ResultSet
+Un ResultSet :
+•	contient tous les tuples résultant d’un SELECT
+•	représente un curseur SQL
+•	correspond à une table virtuelle
+•	possède :
+o	des lignes → tuples
+o	des colonnes → champs sélectionnés
+________________________________________
+🔹 Notion de curseur (TRÈS IMPORTANT QCM)
+•	Le curseur est :
+o	séquentiel
+o	à sens unique
+o	positionné avant la première ligne au départ
+👉 Il faut obligatoirement appeler next() avant de lire des données.
+________________________________________
+🔹 Méthode next()
+public abstract boolean next()
+✔ avance le curseur d’un tuple
+✔ retourne :
+•	true → tuple disponible
+•	false → fin du ResultSet
+📌 Analogie officielle du cours :
+Comparable à un itérateur C++
+________________________________________
+🔹 Lecture des données – méthode générique
+Object getObject(int col)
+✔ retourne la valeur de la colonne col
+✔ sous forme de Object
+✔ index de colonne commence à 1 (⚠️ QCM)
+________________________________________
+🔹 Lecture typée (lecture “fine”)
+Méthodes IMPORTANTES à reconnaître :
+getString("Nom")
+getInt("NbEnfants")
+getFloat("Poids")
+getDate("AnneeNaissance")
+✔ conversion automatique SQL → Java
+✔ le driver tente d’adapter le type
+________________________________________
+🔹 Conversion des dates (PIÈGE QCM)
+•	SQL → java.sql.Date
+•	Conversion vers Java moderne :
+LocalDate d = dateSql.toLocalDate();
+✔ méthode de java.sql.Date
+________________________________________
+🔹 Fermeture d’un ResultSet
+rs.close();
+⚠️ QCM :
+Un ResultSet doit être fermé avant la fermeture de la Connection.
+________________________________________
+🔥 PIÈGES QCM – ResultSet
+❌ Le curseur est positionné sur la première ligne au départ
+❌ Les indices de colonnes commencent à 0
+❌ next() retourne un tuple
+✔ next() retourne un boolean
+✔ lecture impossible sans next()
+✔ parcours uniquement du début vers la fin
+________________________________________
+3️⃣ L’interface ResultSetMetaData
+________________________________________
+🔹 Nature de ResultSetMetaData
+•	Interface
+•	Package :
+java.sql
+•	Obtenue à partir d’un ResultSet
+________________________________________
+🔹 Obtention des métadonnées
+ResultSetMetaData meta = rs.getMetaData();
+________________________________________
+🔹 Rôle de ResultSetMetaData
+Elle permet d’obtenir :
+•	le nombre de colonnes
+•	le nom des colonnes
+•	le nom de la table source
+👉 Indispensable pour un traitement dynamique des résultats.
+________________________________________
+🔹 Méthodes clés à connaître par cœur
+int getColumnCount()
+String getColumnName(int col)
+String getTableName(int col)
+⚠️ Indices de colonnes commencent à 1
+________________________________________
+🔥 PIÈGES QCM – MetaData
+❌ ResultSetMetaData permet d’accéder aux données
+❌ Les indices commencent à 0
+✔ permet uniquement d’analyser la structure
+✔ associée à un ResultSet
+________________________________________
+🔁 CHAÎNE JDBC COMPLÈTE (QCM CLASSIQUE)
+Connection
+   ↓
+Statement
+   ↓
+executeQuery / executeUpdate / execute
+   ↓
+ResultSet
+   ↓
+next()
+   ↓
+getXXX()
+________________________________________
+❗ QCM – VRAI / FAUX TYPIQUES
+✔ executeQuery() retourne toujours un ResultSet
+✔ executeUpdate() retourne un int
+✔ execute() peut retourner true ou false
+✔ ResultSet est un curseur
+✔ next() doit être appelé avant toute lecture
+✔ Les indices de colonnes commencent à 1
+✔ ResultSetMetaData décrit la structure des résultats
+________________________________________
+🧠 PHRASE À RÉCITER À L’EXAMEN
+« Un Statement permet d’exécuter des commandes SQL, un ResultSet représente un curseur contenant les tuples d’un SELECT, et ResultSetMetaData permet d’analyser dynamiquement la structure des résultats. »
+.
+________________________________________
+1️⃣ JDBC : vue d’ensemble (QUESTION QCM CLASSIQUE)
+JDBC (Java DataBase Connectivity) est une API Java qui permet :
+•	de se connecter à une base de données
+•	d’exécuter des requêtes SQL
+•	de récupérer et manipuler les résultats
+📌 JDBC est indépendant du SGBD (MySQL, PostgreSQL, Oracle…).
+________________________________________
+2️⃣ Class.forName() (TRÈS PIÉGEUX EN QCM)
+Rôle
+Class.forName("com.mysql.cj.jdbc.Driver");
+👉 Sert à charger dynamiquement le driver JDBC en mémoire.
+À retenir ABSOLUMENT
+•	❌ Ne crée PAS la connexion
+•	✅ Enregistre le driver auprès de DriverManager
+•	⚠️ Était obligatoire avant JDBC 4
+•	✅ Aujourd’hui souvent optionnel, mais toujours correct
+QCM typiques
+✔️ Class.forName() charge le driver
+❌ Class.forName() ouvre la connexion
+❌ Class.forName() exécute une requête
+________________________________________
+3️⃣ DriverManager (FONDAMENTAL)
+Rôle
+Connection con = DriverManager.getConnection(url, user, password);
+👉 Fabrique des objets Connection
+À retenir
+•	DriverManager :
+o	connaît les drivers disponibles
+o	choisit le bon driver selon l’URL JDBC
+•	C’est une classe utilitaire, pas une interface
+QCM
+✔️ DriverManager fournit une Connection
+❌ DriverManager exécute des requêtes SQL
+________________________________________
+4️⃣ Interface Connection
+Rôle
+Représente une connexion active à la base de données
+Fonctions principales
+•	créer des requêtes :
+Statement stmt = con.createStatement();
+PreparedStatement ps = con.prepareStatement(sql);
+•	gérer les transactions :
+con.commit();
+con.rollback();
+•	fermer la connexion :
+con.close();
+QCM
+✔️ Connection permet de créer Statement et PreparedStatement
+❌ Connection contient les résultats SQL
+________________________________________
+5️⃣ Statement vs PreparedStatement (QUESTION MAJEURE)
+Statement
+Statement stmt = con.createStatement();
+stmt.executeQuery("SELECT * FROM cars");
+Inconvénients
+•	❌ Vulnérable aux injections SQL
+•	❌ Requête recompilée à chaque exécution
+•	❌ SQL mélangé avec les données
+________________________________________
+PreparedStatement (TRÈS IMPORTANT)
+PreparedStatement ps =
+ con.prepareStatement("UPDATE Personne SET NbEnfants = ? WHERE Nom = ?");
+Principe clé
+👉 Le SQL est préparé UNE FOIS
+👉 Les valeurs sont injectées séparément
+ps.setInt(1, 2);
+ps.setString(2, "issier");
+ps.executeUpdate();
+________________________________________
+6️⃣ Avantages des requêtes préparées (À CONNAÎTRE PAR CŒUR)
+🔐 Sécurité
+✔️ Empêche les injections SQL
+✔️ Les paramètres sont traités comme des données, pas du code
+⚡ Performances
+✔️ Requête compilée une seule fois
+✔️ Réutilisable avec plusieurs valeurs
+🧹 Lisibilité / Maintenance
+✔️ Code plus propre
+✔️ Séparation SQL / données
+QCM PIÈGE
+❌ Une requête préparée empêche toute erreur SQL
+❌ Une requête préparée est plus lente
+________________________________________
+7️⃣ executeQuery() vs executeUpdate() (CLASSIQUE)
+Méthode	Utilisation	Retour
+executeQuery()	SELECT	ResultSet
+executeUpdate()	INSERT / UPDATE / DELETE	int (nb lignes)
+________________________________________
+8️⃣ Interface ResultSet
+Rôle
+👉 Contient le résultat d’un SELECT
+while (rs.next()) {
+   rs.getString("model");
+   rs.getDouble("price");
+}
+À retenir
+•	Curseur ligne par ligne
+•	Accès par :
+o	nom de colonne
+o	index (⚠️ fragile)
+QCM
+✔️ ResultSet contient les données
+❌ ResultSet modifie la base
+________________________________________
+9️⃣ DAO (Data Access Object) — QUESTION DE CONCEPTION
+Définition
+Un DAO encapsule l’accès aux données.
+👉 Le reste de l’application ne voit PAS le SQL
+________________________________________
+Ce que fait un DAO
+✔️ Gère la connexion
+✔️ Contient les requêtes SQL
+✔️ Fournit des méthodes métier (save, load, delete)
+Ce qu’un DAO NE fait PAS
+❌ Affichage
+❌ Logique UI
+________________________________________
+SOLID
+✔️ Respecte le principe O (Open/Closed)
+→ on peut changer la BD sans casser le reste
+________________________________________
+🔟 Entités (Car, Engine)
+Mapping champ à champ
+Table	Classe
+cars	Car
+engines	Engine
+Point TRÈS IMPORTANT
+✔️ Car contient un Engine
+❌ Car ne contient PAS juste engine_id
+________________________________________
+1️⃣1️⃣ Wrapper classes (PIÈGE QCM)
+Pourquoi Integer au lieu de int ?
+✔️ Un Integer peut être null
+✔️ Un int ne peut PAS être null
+📌 Cas clé :
+id == null → objet pas encore persisté en BD
+________________________________________
+1️⃣2️⃣ Search View Model (CarSearchVM)
+Concept
+👉 Objet qui contient les critères de recherche
+Exemples de critères
+•	id
+•	model
+•	maxPrice
+•	engineType
+•	minEnginePower
+Règle essentielle
+•	champ null → critère ignoré
+•	tous les champs null → SELECT *
+________________________________________
+1️⃣3️⃣ Construction dynamique des requêtes
+✔️ Le DAO :
+•	lit le SearchVM
+•	construit la clause WHERE
+•	utilise des PreparedStatement
+✔️ JOIN nécessaire :
+cars JOIN engines
+________________________________________
+1️⃣4️⃣ Méthode save(Car c) (IMPORTANT)
+Cas 1 : c.getId() == null
+✔️ INSERT
+✔️ ID auto-généré
+✔️ ID récupéré et affecté à l’objet
+Cas 2 : c.getId() != null
+✔️ UPDATE
+Condition obligatoire
+❌ Impossible si Engine.id == null
+________________________________________
+🎯 RÉSUMÉ EXPRESS POUR LE QCM
+•	Class.forName() → charge le driver
+•	DriverManager → crée la connexion
+•	Connection → fabrique les statements
+•	PreparedStatement → sécurité + perf
+•	ResultSet → résultats SELECT
+•	DAO → encapsule SQL + connexion
+•	Wrapper classes → permettent null
+•	SearchVM → critères combinables
+•	JOIN → nécessaire pour Car ↔ Engine

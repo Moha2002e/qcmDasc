@@ -1,4 +1,7 @@
-[
+
+import json
+
+existing_questions = [
     {
         "id": 1,
         "question": "Qu'est-ce qu'une socket ?",
@@ -9,8 +12,7 @@
             "Un protocole Internet"
         ],
         "answer": 1,
-        "explanation": "Une socket est un point de communication (endpoint) permettant l'échange de données entre processus.",
-        "chapterId": 1
+        "explanation": "Une socket est un point de communication (endpoint) permettant l'échange de données entre processus."
     },
     {
         "id": 2,
@@ -22,8 +24,7 @@
             "Mode aléatoire"
         ],
         "answer": 2,
-        "explanation": "TCP (Transmission Control Protocol) utilise le mode connecté (SOCK_STREAM), garantissant fiabilité et ordre.",
-        "chapterId": 1
+        "explanation": "TCP (Transmission Control Protocol) utilise le mode connecté (SOCK_STREAM), garantissant fiabilité et ordre."
     },
     {
         "id": 3,
@@ -35,8 +36,7 @@
             "{Nom d'hôte, Adresse IP}"
         ],
         "answer": 2,
-        "explanation": "En mode connecté, une socket est identifiée par le couple unique {Adresse IP, Port}.",
-        "chapterId": 1
+        "explanation": "En mode connecté, une socket est identifiée par le couple unique {Adresse IP, Port}."
     },
     {
         "id": 4,
@@ -48,8 +48,7 @@
             "socket()"
         ],
         "answer": 3,
-        "explanation": "La fonction `socket()` est l'appel système permettant de créer une nouvelle socket.",
-        "chapterId": 1
+        "explanation": "La fonction `socket()` est l'appel système permettant de créer une nouvelle socket."
     },
     {
         "id": 5,
@@ -61,8 +60,7 @@
             "SOCK_INET"
         ],
         "answer": 2,
-        "explanation": "`AF_INET` est la famille d'adresses correspondant aux adresses Internet IPv4.",
-        "chapterId": 1
+        "explanation": "`AF_INET` est la famille d'adresses correspondant aux adresses Internet IPv4."
     },
     {
         "id": 6,
@@ -74,8 +72,7 @@
             "SOCK_PACKET"
         ],
         "answer": 2,
-        "explanation": "`SOCK_DGRAM` (Datagram) est utilisé pour le mode non connecté (UDP).",
-        "chapterId": 1
+        "explanation": "`SOCK_DGRAM` (Datagram) est utilisé pour le mode non connecté (UDP)."
     },
     {
         "id": 7,
@@ -87,8 +84,7 @@
             "false"
         ],
         "answer": 2,
-        "explanation": "La fonction retourne -1 en cas d'erreur et met à jour la variable globale `errno`.",
-        "chapterId": 1
+        "explanation": "La fonction retourne -1 en cas d'erreur et met à jour la variable globale `errno`."
     },
     {
         "id": 8,
@@ -100,8 +96,7 @@
             "En écoute"
         ],
         "answer": 2,
-        "explanation": "Juste après `socket()`, la socket existe mais n'est attachée à aucune adresse ni port (elle est anonyme).",
-        "chapterId": 1
+        "explanation": "Juste après `socket()`, la socket existe mais n'est attachée à aucune adresse ni port (elle est anonyme)."
     },
     {
         "id": 9,
@@ -113,8 +108,7 @@
             "listen()"
         ],
         "answer": 2,
-        "explanation": "`bind()` est utilisée pour 'lier' la socket à une adresse locale spécifique.",
-        "chapterId": 1
+        "explanation": "`bind()` est utilisée pour 'lier' la socket à une adresse locale spécifique."
     },
     {
         "id": 10,
@@ -126,8 +120,7 @@
             "Aucun des deux"
         ],
         "answer": 1,
-        "explanation": "Le serveur doit utiliser `bind()` pour être joignable sur un port connu. Le client peut laisser le système choisir.",
-        "chapterId": 1
+        "explanation": "Le serveur doit utiliser `bind()` pour être joignable sur un port connu. Le client peut laisser le système choisir."
     },
     {
         "id": 12,
@@ -139,8 +132,7 @@
             "Gérer les erreurs réseaux"
         ],
         "answer": 1,
-        "explanation": "Le DNS (Domain Name System) permet de faire correspondre un nom d'hôte convivial à une adresse IP numérique.",
-        "chapterId": 1
+        "explanation": "Le DNS (Domain Name System) permet de faire correspondre un nom d'hôte convivial à une adresse IP numérique."
     },
     {
         "id": 13,
@@ -152,8 +144,7 @@
             "Met la socket en mode passif (attente)"
         ],
         "answer": 3,
-        "explanation": "`listen()` indique au noyau d'accepter les demandes de connexion entrantes sur cette socket.",
-        "chapterId": 1
+        "explanation": "`listen()` indique au noyau d'accepter les demandes de connexion entrantes sur cette socket."
     },
     {
         "id": 14,
@@ -165,8 +156,7 @@
             "Le délai d'attente avant timeout"
         ],
         "answer": 2,
-        "explanation": "Le backlog spécifie combien de connexions peuvent être en attente d'acceptation (handshake terminé mais pas encore accept()) avant d'être rejetées.",
-        "chapterId": 1
+        "explanation": "Le backlog spécifie combien de connexions peuvent être en attente d'acceptation (handshake terminé mais pas encore accept()) avant d'être rejetées."
     },
     {
         "id": 15,
@@ -178,8 +168,7 @@
             "ECONNREFUSED"
         ],
         "answer": 2,
-        "explanation": "`EADDRINUSE` signifie que l'adresse (IP/Port) est déjà utilisée par une autre socket.",
-        "chapterId": 1
+        "explanation": "`EADDRINUSE` signifie que l'adresse (IP/Port) est déjà utilisée par une autre socket."
     },
     {
         "id": 16,
@@ -191,8 +180,7 @@
             "init()"
         ],
         "answer": 2,
-        "explanation": "`connect()` lance la procédure d'établissement de connexion vers le serveur.",
-        "chapterId": 1
+        "explanation": "`connect()` lance la procédure d'établissement de connexion vers le serveur."
     },
     {
         "id": 17,
@@ -204,8 +192,7 @@
             "Le client utilise le port 0 par défaut"
         ],
         "answer": 2,
-        "explanation": "C'est le 'bind implicite'. Le système alloue automatiquement un port libre lorsque `connect()` est appelé.",
-        "chapterId": 1
+        "explanation": "C'est le 'bind implicite'. Le système alloue automatiquement un port libre lorsque `connect()` est appelé."
     },
     {
         "id": 18,
@@ -217,8 +204,7 @@
             "sendto et recvfrom"
         ],
         "answer": 1,
-        "explanation": "Sous Unix, écrire sur une socket connectée revient à écrire dans un descripteur de fichier via `write`.",
-        "chapterId": 1
+        "explanation": "Sous Unix, écrire sur une socket connectée revient à écrire dans un descripteur de fichier via `write`."
     },
     {
         "id": 19,
@@ -230,8 +216,7 @@
             "connect()"
         ],
         "answer": 3,
-        "explanation": "`connect()` bloque le processus jusqu'à ce que la connexion soit établie ou échoue (timeout/refus).",
-        "chapterId": 1
+        "explanation": "`connect()` bloque le processus jusqu'à ce que la connexion soit établie ou échoue (timeout/refus)."
     },
     {
         "id": 20,
@@ -243,8 +228,7 @@
             "Ce n'est pas nécessaire"
         ],
         "answer": 1,
-        "explanation": "Il faut libérer les ressources. Une socket non fermée peut laisser un port en état 'bloqué' (CLOSE_WAIT, etc.).",
-        "chapterId": 1
+        "explanation": "Il faut libérer les ressources. Une socket non fermée peut laisser un port en état 'bloqué' (CLOSE_WAIT, etc.)."
     },
     {
         "id": 21,
@@ -257,8 +241,7 @@
             "Crée une socket brute (RAW)"
         ],
         "answer": 2,
-        "explanation": "AF_INET = IPv4, SOCK_STREAM = TCP. Le 0 indique le protocole par défaut (TCP).",
-        "chapterId": 1
+        "explanation": "AF_INET = IPv4, SOCK_STREAM = TCP. Le 0 indique le protocole par défaut (TCP)."
     },
     {
         "id": 22,
@@ -271,8 +254,7 @@
             "Il manque close()"
         ],
         "answer": 2,
-        "explanation": "Entre `bind` (attacher l'adresse) et `accept` (accepter les clients), il faut impérativement appeler `listen()` pour passer en mode passif.",
-        "chapterId": 1
+        "explanation": "Entre `bind` (attacher l'adresse) et `accept` (accepter les clients), il faut impérativement appeler `listen()` pour passer en mode passif."
     },
     {
         "id": 23,
@@ -285,8 +267,7 @@
             "Le serveur est en attente"
         ],
         "answer": 1,
-        "explanation": "Comme la plupart des appels système Unix, -1 signale une erreur (serveur éteint, réseau coupé, etc.).",
-        "chapterId": 1
+        "explanation": "Comme la plupart des appels système Unix, -1 signale une erreur (serveur éteint, réseau coupé, etc.)."
     },
     {
         "id": 24,
@@ -299,8 +280,7 @@
             "Oui, c'est parfaitement portable tel quel"
         ],
         "answer": 1,
-        "explanation": "C'est syntaxiquement valide en C (envoi d'octets bruts), mais risqué entre architectures différentes si on ne gère pas l'endianness (ntohl/htonl).",
-        "chapterId": 1
+        "explanation": "C'est syntaxiquement valide en C (envoi d'octets bruts), mais risqué entre architectures différentes si on ne gère pas l'endianness (ntohl/htonl)."
     },
     {
         "id": 25,
@@ -313,8 +293,7 @@
             "CLOSED"
         ],
         "answer": 1,
-        "explanation": "Le client reçoit un FIN, l'OS passe sa socket en CLOSE_WAIT, attendant que l'application cliente appelle `close()` explicitement.",
-        "chapterId": 1
+        "explanation": "Le client reçoit un FIN, l'OS passe sa socket en CLOSE_WAIT, attendant que l'application cliente appelle `close()` explicitement."
     },
     {
         "id": 26,
@@ -327,8 +306,7 @@
             "LIMIT_BACKLOG"
         ],
         "answer": 2,
-        "explanation": "`SOMAXCONN` est la constante système définissant la limite supérieure de la file d'attente.",
-        "chapterId": 1
+        "explanation": "`SOMAXCONN` est la constante système définissant la limite supérieure de la file d'attente."
     },
     {
         "id": 29,
@@ -341,8 +319,7 @@
             "La socket va se fermer"
         ],
         "answer": 1,
-        "explanation": "On demande de lire jusqu'à 100 octets dans un buffer qui ne peut en contenir que 10. Risque critique de corruption mémoire.",
-        "chapterId": 1
+        "explanation": "On demande de lire jusqu'à 100 octets dans un buffer qui ne peut en contenir que 10. Risque critique de corruption mémoire."
     },
     {
         "id": 30,
@@ -355,8 +332,7 @@
             "whoami()"
         ],
         "answer": 0,
-        "explanation": "Les arguments pointeurs de `accept()` (struct sockaddr *) ou la fonction `getpeername()` permettent d'obtenir l'IP et le port du client distant.",
-        "chapterId": 1
+        "explanation": "Les arguments pointeurs de `accept()` (struct sockaddr *) ou la fonction `getpeername()` permettent d'obtenir l'IP et le port du client distant."
     },
     {
         "id": 31,
@@ -368,8 +344,7 @@
             "L'adresse IP du client"
         ],
         "answer": 2,
-        "explanation": "`accept()` crée et retourne une *nouvelle* socket connectée spécifiquement à ce client. La socket d'écoute originale reste disponible pour d'autres connexions.",
-        "chapterId": 1
+        "explanation": "`accept()` crée et retourne une *nouvelle* socket connectée spécifiquement à ce client. La socket d'écoute originale reste disponible pour d'autres connexions."
     },
     {
         "id": 32,
@@ -381,8 +356,7 @@
             "Cela dépend des flags"
         ],
         "answer": 1,
-        "explanation": "`listen()` est purement déclaratif : il informe l'OS que la socket acceptera des connexions. Il ne bloque pas le programme.",
-        "chapterId": 1
+        "explanation": "`listen()` est purement déclaratif : il informe l'OS que la socket acceptera des connexions. Il ne bloque pas le programme."
     },
     {
         "id": 33,
@@ -394,8 +368,7 @@
             "Aucun, c'est des paquets"
         ],
         "answer": 1,
-        "explanation": "Bien que ce soit le même câble, on conceptualise TCP comme deux 'pipes' distincts : un flux allant du Client vers le Serveur, et un flux Serveur vers Client.",
-        "chapterId": 1
+        "explanation": "Bien que ce soit le même câble, on conceptualise TCP comme deux 'pipes' distincts : un flux allant du Client vers le Serveur, et un flux Serveur vers Client."
     },
     {
         "id": 34,
@@ -407,8 +380,7 @@
             "L'adresse IP n'existe pas"
         ],
         "answer": 1,
-        "explanation": "Cela indique qu'il n'y a 'personne au bout du fil' : aucune application n'a fait de `bind/listen` sur l'IP/Port ciblé.",
-        "chapterId": 1
+        "explanation": "Cela indique qu'il n'y a 'personne au bout du fil' : aucune application n'a fait de `bind/listen` sur l'IP/Port ciblé."
     },
     {
         "id": 35,
@@ -420,8 +392,7 @@
             "Car les sockets sont des fichiers textes"
         ],
         "answer": 1,
-        "explanation": "Le descripteur de socket est un descripteur de fichier standard, permettant l'usage des outils génériques de manipulation de fichiers.",
-        "chapterId": 1
+        "explanation": "Le descripteur de socket est un descripteur de fichier standard, permettant l'usage des outils génériques de manipulation de fichiers."
     },
     {
         "id": 36,
@@ -433,8 +404,7 @@
             "connect -> send -> close"
         ],
         "answer": 1,
-        "explanation": "Le serveur crée la socket, la lie à un port (bind), se met en attente (listen), puis accepte les clients (accept).",
-        "chapterId": 1
+        "explanation": "Le serveur crée la socket, la lie à un port (bind), se met en attente (listen), puis accepte les clients (accept)."
     },
     {
         "id": 37,
@@ -446,12 +416,11 @@
             "Mode raw socket"
         ],
         "answer": 2,
-        "explanation": "Mettre 0 demande au système d'utiliser le standard : TCP pour SOCK_STREAM et UDP pour SOCK_DGRAM.",
-        "chapterId": 1
+        "explanation": "Mettre 0 demande au système d'utiliser le standard : TCP pour SOCK_STREAM et UDP pour SOCK_DGRAM."
     },
     {
         "id": 38,
-        "question": "Qu'est-ce qu'un 'port éphémère' ?",
+        "question": "Qu'est-ce un 'port éphémère' ?",
         "options": [
             "Un port qui change toutes les secondes",
             "Un port temporaire attribué automatiquement par le système",
@@ -459,8 +428,7 @@
             "Un port réservé à l'administrateur"
         ],
         "answer": 1,
-        "explanation": "Lorsqu'un client ne fait pas de `bind()`, le système lui prête un port libre aléatoire (ex: 49152) pour la durée de la connexion.",
-        "chapterId": 1
+        "explanation": "Lorsqu'un client ne fait pas de `bind()`, le système lui prête un port libre aléatoire (ex: 49152) pour la durée de la connexion."
     },
     {
         "id": 39,
@@ -472,8 +440,7 @@
             "listen()"
         ],
         "answer": 2,
-        "explanation": "C'est au moment où le client appelle `connect()` que les paquets SYN sont envoyés pour établir la connexion.",
-        "chapterId": 1
+        "explanation": "C'est au moment où le client appelle `connect()` que les paquets SYN sont envoyés pour établir la connexion."
     },
     {
         "id": 40,
@@ -485,8 +452,7 @@
             "Il est plus lent que TCP"
         ],
         "answer": 2,
-        "explanation": "UDP est un protocole 'fire and forget' : on envoie le paquet, mais on ne sait pas s'il arrive ni dans quel ordre.",
-        "chapterId": 1
+        "explanation": "UDP est un protocole 'fire and forget' : on envoie le paquet, mais on ne sait pas s'il arrive ni dans quel ordre."
     },
     {
         "id": 41,
@@ -498,8 +464,7 @@
             "Bluetooth"
         ],
         "answer": 1,
-        "explanation": "AF_INET correspond à IPv4, tandis que AF_INET6 correspond aux adresses IPv6 (128 bits).",
-        "chapterId": 1
+        "explanation": "AF_INET correspond à IPv4, tandis que AF_INET6 correspond aux adresses IPv6 (128 bits)."
     },
     {
         "id": 42,
@@ -511,8 +476,7 @@
             "Elles sont rejetées immédiatement"
         ],
         "answer": 1,
-        "explanation": "Le noyau stocke les connexions 'prêtes' (handshake fini) dans une file jusqu'à ce que l'application les récupère via `accept()`.",
-        "chapterId": 1
+        "explanation": "Le noyau stocke les connexions 'prêtes' (handshake fini) dans une file jusqu'à ce que l'application les récupère via `accept()`."
     },
     {
         "id": 43,
@@ -524,9 +488,16 @@
             "struct socket"
         ],
         "answer": 2,
-        "explanation": "Elle retourne un entier (int) qui est l'indice dans la table des descripteurs de fichier du processus.",
-        "chapterId": 1
-    },
+        "explanation": "Elle retourne un entier (int) qui est l'indice dans la table des descripteurs de fichier du processus."
+    }
+]
+
+# Set 'chapterId': 1 for all existing questions
+for q in existing_questions:
+    q['chapterId'] = 1
+
+# New Chapter 3 questions
+new_questions = [
     {
         "id": 44,
         "chapterId": 3,
@@ -1048,3 +1019,8 @@
         "explanation": "`try(Connection c = ...) { ... }` garantit la fermeture propre des ressources même en cas d'erreur."
     }
 ]
+
+all_questions = existing_questions + new_questions
+
+with open('c:/Users/moha4/Documents/qcmDasc/src/data/questions.json', 'w', encoding='utf-8') as f:
+    json.dump(all_questions, f, indent=4, ensure_ascii=False)
