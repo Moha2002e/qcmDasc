@@ -127,40 +127,26 @@ const restartQuiz = () => {
         <button class="menu-btn" @click="goHome">Choisir un autre chapitre</button>
       </div>
     </main>
+    
+    <!-- Explicit spacer for mobile scrolling -->
+    <div class="mobile-spacer"></div>
   </div>
 </template>
 
 <style scoped>
 .app-container {
   min-height: 100vh;
+  /* Fallback for browsers ensuring 100vh */
+  min-height: 100dvh; 
   width: 100%;
   position: relative;
   overflow-x: hidden;
   background-color: #0f172a;
   font-family: 'Inter', sans-serif;
   color: white;
+  /* Ensure space at bottom for mobile scrolling */
+  padding-bottom: 15rem; 
 }
-
-.background-blobs {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.6;
-}
-
-.blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #7c4dff; animation: float 20s infinite alternate; }
-.blob-2 { bottom: -10%; right: -10%; width: 600px; height: 600px; background: #00bcd4; animation: float 25s infinite alternate-reverse; }
-.blob-3 { top: 40%; left: 40%; width: 400px; height: 400px; background: #e91e63; animation: float 22s infinite alternate; }
 
 .content-wrapper {
   position: relative;
@@ -170,6 +156,7 @@ const restartQuiz = () => {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  min-height: 100dvh;
   padding: 2rem;
 }
 
@@ -260,6 +247,7 @@ h1 {
   transition: all 0.2s;
 }
 
+.back-btn:hover {
   background: rgba(255,255,255,0.1);
 }
 
@@ -306,5 +294,16 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.mobile-spacer {
+  height: 0;
+}
+
+@media (max-width: 600px) {
+  .mobile-spacer {
+    height: 15vh;
+    display: block;
+  }
 }
 </style>

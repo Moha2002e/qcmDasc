@@ -40,5 +40,11 @@
         "title": "Prog. Web côté client avec Vue.js",
         "description": "Composants, Réactivité, Vite.",
         "status": "coming_soon"
+    }, 
+    {
+        "id": 8,
+        "title": "Examen Final ",
+        "description": "Qcm sur tout les parties et testez vos connaissances",
+        "status": "coming_soon"
     }
 ]
