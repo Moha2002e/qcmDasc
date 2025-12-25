@@ -11,7 +11,8 @@ const currentView = ref('menu') // 'menu' or 'quiz'
 const activeChapter = ref(null)
 
 // Quiz State
-const questions = ref(questionsData)
+// We start with empty, it will be populated by initQuiz
+const questions = ref([])
 const currentQuestionIndex = ref(0)
 const score = ref(0)
 const isFinished = ref(false)
@@ -20,7 +21,52 @@ const selectedAnswer = ref(null)
 const showResult = ref(false)
 
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
-const progress = computed(() => ((currentQuestionIndex.value) / questions.value.length) * 100)
+const progress = computed(() => {
+  if (questions.value.length === 0) return 0
+  return ((currentQuestionIndex.value) / questions.value.length) * 100
+})
+
+// --- Utilities ---
+const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+const initQuiz = () => {
+  // Deep clone and shuffle questions
+  // In a real app, we would filter by activeChapter.id here
+  const rawQuestions = JSON.parse(JSON.stringify(questionsData))
+  
+  const shuffled = shuffleArray(rawQuestions).map(q => {
+    // Determine original correct answer text
+    const correctAnswerText = q.options[q.answer]
+    
+    // Shuffle options
+    const shuffledOptions = shuffleArray([...q.options])
+    
+    // Find new index of the correct answer
+    const newAnswerIndex = shuffledOptions.indexOf(correctAnswerText)
+    
+    return {
+      ...q,
+      options: shuffledOptions,
+      answer: newAnswerIndex
+    }
+  })
+  
+  questions.value = shuffled
+  
+  // Reset state
+  currentQuestionIndex.value = 0
+  score.value = 0
+  isFinished.value = false
+  userAnswers.value = []
+  selectedAnswer.value = null
+  showResult.value = false
+}
 
 // --- Navigation Methods ---
 
@@ -29,7 +75,7 @@ const startChapter = (chapterId) => {
   if (chapter) {
     activeChapter.value = chapter
     currentView.value = 'quiz'
-    restartQuiz() // Ensure we start fresh
+    initQuiz()
   }
 }
 
@@ -70,12 +116,7 @@ const nextQuestion = () => {
 }
 
 const restartQuiz = () => {
-  currentQuestionIndex.value = 0
-  score.value = 0
-  isFinished.value = false
-  userAnswers.value = []
-  selectedAnswer.value = null
-  showResult.value = false
+  initQuiz()
 }
 </script>
 
