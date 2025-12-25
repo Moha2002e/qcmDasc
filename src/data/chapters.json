@@ -1,0 +1,44 @@
+[
+    {
+        "id": 1,
+        "title": "Communications réseaux en C",
+        "description": "Sockets, TCP/UDP, Bind, Listen, etc.",
+        "status": "active"
+    },
+    {
+        "id": 2,
+        "title": "Threads en Java",
+        "description": "Programmation concurrente et parallélisme.",
+        "status": "coming_soon"
+    },
+    {
+        "id": 3,
+        "title": "JDBC et l’accès aux bases de données",
+        "description": "Connexion SQL, Drivers, ResultSet.",
+        "status": "coming_soon"
+    },
+    {
+        "id": 4,
+        "title": "Communications réseaux en Java",
+        "description": "Socket, ServerSocket, NIO.",
+        "status": "coming_soon"
+    },
+    {
+        "id": 5,
+        "title": "Cryptographie et Java",
+        "description": "Sécurité, Chiffrement, Clés publiques/privées.",
+        "status": "coming_soon"
+    },
+    {
+        "id": 6,
+        "title": "Protocole HTTP et Prog. Serveur",
+        "description": "Servlets, Requêtes, Réponses, Sessions.",
+        "status": "coming_soon"
+    },
+    {
+        "id": 7,
+        "title": "Prog. Web côté client avec Vue.js",
+        "description": "Composants, Réactivité, Vite.",
+        "status": "coming_soon"
+    }
+]
