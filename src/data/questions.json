@@ -120,18 +120,6 @@
         "explanation": "Le serveur doit utiliser `bind()` pour être joignable sur un port connu. Le client peut laisser le système choisir."
     },
     {
-        "id": 11,
-        "question": "Quelle structure C contient l'adresse IPv4 d'une socket ?",
-        "options": [
-            "struct sockaddr_un",
-            "struct in_addr",
-            "struct sockaddr_in",
-            "struct ip_addr"
-        ],
-        "answer": 2,
-        "explanation": "`struct sockaddr_in` est la structure spécifique pour les adresses IPv4 (famille AF_INET)."
-    },
-    {
         "id": 12,
         "question": "Quel est le rôle du DNS ?",
         "options": [
@@ -316,32 +304,6 @@
         ],
         "answer": 2,
         "explanation": "`SOMAXCONN` est la constante système définissant la limite supérieure de la file d'attente."
-    },
-    {
-        "id": 27,
-        "question": "Que fait ce bout de code ?",
-        "code": "struct sockaddr_in addr;\naddr.sin_family = AF_INET;\naddr.sin_port = htons(8080);\naddr.sin_addr.s_addr = INADDR_ANY;",
-        "options": [
-            "Prépare une adresse pour se connecter à Google",
-            "Prépare une adresse serveur écoutant sur toutes les interfaces locales",
-            "Crée une nouvelle socket",
-            "Configure un client UDP"
-        ],
-        "answer": 1,
-        "explanation": "`INADDR_ANY` signifie que le serveur acceptera les connexions venant de n'importe quelle interface réseau de la machine (Wifi, Ethernet, Localhost...)."
-    },
-    {
-        "id": 28,
-        "question": "Pourquoi utilise-t-on `htons(8080)` ?",
-        "code": "addr.sin_port = htons(8080);",
-        "options": [
-            "Pour crypter le port",
-            "Pour convertir 8080 en string",
-            "Pour convertir l'entier du format Hôte vers Réseau (Big Endian)",
-            "C'est une fonction d'affichage"
-        ],
-        "answer": 2,
-        "explanation": "`htons` = Host TO Network Short. Le réseau utilise le Big Endian, alors que les PC x86 utilisent le Little Endian."
     },
     {
         "id": 29,
