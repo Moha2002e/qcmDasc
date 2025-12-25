@@ -330,5 +330,161 @@
         ],
         "answer": 0,
         "explanation": "Les arguments pointeurs de `accept()` (struct sockaddr *) ou la fonction `getpeername()` permettent d'obtenir l'IP et le port du client distant."
+    },
+    {
+        "id": 31,
+        "question": "Que retourne la fonction `accept()` en cas de succès ?",
+        "options": [
+            "0",
+            "Le même descripteur que la socket d'écoute",
+            "Un nouveau descripteur de fichier dédié à la connexion",
+            "L'adresse IP du client"
+        ],
+        "answer": 2,
+        "explanation": "`accept()` crée et retourne une *nouvelle* socket connectée spécifiquement à ce client. La socket d'écoute originale reste disponible pour d'autres connexions."
+    },
+    {
+        "id": 32,
+        "question": "L'appel à la fonction `listen()` est-il bloquant ?",
+        "options": [
+            "Oui, il attend une connexion",
+            "Non, il retourne immédiatement",
+            "Oui, mais avec un timeout",
+            "Cela dépend des flags"
+        ],
+        "answer": 1,
+        "explanation": "`listen()` est purement déclaratif : il informe l'OS que la socket acceptera des connexions. Il ne bloque pas le programme."
+    },
+    {
+        "id": 33,
+        "question": "Combien de canaux de communication conceptuels imagine-t-on pour une connexion TCP ?",
+        "options": [
+            "Un seul canal bidirectionnel mélangé",
+            "Deux canaux unidirectionnels (un Emission, un Réception)",
+            "Quatre canaux",
+            "Aucun, c'est des paquets"
+        ],
+        "answer": 1,
+        "explanation": "Bien que ce soit le même câble, on conceptualise TCP comme deux 'pipes' distincts : un flux allant du Client vers le Serveur, et un flux Serveur vers Client."
+    },
+    {
+        "id": 34,
+        "question": "Que signifie généralement l'erreur `ECONNREFUSED` lors d'un `connect()` ?",
+        "options": [
+            "Le câble réseau est débranché",
+            "Le serveur n'est pas lancé ou n'écoute pas sur ce port",
+            "Le pare-feu bloque la connexion",
+            "L'adresse IP n'existe pas"
+        ],
+        "answer": 1,
+        "explanation": "Cela indique qu'il n'y a 'personne au bout du fil' : aucune application n'a fait de `bind/listen` sur l'IP/Port ciblé."
+    },
+    {
+        "id": 35,
+        "question": "Pourquoi peut-on utiliser `read()` et `write()` sur une socket sous Unix ?",
+        "options": [
+            "C'est une spécificité du langage C",
+            "Car 'Tout est fichier' dans la philosophie Unix",
+            "C'est une erreur, on ne devrait pas le faire",
+            "Car les sockets sont des fichiers textes"
+        ],
+        "answer": 1,
+        "explanation": "Le descripteur de socket est un descripteur de fichier standard, permettant l'usage des outils génériques de manipulation de fichiers."
+    },
+    {
+        "id": 36,
+        "question": "Quel est l'ordre typique des appels système pour un SERVEUR TCP ?",
+        "options": [
+            "socket -> connect -> write",
+            "socket -> bind -> listen -> accept",
+            "socket -> accept -> listen -> bind",
+            "connect -> send -> close"
+        ],
+        "answer": 1,
+        "explanation": "Le serveur crée la socket, la lie à un port (bind), se met en attente (listen), puis accepte les clients (accept)."
+    },
+    {
+        "id": 37,
+        "question": "Dans `socket(domain, type, protocol)`, que signifie `protocol = 0` ?",
+        "options": [
+            "Pas de protocole",
+            "Protocole expérimental",
+            "Le système choisit le protocole par défaut pour le type (ex: TCP pour STREAM)",
+            "Mode raw socket"
+        ],
+        "answer": 2,
+        "explanation": "Mettre 0 demande au système d'utiliser le standard : TCP pour SOCK_STREAM et UDP pour SOCK_DGRAM."
+    },
+    {
+        "id": 38,
+        "question": "Qu'est-ce qu'un 'port éphémère' ?",
+        "options": [
+            "Un port qui change toutes les secondes",
+            "Un port temporaire attribué automatiquement par le système",
+            "Un port > 65535",
+            "Un port réservé à l'administrateur"
+        ],
+        "answer": 1,
+        "explanation": "Lorsqu'un client ne fait pas de `bind()`, le système lui prête un port libre aléatoire (ex: 49152) pour la durée de la connexion."
+    },
+    {
+        "id": 39,
+        "question": "Quel appel système déclenche réellement le 'Handshake TCP' sur le réseau ?",
+        "options": [
+            "socket()",
+            "bind()",
+            "connect()",
+            "listen()"
+        ],
+        "answer": 2,
+        "explanation": "C'est au moment où le client appelle `connect()` que les paquets SYN sont envoyés pour établir la connexion."
+    },
+    {
+        "id": 40,
+        "question": "Quelle affirmation est vraie concernant le mode UDP (SOCK_DGRAM) ?",
+        "options": [
+            "Il garantit l'ordre d'arrivée des paquets",
+            "Il nécessite une connexion préalable",
+            "Il envoie des messages (datagrammes) indépendants sans garantie",
+            "Il est plus lent que TCP"
+        ],
+        "answer": 2,
+        "explanation": "UDP est un protocole 'fire and forget' : on envoie le paquet, mais on ne sait pas s'il arrive ni dans quel ordre."
+    },
+    {
+        "id": 41,
+        "question": "Que signifie la famille d'adresse `AF_INET6` ?",
+        "options": [
+            "Internet Protocol v4",
+            "Internet Protocol v6",
+            "Réseau local Unix",
+            "Bluetooth"
+        ],
+        "answer": 1,
+        "explanation": "AF_INET correspond à IPv4, tandis que AF_INET6 correspond aux adresses IPv6 (128 bits)."
+    },
+    {
+        "id": 42,
+        "question": "Où sont stockées les connexions en attente (backlog) gérées par `listen` ?",
+        "options": [
+            "Dans le disque dur",
+            "Dans une file d'attente (FIFO) en mémoire noyau",
+            "Dans l'application serveur",
+            "Elles sont rejetées immédiatement"
+        ],
+        "answer": 1,
+        "explanation": "Le noyau stocke les connexions 'prêtes' (handshake fini) dans une file jusqu'à ce que l'application les récupère via `accept()`."
+    },
+    {
+        "id": 43,
+        "question": "Quel est le type de retour de la fonction `socket()` ?",
+        "options": [
+            "void",
+            "char *",
+            "int (descripteur de fichier)",
+            "struct socket"
+        ],
+        "answer": 2,
+        "explanation": "Elle retourne un entier (int) qui est l'indice dans la table des descripteurs de fichier du processus."
     }
 ]
