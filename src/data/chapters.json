@@ -15,7 +15,7 @@
         "id": 3,
         "title": "JDBC et l’accès aux bases de données",
         "description": "Connexion SQL, Drivers, ResultSet.",
-        "status": "coming_soon"
+        "status": "active"
     },
     {
         "id": 4,
