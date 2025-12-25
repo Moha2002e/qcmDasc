@@ -66,6 +66,12 @@ const handleSelect = (index) => {
   animation: fadeIn 0.5s ease-out;
 }
 
+@media (max-width: 600px) {
+  .quiz-card {
+    padding: 1.5rem;
+  }
+}
+
 .question-text {
   font-size: 1.4rem;
   margin-bottom: 1.5rem;
@@ -73,8 +79,24 @@ const handleSelect = (index) => {
   text-align: left;
   line-height: 1.4;
   background: linear-gradient(to right, #fff, #b3d5ff);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+@media (max-width: 600px) {
+  .question-text {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .option-btn {
+    padding: 0.8rem 1rem;
+  }
+  
+  .option-text {
+    font-size: 0.9rem;
+  }
 }
 
 /* Code Block Styling */

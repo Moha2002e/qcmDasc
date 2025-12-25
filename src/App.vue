@@ -178,6 +178,15 @@ const restartQuiz = () => {
   padding-top: 5rem;
 }
 
+@media (max-width: 600px) {
+  .content-wrapper {
+    padding: 1rem;
+  }
+  .menu-wrapper {
+    padding-top: 2rem;
+  }
+}
+
 /* Quiz Styles */
 .quiz-container {
   width: 100%;
@@ -208,6 +217,13 @@ h1 {
   font-size: 2rem;
   margin-bottom: 1.5rem;
   text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+@media (max-width: 600px) {
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
 }
 
 .progress-bar-container {
@@ -244,8 +260,18 @@ h1 {
   transition: all 0.2s;
 }
 
-.back-btn:hover {
   background: rgba(255,255,255,0.1);
+}
+
+@media (max-width: 600px) {
+  .back-btn {
+    top: 1rem;
+    left: 1rem;
+    padding: 0.4rem 0.8rem;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+  }
 }
 
 .menu-btn {

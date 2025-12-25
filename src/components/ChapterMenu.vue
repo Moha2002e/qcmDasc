@@ -46,9 +46,19 @@ const chapters = chaptersData
   font-size: 3rem;
   margin-bottom: 0.5rem;
   background: linear-gradient(135deg, #fff 0%, #a5f3fc 100%);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-align: center;
+}
+
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 2rem;
+  }
+  .menu-container {
+    padding: 1rem;
+  }
 }
 
 .subtitle {
@@ -60,9 +70,16 @@ const chapters = chaptersData
 
 .chapters-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
   width: 100%;
+}
+
+@media (max-width: 600px) {
+  .chapters-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
 }
 
 .chapter-card {

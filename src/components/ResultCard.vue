@@ -46,6 +46,22 @@ const emit = defineEmits(['restart'])
   align-items: center;
 }
 
+@media (max-width: 600px) {
+  .result-card {
+    padding: 2rem;
+  }
+  .score-circle {
+    width: 120px;
+    height: 120px;
+  }
+  .score-number {
+    font-size: 2.5rem;
+  }
+  .result-title {
+    font-size: 1.5rem;
+  }
+}
+
 .score-circle {
   width: 150px;
   height: 150px;
@@ -66,6 +82,7 @@ const emit = defineEmits(['restart'])
   font-weight: 800;
   line-height: 1;
   background: linear-gradient(135deg, #FFD700, #FFA500);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
