@@ -1,0 +1,290 @@
+Voici la mise en forme complète du texte fourni, sans aucune suppression, organisée pour une lecture claire.
+
+---
+
+# Chapitre 1 : Communication Réseaux en C
+
+## 1) Socket ()
+
+### 1. Définition
+
+Une socket est un point de communication bidirectionnel (endpoint) permettant à un processus d'émettre ou de recevoir des données à travers un réseau.
+
+### 2. Modes de communication
+
+Il existe principalement deux modes de fonctionnement pour les sockets, basés sur les protocoles de transport :
+
+* **Mode connecté (TCP) :**
+* Garantit la fiabilité et l'ordre des données.
+* Une socket en mode connecté est identifiée par un couple unique : `{Adresse IP, Port}`.
+
+
+* **Mode non connecté (UDP) :**
+* Envoi de datagrammes sans garantie de connexion persistante ou de réception.
+
+
+
+### 3. Création d'une socket (Appel Système)
+
+Pour créer une socket en langage C, on utilise la primitive suivante :
+
+```c
+int socket(int domain, int type, int protocol);
+
+```
+
+**Détail des paramètres :**
+
+* **Domain (Famille d'adresse) :** Précise le format d'adresse utilisé.
+* Exemple : `AF_INET` pour IPv4, `AF_INET6` pour IPv6.
+
+
+* **Type (Type de socket) :** Précise le mode de communication.
+* `SOCK_STREAM` : Pour le mode connecté (TCP).
+* `SOCK_DGRAM` : Pour le mode non connecté (UDP).
+
+
+* **Protocol :** Spécifie le protocole particulier à utiliser avec le type choisi.
+* Généralement mis à 0 (le système choisit le protocole par défaut pour le type donné).
+
+
+
+### 4. Le descripteur de socket
+
+* **Valeur de retour :** La fonction retourne un entier (`int`).
+* **Succès :** Un entier  (le descripteur de fichier).
+* **Erreur :** Retourne `-1` (avec la variable `errno` mise à jour).
+
+
+* **Analogie avec les fichiers :** Le descripteur de socket fonctionne exactement comme celui retourné par l'appel système `open()`. Dans la philosophie Unix/Linux, "tout est fichier".
+* **Point important :** Juste après l'appel à `socket()`, la socket existe mais n'est attachée à aucune adresse IP ni aucun port. Elle est anonyme.
+
+### 5. Cycle de vie : Client vs Serveur
+
+Le rôle de la socket diffère selon qu'elle agit comme client ou comme serveur lors de l'établissement de la connexion :
+
+| Rôle | Type de connexion | Description |
+| --- | --- | --- |
+| **Serveur** | **Connexion Passive** | Le serveur crée la socket et se met en attente qu'un autre processus le contacte. |
+| **Client** | **Connexion Active** | Le client initie la communication en demandant à se connecter au serveur. |
+
+---
+
+## 2) Bind()
+
+### 1. Utilité et nécessité
+
+L'appel système `bind` permet d'associer une socket (initialement anonyme) à une adresse IP et un port spécifiques.
+
+* **Pour le processus Serveur :** C'est une étape nécessaire. Le serveur doit décider explicitement sur quelle adresse IP et quel port il souhaite être contacté par les clients.
+* **Pour le processus Client :** Ce n'est pas nécessaire (bien que possible). Généralement, le client laisse le système d'exploitation lui attribuer automatiquement une adresse IP locale et un port éphémère disponible.
+
+### 2. Prototype de la fonction
+
+**Détail des paramètres :**
+
+* **sockfd :** Le descripteur de fichier de la socket à lier (retourné précédemment par `socket()`).
+* **addr :** Un pointeur vers une structure contenant l'adresse IP et le port souhaités.
+* *Note :* Il s'agit ici d'un pointeur générique (`struct sockaddr *`). Il pointera en réalité vers une structure spécifique dépendant de la famille d'adresse (ex: `struct sockaddr_in` pour IPv4).
+
+
+* **addrlen :** La taille (en octets) de la structure pointée par `addr`.
+
+### 3. Les structures de données (IPv4)
+
+Dans le cas du mode connecté TCP avec le domaine `AF_INET` (IPv4), l'adresse est décrite via la structure `sockaddr_in` :
+
+La structure `in_addr` (imbriquée ci-dessus) représente l'adresse IP elle-même.
+
+### 4. Remplissage des structures et Résolution de nom
+
+Remplir ces structures manuellement (champ par champ) est complexe car il faut gérer les formats binaires et l'ordre des octets.
+
+**La solution : Le DNS (Domain Name System)**
+Le plus simple est d'utiliser le mécanisme de résolution de nom. Il permet de faire correspondre :
+
+* Un nom d'hôte convivial (ex: `www.google.be`).
+* À une adresse IP numérique (ex: `142.251.36.3`).
+
+Ce service est assuré par le DNS, une infrastructure distribuée sur Internet. Cela permet au programmeur de manipuler des noms lisibles plutôt que des adresses IP brutes lors de la configuration des structures.
+
+---
+
+## 3) Listen()
+
+### 1. Description
+
+La fonction `listen()` permet de placer la socket dans un état d'attente (mode passif). Elle indique au système d'exploitation que le programme est prêt à recevoir des demandes de connexion entrantes sur cette socket.
+
+### 2. Prototype
+
+```c
+#include <sys/socket.h>
+
+int listen(int sockfd, int count);
+
+```
+
+**Détail des paramètres :**
+
+* **sockfd :** Le descripteur de la socket sur laquelle on souhaite attendre des connexions (la socket doit avoir été liée à une adresse via `bind()` au préalable).
+* **count :** Ce paramètre (souvent appelé *backlog*) spécifie le nombre maximum de connexions pendantes.
+* Ce sont les demandes de connexions reçues par le système mais qui n'ont pas encore été validées par l'application via `accept()`.
+* Ces demandes sont placées dans une file d'attente (FIFO).
+* La taille maximum de cette file ne peut pas dépasser la constante système `SOMAXCONN`.
+
+
+
+### 3. Comportement et valeur de retour
+
+* **Non-bloquant :** L'appel à cette fonction n'est pas bloquant. Il ne fait que changer l'état de la socket et retourne immédiatement.
+* **Valeurs de retour :**
+* **0 :** En cas de succès.
+* **-1 :** En cas d'erreur (la variable globale `errno` est alors positionnée).
+
+
+
+**Erreur fréquente : EADDRINUSE**
+Une valeur importante de `errno` à connaître est `EADDRINUSE`. Elle signifie qu'une autre socket est déjà à l'écoute sur le même port (adresse déjà utilisée), ce qui empêche la mise en écoute.
+
+---
+
+Voici la mise au propre de la section concernant l'échange de données et la fermeture des connexions.
+
+## Échange de données et Fermeture de connexion
+
+Une fois la connexion établie (après le `accept` côté serveur et le `connect` côté client), les deux processus peuvent s'échanger des données.
+
+### 1. Les primitives spécifiques aux sockets : send et recv
+
+Le système propose des appels dédiés à la communication réseau :
+
+```c
+#include <sys/types.h>
+#include <sys/socket.h>
+
+ssize_t send(int sockfd, const void *buf, size_t len, int flags);
+ssize_t recv(int sockfd, void *buf, size_t len, int flags);
+
+```
+
+**Détail des paramètres :**
+
+* **sockfd :** Le descripteur de la socket de service (côté serveur ou client).
+* **buf :** L'adresse mémoire des données.
+* Pour `send` : le pointeur vers les données à envoyer.
+* Pour `recv` : le pointeur vers le buffer qui recevra les données.
+
+
+* **len :** La taille (en octets).
+* Pour `send` : la taille du paquet à envoyer.
+* Pour `recv` : la taille maximale du buffer de réception.
+
+
+* **flags :** Permet de modifier le comportement de la fonction (ex: données hors bande).
+* *Note :* Ce paramètre est rarement utilisé dans les cas simples. S'il vaut 0, le comportement est standard.
+
+
+
+### 2. Analogie avec les fichiers : write et read
+
+C'est un point fondamental de la philosophie Unix ("Tout est fichier"). Lorsque le paramètre `flags` est égal à 0, `send` et `recv` se comportent exactement comme les appels système standards d'écriture et de lecture de fichiers :
+
+```c
+#include <unistd.h>
+
+ssize_t write(int fd, const void *buf, size_t count);
+ssize_t read(int fd, void *buf, size_t count);
+
+```
+
+* **fd :** Correspond au `sockfd`.
+* **count :** Correspond au `len`.
+
+Au niveau de la programmation, on peut donc traiter la socket comme un fichier classique.
+
+### 3. Modèle conceptuel : Les Pipes
+
+Bien que l'on utilise les mêmes fonctions que pour les fichiers, la communication TCP se distingue par sa bidirectionnalité :
+
+* **Socket vs Pipe classique :** Contrairement à un pipe standard (unidirectionnel), la socket permet de lire et d'écrire sur le même descripteur (`sockfd`).
+* **Fonctionnement interne :** On peut imaginer qu'il existe deux pipes distincts pour chaque connexion :
+* Un canal pour le flux Client  Serveur.
+* Un canal pour le flux Serveur  Client.
+
+
+
+### 4. Fermeture de la connexion : close
+
+Une fois l'échange de données terminé, il est impératif de libérer les ressources.
+
+```c
+#include <unistd.h>
+
+int close(int fd);
+
+```
+
+**Règles importantes :**
+
+* **Qui doit fermer ?** La fermeture doit être effectuée par le client ET le serveur sur leur socket de service respective.
+* **Conséquences d'un oubli :** Si la socket n'est pas fermée proprement, elle peut rester bloquée dans des états transitoires (comme `CLOSE_WAIT` ou `FIN_WAIT1`).
+* Cela empêche le système de libérer le port immédiatement.
+* On ne pourra pas réutiliser ce port tant que le délai d'expiration (timeout) du système n'est pas écoulé.
+
+
+* **Socket d'écoute :** Côté serveur, n'oubliez pas qu'il faut également fermer la socket d'écoute (celle utilisée pour le `bind` et `listen`) si le serveur ne souhaite plus accepter aucune nouvelle connexion du tout.
+
+---
+
+Voici la mise au propre pour la fonction connect(), structurée de la même manière que les précédentes.
+
+## Demande de connexion : La primitive connect()
+
+### 1. Description
+
+Cette fonction est utilisée exclusivement par le processus client. Elle permet d'initier une connexion active vers un serveur distant qui est en attente (écoute).
+
+Concrètement, c'est l'appel à cette fonction qui déclenche le "Handshake TCP" (la poignée de main en 3 étapes) pour établir le canal de communication.
+
+### 2. Prototype
+
+```c
+#include <sys/types.h>
+#include <sys/socket.h>
+
+int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+
+```
+
+**Détail des paramètres :**
+
+* **sockfd :** Le descripteur de la socket du client (créée juste avant avec `socket()`).
+* **addr :** Pointeur vers la structure contenant l'adresse IP et le port du serveur que l'on veut joindre.
+* *Note :* Contrairement au `bind` (où l'adresse est la nôtre), ici l'adresse est celle de la destination.
+
+
+* **addrlen :** La taille (en octets) de la structure pointée par `addr`.
+
+### 3. Comportement et Valeur de retour
+
+* **Fonction bloquante :** Par défaut, l'appel à `connect()` est bloquant. Le programme s'arrête à cette ligne et attend que la connexion soit établie (ou qu'une erreur/timeout survienne).
+* **Valeurs de retour :**
+* **0 :** Succès, la connexion est établie, le canal est ouvert.
+* **-1 :** Erreur (la variable `errno` est positionnée).
+
+
+
+**Erreurs fréquentes (errno) :**
+
+* **ECONNREFUSED :** Le serveur n'est pas lancé ou n'écoute pas sur ce port (personne au bout du fil).
+* **ETIMEDOUT :** Le serveur est injoignable (problème réseau ou pare-feu).
+
+### 4. Note importante : Le "Bind implicite"
+
+Comme mentionné précédemment, le client n'est pas obligé d'utiliser `bind()` avant `connect()`.
+Si le client appelle directement `connect()` :
+
+* Le système d'exploitation attribue automatiquement une adresse IP locale disponible à la socket.
+* Le système choisit un port local aléatoire (port éphémère) pour la communication.
+* La connexion est lancée vers le serveur.
