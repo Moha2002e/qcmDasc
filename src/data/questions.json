@@ -1046,5 +1046,1045 @@
         ],
         "answer": 1,
         "explanation": "`try(Connection c = ...) { ... }` garantit la fermeture propre des ressources même en cas d'erreur."
+    },
+    {
+        "id": 84,
+        "chapterId": 2,
+        "question": "Qu'est-ce qu'un thread en Java ?",
+        "options": [
+            "Un processus lourd indépendant",
+            "Une unité d'exécution légère au sein d'un processus",
+            "Une méthode statique",
+            "Un type de variable"
+        ],
+        "answer": 1,
+        "explanation": "Un thread est une unité d'exécution légère qui partage l'espace mémoire du processus parent."
+    },
+    {
+        "id": 85,
+        "chapterId": 2,
+        "question": "Que partagent les threads d'un même processus ?",
+        "options": [
+            "La pile d'appels (Stack)",
+            "Le tas (Heap) et les variables statiques",
+            "Le compteur ordinal (PC)",
+            "Rien du tout"
+        ],
+        "answer": 1,
+        "explanation": "Les threads partagent le tas (Heap) où résident les objets. En revanche, chaque thread a sa propre pile (Stack)."
+    },
+    {
+        "id": 86,
+        "chapterId": 2,
+        "question": "Comment démarrer réellement un thread `t` ?",
+        "options": [
+            "t.run()",
+            "t.start()",
+            "t.execute()",
+            "t.init()"
+        ],
+        "answer": 1,
+        "explanation": "`start()` crée le nouveau contexte d'exécution système, puis appelle `run()`. Appeler `run()` directement ne crée pas de thread."
+    },
+    {
+        "id": 87,
+        "chapterId": 2,
+        "question": "Quelle interface doit-on implémenter pour définir une tâche exécutable ?",
+        "options": [
+            "Executable",
+            "Task",
+            "Runnable",
+            "Callable"
+        ],
+        "answer": 2,
+        "explanation": "L'interface `Runnable` définit la méthode `run()` contenant le code à exécuter."
+    },
+    {
+        "id": 88,
+        "chapterId": 2,
+        "question": "Que fait `Thread.sleep(1000)` ?",
+        "options": [
+            "Arrête le thread définitivement",
+            "Libère le verrou et attend 1s",
+            "Met le thread en pause pendant 1s sans libérer les verrous",
+            "Tue le processus"
+        ],
+        "answer": 2,
+        "explanation": "`sleep` met le thread en pause (état TIMED_WAITING) mais NE libère PAS les verrous (moniteurs) détenus."
+    },
+    {
+        "id": 89,
+        "chapterId": 2,
+        "question": "Quelle méthode permet d'attendre la fin d'un autre thread ?",
+        "options": [
+            "wait()",
+            "stop()",
+            "join()",
+            "yield()"
+        ],
+        "answer": 2,
+        "explanation": "`join()` bloque le thread appelant jusqu'à ce que le thread cible se termine."
+    },
+    {
+        "id": 90,
+        "chapterId": 2,
+        "question": "Pourquoi la méthode `stop()` est-elle dépréciée ?",
+        "options": [
+            "Elle est trop lente",
+            "Elle risque de provoquer des interblocages et de laisser les objets dans un état incohérent",
+            "Elle ne marche pas sous Linux",
+            "Elle ferme l'application"
+        ],
+        "answer": 1,
+        "explanation": "`stop()` tue le thread brutalement, potentiellement au milieu d'une opération critique, corrompant les données."
+    },
+    {
+        "id": 91,
+        "chapterId": 2,
+        "question": "Comment demander proprement l'arrêt d'un thread ?",
+        "options": [
+            "t.kill()",
+            "t.interrupt()",
+            "t.stop()",
+            "System.exit(0)"
+        ],
+        "answer": 1,
+        "explanation": "`interrupt()` positionne un drapeau d'interruption. C'est au thread de vérifier ce drapeau et de s'arrêter proprement."
+    },
+    {
+        "id": 92,
+        "chapterId": 2,
+        "question": "Quel mot-clé assure l'exclusion mutuelle ?",
+        "options": [
+            "volatile",
+            "synchronized",
+            "transient",
+            "static"
+        ],
+        "answer": 1,
+        "explanation": "`synchronized` permet d'acquérir le verrou (moniteur) d'un objet, empêchant d'autres threads d'entrer dans un bloc synchronisé sur le même objet."
+    },
+    {
+        "id": 93,
+        "chapterId": 2,
+        "question": "Si j'ai deux méthodes `synchronized` sur le même objet, deux threads peuvent-ils les exécuter en simultané ?",
+        "options": [
+            "Oui, car ce sont deux méthodes différentes",
+            "Non, car le verrou est sur l'objet (this)",
+            "Oui, si elles sont void",
+            "Cela dépend de l'OS"
+        ],
+        "answer": 1,
+        "explanation": "Le verrou est lié à l'instance de l'objet (`this`). Un seul thread à la fois peut détenir le verrou de cet objet."
+    },
+    {
+        "id": 94,
+        "chapterId": 2,
+        "question": "Que se passe-t-il si on appelle `wait()` hors d'un bloc `synchronized` ?",
+        "options": [
+            "Rien",
+            "Le thread attend indéfiniment",
+            "Une `IllegalMonitorStateException` est levée",
+            "Une `InterruptedException` est levée"
+        ],
+        "answer": 2,
+        "explanation": "Pour appeler `wait()`, le thread doit posséder le moniteur de l'objet, donc être dans un bloc `synchronized`."
+    },
+    {
+        "id": 95,
+        "chapterId": 2,
+        "question": "Quelle est la différence fondamentale entre `wait()` et `sleep()` ?",
+        "options": [
+            "Aucune",
+            "`wait()` libère le verrou, `sleep()` le garde",
+            "`sleep()` libère le verrou, `wait()` le garde",
+            "`wait()` est plus précis"
+        ],
+        "answer": 1,
+        "explanation": "`wait()` relâche le moniteur pour permettre à d'autres threads (ex: notify) de prendre la main, contrairement à `sleep()`."
+    },
+    {
+        "id": 96,
+        "chapterId": 2,
+        "question": "À quoi sert `notifyAll()` ?",
+        "options": [
+            "À afficher une notification à l'utilisateur",
+            "À réveiller tous les threads en attente sur cet objet",
+            "À réveiller un seul thread aléatoire",
+            "À terminer le programme"
+        ],
+        "answer": 1,
+        "explanation": "`notifyAll()` réveille tous les threads en wait() sur le moniteur. C'est souvent plus sûr que `notify()` pour éviter des blocages."
+    },
+    {
+        "id": 97,
+        "chapterId": 2,
+        "question": "Qu'est-ce qu'un thread Daemon ?",
+        "options": [
+            "Un thread malveillant",
+            "Un thread de service qui ne bloque pas la fin du programme",
+            "Un thread prioritaire",
+            "Un thread administrateur"
+        ],
+        "answer": 1,
+        "explanation": "La JVM s'arrête dès qu'il ne reste plus que des threads Daemons. Ils servent aux tâches de fond (ex: Garbage Collector)."
+    },
+    {
+        "id": 98,
+        "chapterId": 2,
+        "question": "Quand peut-on appeler `setDaemon(true)` ?",
+        "options": [
+            "N'importe quand",
+            "Uniquement après start()",
+            "Uniquement avant start()",
+            "Dans la méthode run()"
+        ],
+        "answer": 2,
+        "explanation": "Le statut Daemon doit être défini avant le démarrage du thread. Sinon, une exception est levée."
+    },
+    {
+        "id": 99,
+        "chapterId": 2,
+        "question": "Quelle méthode permet de passer la main volontairement ?",
+        "options": [
+            "Thread.pass()",
+            "Thread.yield()",
+            "Thread.stop()",
+            "Thread.give()"
+        ],
+        "answer": 1,
+        "explanation": "`yield()` suggère au planificateur de passer la main à un autre thread de même priorité."
+    },
+    {
+        "id": 100,
+        "chapterId": 2,
+        "question": "La priorité d'un thread garantit-elle l'ordre d'exécution ?",
+        "options": [
+            "Oui, absolument",
+            "Non, c'est juste une indication (optimisation) pour le scheduler",
+            "Oui, sauf sous Windows",
+            "Oui si on est root"
+        ],
+        "answer": 1,
+        "explanation": "Les spécifications Java ne garantissent pas que la priorité sera strictement respectée par l'OS."
+    },
+    {
+        "id": 101,
+        "chapterId": 2,
+        "question": "Quel stream utiliser pour commmuniquer entre threads ?",
+        "options": [
+            "FileStream",
+            "PipedInputStream / PipedOutputStream",
+            "ThreadStream",
+            "SocketStream"
+        ],
+        "answer": 1,
+        "explanation": "Les Pipes (tubes) permettent une communication unidirectionnelle entre deux threads."
+    },
+    {
+        "id": 102,
+        "chapterId": 2,
+        "question": "Dans quel thread doit-on modifier l'interface graphique Swing ?",
+        "options": [
+            "Le thread main",
+            "N'importe quel thread",
+            "Le thread EDT (Event Dispatch Thread)",
+            "Un thread Daemon"
+        ],
+        "answer": 2,
+        "explanation": "Swing n'est pas Thread-Safe. Toutes les mutations d'UI doivent se faire dans l'EDT via `invokeLater`."
+    },
+    {
+        "id": 103,
+        "chapterId": 2,
+        "question": "Quelle méthode permet d'exécuter du code dans l'EDT ?",
+        "options": [
+            "SwingUtilities.run()",
+            "EventQueue.invokeLater(Runnable)",
+            "Thread.start()",
+            "System.run()"
+        ],
+        "answer": 1,
+        "explanation": "`EventQueue.invokeLater` place la tâche dans la file d'attente de l'Event Dispatch Thread."
+    },
+    {
+        "id": 104,
+        "chapterId": 2,
+        "question": "Quel Timer utiliser pour faire une animation Swing ?",
+        "options": [
+            "java.util.Timer",
+            "javax.swing.Timer",
+            "Thread.sleep",
+            "Cron"
+        ],
+        "answer": 1,
+        "explanation": "`javax.swing.Timer` exécute ses actions directement dans l'EDT, ce qui permet de modifier l'UI en toute sécurité."
+    },
+    {
+        "id": 105,
+        "chapterId": 2,
+        "question": "Une méthode statique synchronisée verrouille :",
+        "options": [
+            "L'instance (this)",
+            "La classe (Class object)",
+            "Toutes les instances",
+            "Rien"
+        ],
+        "answer": 1,
+        "explanation": "`static synchronized` prend le verrou sur l'objet `Class` correspondant, pas sur une instance `this`."
+    },
+    {
+        "id": 106,
+        "chapterId": 2,
+        "question": "L'interface `Runnable` contient combien de méthodes ?",
+        "options": [
+            "2 (start et run)",
+            "1 (run)",
+            "0 (interface marqueur)",
+            "Plusieurs"
+        ],
+        "answer": 1,
+        "explanation": "Elle est une interface fonctionnelle avec une seule méthode abstraite : `public void run()`."
+    },
+    {
+        "id": 107,
+        "chapterId": 2,
+        "question": "Peut-on redémarrer un thread (appeler start 2 fois) ?",
+        "options": [
+            "Oui, sans problème",
+            "Non, cela lève une IllegalThreadStateException",
+            "Oui, après un stop()",
+            "Seulement s'il est Daemon"
+        ],
+        "answer": 1,
+        "explanation": "Un thread une fois terminé est mort. On ne peut pas le relancer."
+    },
+    {
+        "id": 108,
+        "chapterId": 2,
+        "question": "A quoi sert `Thread.currentThread()` ?",
+        "options": [
+            "À créer un thread",
+            "À obtenir une référence sur le thread en cours d'exécution",
+            "À arrêter le thread courant",
+            "À changer de thread"
+        ],
+        "answer": 1,
+        "explanation": "C'est une méthode statique permettant au code de savoir quel thread l'exécute actuellement."
+    },
+    {
+        "id": 109,
+        "chapterId": 2,
+        "question": "Quelle méthode permet de vérifier si un thread tourne encore ?",
+        "options": [
+            "check()",
+            "isAlive()",
+            "isRunning()",
+            "status()"
+        ],
+        "answer": 1,
+        "explanation": "`isAlive()` retourne true si le thread a été démarré et n'est pas encore mort."
+    },
+    {
+        "id": 110,
+        "chapterId": 2,
+        "question": "Le mot-clé `synchronized` est-il hérité par les sous-classes ?",
+        "options": [
+            "Oui",
+            "Non",
+            "Uniquement si public",
+            "Uniquement si abstract"
+        ],
+        "answer": 1,
+        "explanation": "La synchronisation est une propriété de l'implémentation de la méthode, pas de sa signature. Elle n'est pas héritée."
+    },
+    {
+        "id": 111,
+        "chapterId": 2,
+        "question": "Qu'est-ce qu'un moniteur réentrant ?",
+        "options": [
+            "Un thread qui peut entrer plusieurs fois dans un bloc qu'il verrouille déjà",
+            "Un thread qui peut entrer dans n'importe quel bloc",
+            "Un verrou cassé",
+            "Un mécanisme interdit"
+        ],
+        "answer": 0,
+        "explanation": "En Java, si un thread possède un verrou, il peut ré-entrer dans d'autres blocs synchronisés sur ce MÊME verrou sans se bloquer."
+    },
+    {
+        "id": 112,
+        "chapterId": 2,
+        "question": "Les variables locales d'une méthode sont-elles partagées entre threads ?",
+        "options": [
+            "Oui",
+            "Non, elles sont sur la pile (thread-local)",
+            "Oui si elles sont finales",
+            "Oui si elles sont objets"
+        ],
+        "answer": 1,
+        "explanation": "Chaque thread a sa propre pile. Les variables locales vivent dans la pile, donc elles sont isolées."
+    },
+    {
+        "id": 113,
+        "chapterId": 2,
+        "question": "En cas d'exception non gérée dans `run()`, que se passe-t-il ?",
+        "options": [
+            "Le programme entier plante",
+            "Le thread se termine, le reste du programme continue",
+            "L'exception est ignorée",
+            "Le thread redémarre"
+        ],
+        "answer": 1,
+        "explanation": "La mort d'un thread sur exception ne tue pas tout le processus (sauf si c'était le dernier User Thread ou le main)."
+    },
+    {
+        "id": 114,
+        "chapterId": 2,
+        "question": "Comment grouper plusieurs threads pour les gérer ensemble ?",
+        "options": [
+            "ThreadList",
+            "ThreadGroup",
+            "ThreadCollection",
+            "ThreadPool"
+        ],
+        "answer": 1,
+        "explanation": "`ThreadGroup` permet d'organiser les threads en arborescence et d'agir sur eux collectivement (ex: interrupt)."
+    },
+    {
+        "id": 115,
+        "chapterId": 2,
+        "question": "La méthode `activeCount()` d'un ThreadGroup est :",
+        "options": [
+            "Exacte",
+            "Une estimation",
+            "Toujours nulle",
+            "Obsolète"
+        ],
+        "answer": 1,
+        "explanation": "Comme les threads naissent et meurent dynamiquement, ce nombre n'est qu'une estimation instantanée."
+    },
+    {
+        "id": 116,
+        "chapterId": 2,
+        "question": "Pourquoi préférer `Runnable` à l'héritage de `Thread` ?",
+        "options": [
+            "C'est plus performant",
+            "Pour contourner l'héritage unique de Java (une classe peut étendre autre chose et implémenter Runnable)",
+            "Thread est déprécié",
+            "C'est obligatoire"
+        ],
+        "answer": 1,
+        "explanation": "Cela permet une meilleure séparation des préoccupations (tâche vs exécution) et de garder la possibilité d'hériter d'une autre classe métier."
+    },
+    {
+        "id": 117,
+        "chapterId": 2,
+        "question": "Quel état n'existe PAS pour un thread Java ?",
+        "options": [
+            "NEW",
+            "RUNNABLE",
+            "BLOCKED",
+            "PAUSED"
+        ],
+        "answer": 3,
+        "explanation": "L'état 'PAUSED' n'existe pas dans l'enum `Thread.State`. On a WAITING ou TIMED_WAITING."
+    },
+    {
+        "id": 118,
+        "chapterId": 2,
+        "question": "Si j'appelle `wait()` avec un temps (timeout), le thread :",
+        "options": [
+            "Se réveille au bout du temps OU si on le notifie",
+            "Doit forcément être notifié",
+            "Ne peut pas être notifié",
+            "Se termine"
+        ],
+        "answer": 0,
+        "explanation": "`wait(timeout)` attend au maximum le temps donné, ou un `notify`/`notifyAll` précoce."
+    },
+    {
+        "id": 119,
+        "chapterId": 2,
+        "question": "Le scheduler (ordonnanceur) Java est-il préemptif ?",
+        "options": [
+            "Oui, généralement",
+            "Non, coopératif uniquement",
+            "Java n'a pas de scheduler",
+            "Cela dépend de la JVM et de l'OS"
+        ],
+        "answer": 3,
+        "explanation": "Bien que souvent préemptif sur les OS modernes, la spécification Java ne garantit pas le mode d'ordonnancement (Time Slicing)."
+    },
+    {
+        "id": 120,
+        "chapterId": 2,
+        "question": "Comment envoyer des types primitifs (int, double) via un Pipe ?",
+        "options": [
+            "Directement dans PipedInputStream",
+            "Via DataInputStream / DataOutputStream qui enveloppent le pipe",
+            "Impossible",
+            "Via ObjectOutputStream"
+        ],
+        "answer": 1,
+        "explanation": "Les Pipes gèrent des octets. Utiliser `DataOuputStream` permet d'écrire des types structurés Java."
+    },
+    {
+        "id": 121,
+        "chapterId": 2,
+        "question": "Que se passe-t-il si un Pipe n'est connecté à rien ?",
+        "options": [
+            "Rien",
+            "Blocage ou Exception si on tente d'écrire/lire",
+            "Il se connecte tout seul",
+            "Il écrit sur la console"
+        ],
+        "answer": 1,
+        "explanation": "Un pipe doit être appairé (connect). Sinon, une exception peut survenir."
+    },
+    {
+        "id": 122,
+        "chapterId": 2,
+        "question": "Quelle méthode permet d'interrompre tout un groupe de threads ?",
+        "options": [
+            "group.killAll()",
+            "group.interrupt()",
+            "group.stop()",
+            "group.halt()"
+        ],
+        "answer": 1,
+        "explanation": "La classe `ThreadGroup` possède une méthode `interrupt()` qui appelle `interrupt()` sur tous ses threads membres."
+    },
+    {
+        "id": 123,
+        "chapterId": 2,
+        "question": "Quelle classe permet d'exécuter une tâche répétitive ?",
+        "options": [
+            "java.util.Repeat",
+            "java.util.Timer",
+            "java.lang.Looper",
+            "java.io.Repeater"
+        ],
+        "answer": 1,
+        "explanation": "`Timer` permet de planifier des `TimerTask` pour une exécution unique ou répétitive."
+    },
+    {
+        "id": 124,
+        "chapterId": 4,
+        "question": "Combien de couches comporte le modèle utilisé dans ce cours (TCP/IP simplifié) ?",
+        "options": [
+            "7 couches (OSI)",
+            "4 couches (Application, Transport, Internet, Hôte-Réseau)",
+            "5 couches",
+            "3 couches"
+        ],
+        "answer": 1,
+        "explanation": "Le modèle TCP/IP simplifié présenté comporte 4 couches : Application, Transport, Internet, Hôte-Réseau."
+    },
+    {
+        "id": 125,
+        "chapterId": 4,
+        "question": "Quelle est la différence fondamentale entre TCP et UDP concernant la connexion ?",
+        "options": [
+            "TCP est non connecté, UDP est connecté",
+            "TCP est orienté connexion (Handshake), UDP est non connecté",
+            "Les deux sont connectés",
+            "Aucun n'est connecté"
+        ],
+        "answer": 1,
+        "explanation": "TCP nécessite l'établissement d'une connexion (Handshake) avant d'envoyer des données, contrairement à UDP."
+    },
+    {
+        "id": 126,
+        "chapterId": 4,
+        "question": "Sur combien de bits est codé un numéro de port ?",
+        "options": [
+            "8 bits",
+            "16 bits",
+            "32 bits",
+            "64 bits"
+        ],
+        "answer": 1,
+        "explanation": "Un port est un entier non signé de 16 bits, allant de 0 à 65535."
+    },
+    {
+        "id": 127,
+        "chapterId": 4,
+        "question": "Comment appelle-t-on l'association unique {Adresse IP + Port} ?",
+        "options": [
+            "Un Packet",
+            "Une Socket",
+            "Un Thread",
+            "Un Stream"
+        ],
+        "answer": 1,
+        "explanation": "Une socket est définie par ce couple qui permet d'identifier un processus spécifique sur une machine spécifique."
+    },
+    {
+        "id": 128,
+        "chapterId": 4,
+        "question": "Peut-on instancier `InetAddress` via `new InetAddress()` ?",
+        "options": [
+            "Oui, c'est la méthode standard",
+            "Non, elle n'a pas de constructeur public",
+            "Oui, mais c'est déprécié",
+            "Seulement pour IPv6"
+        ],
+        "answer": 1,
+        "explanation": "`InetAddress` utilise des méthodes de fabrique statiques (Factory Methods) comme `getLocalHost` ou `getByName`."
+    },
+    {
+        "id": 129,
+        "chapterId": 4,
+        "question": "Quelle méthode permet d'obtenir l'adresse IP d'un nom de domaine (ex: www.google.com) ?",
+        "options": [
+            "InetAddress.create()",
+            "InetAddress.getByName()",
+            "DNS.resolve()",
+            "Server.find()"
+        ],
+        "answer": 1,
+        "explanation": "`InetAddress.getByName(\"...\")` effectue la résolution DNS pour retourner l'objet adresse correspondant."
+    },
+    {
+        "id": 130,
+        "chapterId": 4,
+        "question": "Quelle exception est levée si `InetAddress.getByName` ne trouve pas l'hôte ?",
+        "options": [
+            "IOException",
+            "SocketException",
+            "UnknownHostException",
+            "NullPointerException"
+        ],
+        "answer": 2,
+        "explanation": "Si le DNS ne parvient pas à résoudre le nom, une `UnknownHostException` est levée."
+    },
+    {
+        "id": 131,
+        "chapterId": 4,
+        "question": "Quel objet Java sert à ATTENDRE les connexions des clients (côté serveur) ?",
+        "options": [
+            "Socket",
+            "ServerSocket",
+            "ClientSocket",
+            "ConnectionFactory"
+        ],
+        "answer": 1,
+        "explanation": "`ServerSocket` est la classe dédiée à l'écoute d'un port et à l'acceptation des connexions entrantes."
+    },
+    {
+        "id": 132,
+        "chapterId": 4,
+        "question": "Par défaut, quelle est la taille de la file d'attente (backlog) d'un `ServerSocket` ?",
+        "options": [
+            "10",
+            "50",
+            "100",
+            "Illimitée"
+        ],
+        "answer": 1,
+        "explanation": "Si on ne spécifie pas le second argument du constructeur, la file des connexions en attente est limitée à 50 par défaut."
+    },
+    {
+        "id": 133,
+        "chapterId": 4,
+        "question": "La méthode `accept()` de `ServerSocket` est-elle bloquante ?",
+        "options": [
+            "Non, elle retourne null immédiatement si personne n'est là",
+            "Oui, elle bloque jusqu'à ce qu'un client se connecte (ou timeout)",
+            "Oui, mais maximum 1 seconde",
+            "Non, elle lance un thread"
+        ],
+        "answer": 1,
+        "explanation": "`accept()` met le thread en pause jusqu'à l'arrivée d'une connexion. C'est un appel bloquant."
+    },
+    {
+        "id": 134,
+        "chapterId": 4,
+        "question": "Que retourne la méthode `ServerSocket.accept()` ?",
+        "options": [
+            "Un boolean",
+            "Une adresse IP",
+            "Un objet `Socket` permettant de communiquer avec le client",
+            "Un entier"
+        ],
+        "answer": 2,
+        "explanation": "Elle retourne une `Socket` de service dédiée à la communication avec le client qui vient d'arriver."
+    },
+    {
+        "id": 135,
+        "chapterId": 4,
+        "question": "Quelle exception survient si `new Socket(host, port)` n'arrive pas à se connecter ?",
+        "options": [
+            "NoRouteToHostException",
+            "ConnectException",
+            "BindException",
+            "InterruptException"
+        ],
+        "answer": 1,
+        "explanation": "`ConnectException` indique que le serveur est éteint ou inaccessible sur ce port (Connection refused)."
+    },
+    {
+        "id": 136,
+        "chapterId": 4,
+        "question": "Pour envoyer des objets Java sur le réseau, quelle classe utilise-t-on ?",
+        "options": [
+            "DataOutputStream",
+            "ObjectOutputStream",
+            "BufferedOutputStream",
+            "PrintStream"
+        ],
+        "answer": 1,
+        "explanation": "`ObjectOutputStream` permet de sérialiser des objets Java dans le flux."
+    },
+    {
+        "id": 137,
+        "chapterId": 4,
+        "question": "Quelle interface doit implémenter une classe pour être envoyée via `ObjectOutputStream` ?",
+        "options": [
+            "Cloneable",
+            "Runnable",
+            "Serializable",
+            "Remote"
+        ],
+        "answer": 2,
+        "explanation": "L'interface marqueur `java.io.Serializable` est obligatoire pour la sérialisation."
+    },
+    {
+        "id": 138,
+        "chapterId": 4,
+        "question": "Si j'utilise `BufferedWriter` sans faire `flush()`, que se passe-t-il ?",
+        "options": [
+            "Les données sont envoyées instantanément",
+            "Les données restent dans le tampon et ne partent pas sur le réseau",
+            "Une exception est levée",
+            "Le socket se ferme"
+        ],
+        "answer": 1,
+        "explanation": "Les flux bufférisés gardent les données en mémoire pour optimiser. `flush()` force l'envoi physique."
+    },
+    {
+        "id": 139,
+        "chapterId": 4,
+        "question": "Lors d'une communication Java <-> C, peut-on utiliser la sérialisation Java ?",
+        "options": [
+            "Oui, le C comprend le Java",
+            "Non, il faut échanger des octets bruts (Bytes) ou du texte standard",
+            "Oui avec un plugin",
+            "Oui si la classe est Serializable en C"
+        ],
+        "answer": 1,
+        "explanation": "La sérialisation Java est un format binaire spécifique à la JVM. Le C ne sait pas le lire nativement."
+    },
+    {
+        "id": 140,
+        "chapterId": 4,
+        "question": "En TCP (flux continu), comment délimiter la fin d'un message textuel ?",
+        "options": [
+            "C'est automatique",
+            "On utilise un caractère de fin (ex: fin de ligne ou $%) ou un entête de taille",
+            "On ferme la socket après chaque mot",
+            "On attend 1 seconde"
+        ],
+        "answer": 1,
+        "explanation": "Comme c'est un flux (tuyau), il n'y a pas de notion de 'paquet' visible. Il faut définir un protocole de délimitation."
+    },
+    {
+        "id": 141,
+        "chapterId": 4,
+        "question": "Dans le modèle 'Serveur Multi-Threads à la demande', que fait-on à chaque connexion ?",
+        "options": [
+            "On traite la requête dans le thread principal",
+            "On crée un nouveau Thread dédié au client",
+            "On refuse le client",
+            "On met le client en attente"
+        ],
+        "answer": 1,
+        "explanation": "Chaque `accept()` est suivi d'un `new ThreadClient(socket).start()`."
+    },
+    {
+        "id": 142,
+        "chapterId": 4,
+        "question": "Quel est le risque principal du modèle 'Thread à la demande' ?",
+        "options": [
+            "C'est lent",
+            "Saturation mémoire (DoS) si trop de clients arrivent simultanément",
+            "C'est trop complexe",
+            "Les données se mélangent"
+        ],
+        "answer": 1,
+        "explanation": "Créer un thread par client consomme des ressources. Une attaque massive peut faire crasher le serveur."
+    },
+    {
+        "id": 143,
+        "chapterId": 4,
+        "question": "Dans le modèle 'Pool de Threads', que fait le ThreadServeur ?",
+        "options": [
+            "Il traite les clients",
+            "Il crée des threads",
+            "Il récupère la socket et la dépose dans une File d'Attente",
+            "Il ne fait rien"
+        ],
+        "answer": 2,
+        "explanation": "Le ThreadServeur ne fait que `accept()` et `queue.add(socket)`. Ce sont les threads du pool qui consomment la file."
+    },
+    {
+        "id": 144,
+        "chapterId": 4,
+        "question": "Que se passe-t-il si un Thread du pool veut prendre une connexion mais que la file est vide ?",
+        "options": [
+            "Il s'arrête",
+            "Il se met en attente (wait) jusqu'à ce qu'une connexion arrive",
+            "Il lance une exception",
+            "Il crée une fausse connexion"
+        ],
+        "answer": 1,
+        "explanation": "C'est le principe Producteur/Consommateur bloquant. `getConnexion()` utilise `wait()`."
+    },
+    {
+        "id": 145,
+        "chapterId": 4,
+        "question": "Pourquoi utiliser `notify()` (et pas `notifyAll`) dans le pool de threads ?",
+        "options": [
+            "C'est obligatoire",
+            "Car une seule socket ne peut être traitée que par UN seul thread",
+            "Car `notifyAll` est déprécié",
+            "Pour économiser de la batterie"
+        ],
+        "answer": 1,
+        "explanation": "Lorsqu'on ajoute UNE socket, inutile de réveiller tous les threads, un seul pourra la prendre."
+    },
+    {
+        "id": 146,
+        "chapterId": 4,
+        "question": "Que se passe-t-il si on fait `socket.accept()` dans le thread de l'interface graphique (EDT) ?",
+        "options": [
+            "Tout fonctionne bien",
+            "L'interface graphique gèle (freeze) jusqu'à la connexion d'un client",
+            "Une exception swing est lancée",
+            "La fenêtre change de couleur"
+        ],
+        "answer": 1,
+        "explanation": "L'appel étant bloquant, l'EDT ne peut plus redessiner la fenêtre ni gérer les clics."
+    },
+    {
+        "id": 147,
+        "chapterId": 4,
+        "question": "Comment le Serveur doit-il communiquer avec l'interface graphique Swing ?",
+        "options": [
+            "En modifiant directement les composants JTable/JLabel",
+            "Via une interface Logger (ou callback) utilisant `invokeLater`",
+            "Par télépathie",
+            "En écrivant dans un fichier texte"
+        ],
+        "answer": 1,
+        "explanation": "Le serveur ne doit pas toucher au GUI directement. Il passe par une abstraction (Logger) qui redirige vers l'EDT."
+    },
+    {
+        "id": 148,
+        "chapterId": 4,
+        "question": "À quoi sert la classe `DataInputStream` ?",
+        "options": [
+            "À lire des objets",
+            "À lire des types primitifs (int, double, boolean) de manière portable",
+            "À lire des fichiers MP3",
+            "À lire des images"
+        ],
+        "answer": 1,
+        "explanation": "Elle permet de lire des données binaires (comme `readInt`) encodées de manière indépendante de la plateforme."
+    },
+    {
+        "id": 149,
+        "chapterId": 4,
+        "question": "Si j'écris `writeInt(42)`, que dois-je appeler en face ?",
+        "options": [
+            "readDouble()",
+            "readByte()",
+            "readInt()",
+            "readString()"
+        ],
+        "answer": 2,
+        "explanation": "L'ordre et le type de lecture doivent correspondre exactement à l'écriture."
+    },
+    {
+        "id": 150,
+        "chapterId": 4,
+        "question": "Quelle méthode active le timeout sur une Socket ?",
+        "options": [
+            "setTimeout()",
+            "setSoTimeout()",
+            "waitTimeout()",
+            "limitTime()"
+        ],
+        "answer": 1,
+        "explanation": "`setSoTimeout(int ms)` définit le temps max d'attente pour `read()` ou `accept()`."
+    },
+    {
+        "id": 151,
+        "chapterId": 4,
+        "question": "Quel port est généralement associé au protocole HTTP ?",
+        "options": [
+            "21",
+            "25",
+            "80",
+            "443"
+        ],
+        "answer": 2,
+        "explanation": "Le port standard pour le web non sécurisé est 80. (443 pour HTTPS)."
+    },
+    {
+        "id": 152,
+        "chapterId": 4,
+        "question": "Un thread démon (Daemon) empêche-t-il la JVM de s'arrêter ?",
+        "options": [
+            "Oui",
+            "Non, la JVM s'arrête s'il ne reste que des Daemons",
+            "Cela dépend de sa priorité",
+            "Oui s'il est en boucle infinie"
+        ],
+        "answer": 1,
+        "explanation": "Les threads démons sont des threads de service qui sont tués automatiquement à la fin des threads utilisateurs."
+    },
+    {
+        "id": 153,
+        "chapterId": 4,
+        "question": "Dans l'architecture proposée, à quoi sert l'interface `Protocole` ?",
+        "options": [
+            "À définir TCP ou UDP",
+            "À isoler la logique métier (traiteRequete) du code réseau",
+            "À crypter les données",
+            "À connecter la base de données"
+        ],
+        "answer": 1,
+        "explanation": "Elle permet de changer le comportement du serveur (ex: Chat, Calcul, Login) sans toucher au code du serveur lui-même."
+    },
+    {
+        "id": 154,
+        "chapterId": 4,
+        "question": "Qu'est-ce que `InetAddress.getLocalHost()` retourne ?",
+        "options": [
+            "L'adresse 127.0.0.1 (localhost)",
+            "L'adresse IP réelle de la machine sur le réseau (avec son nom d'hôte)",
+            "L'adresse du serveur Google",
+            "Null"
+        ],
+        "answer": 1,
+        "explanation": "Elle interroge le système pour obtenir l'IP de la carte réseau principale."
+    },
+    {
+        "id": 155,
+        "chapterId": 4,
+        "question": "Pourquoi mettre `ObjectOutputStream` avant `ObjectInputStream` à la création ?",
+        "options": [
+            "Pour éviter un blocage (deadlock) lors de l'envoi de l'en-tête de sérialisation",
+            "C'est une convention esthétique",
+            "Cela n'a aucune importance",
+            "Pour aller plus vite"
+        ],
+        "answer": 0,
+        "explanation": "`new ObjectOutputStream` écrit un header immédiatement. Si les deux côtés font `new ObjectInputStream` en premier, ils attendent tous les deux un header qui n'arrive jamais."
+    },
+    {
+        "id": 156,
+        "chapterId": 4,
+        "question": "Quelle classe permet de lire des lignes de texte entières ?",
+        "options": [
+            "FileReader",
+            "BufferedReader",
+            "LineReader",
+            "TextInputStream"
+        ],
+        "answer": 1,
+        "explanation": "`BufferedReader` possède la méthode `readLine()` très pratique pour le texte."
+    },
+    {
+        "id": 157,
+        "chapterId": 4,
+        "question": "Dans le modèle OSI, quelle couche manque dans le modèle 4 couches ?",
+        "options": [
+            "Application",
+            "Transport",
+            "Présentation (et Session)",
+            "Réseau"
+        ],
+        "answer": 2,
+        "explanation": "Le modèle TCP/IP regroupe Session, Présentation et Application en une seule couche 'Application'."
+    },
+    {
+        "id": 158,
+        "chapterId": 4,
+        "question": "Quand on sérialise un objet, ses champs `transient` sont-ils envoyés ?",
+        "options": [
+            "Oui",
+            "Non, ils sont ignorés",
+            "Seulement s'ils sont publics",
+            "Oui mais chiffrés"
+        ],
+        "answer": 1,
+        "explanation": "Le mot-clé `transient` sert justement à exclure un champ de la sérialisation."
+    },
+    {
+        "id": 159,
+        "chapterId": 4,
+        "question": "La méthode `getAddress()` de `InetAddress` retourne des octets. Quelle est leur particularité en Java ?",
+        "options": [
+            "Ils sont non signés (0..255)",
+            "Ils sont signés (-128..127)",
+            "Ce sont des int",
+            "Ce sont des char"
+        ],
+        "answer": 1,
+        "explanation": "En Java, le type `byte` est signé. Il faut faire attention lors de l'affichage (souvent `b & 0xFF` pour retrouver 0-255)."
+    },
+    {
+        "id": 160,
+        "chapterId": 4,
+        "question": "Quel composant Swing est utilisé dans l'exemple LILOC pour afficher les logs ?",
+        "options": [
+            "JTable",
+            "JLabel",
+            "JButton",
+            "JFrame"
+        ],
+        "answer": 0,
+        "explanation": "L'exemple du cours utilise une `JTable` (modèle `LogTableModel`) pour lister les traces du serveur."
+    },
+    {
+        "id": 161,
+        "chapterId": 4,
+        "question": "Comment le serveur sait-il qu'un client C a fini son message ?",
+        "options": [
+            "Grâce à la fin de l'objet Java",
+            "Grâce à un caractère délimiteur (ex: $) ou une taille en entête",
+            "Il devine",
+            "Le client ferme la connexion"
+        ],
+        "answer": 1,
+        "explanation": "En communication bas niveau, c'est au protocole applicatif de définir la structure (Header+Body ou Delimiter)."
+    },
+    {
+        "id": 162,
+        "chapterId": 4,
+        "question": "Dans un `catch(IOException e)`, que doit-on faire de la socket ?",
+        "options": [
+            "La laisser ouverte",
+            "La fermer proprement (socket.close())",
+            "La relancer",
+            "Rien"
+        ],
+        "answer": 1,
+        "explanation": "En cas d'erreur de communication, il faut libérer les ressources en fermant la socket."
+    },
+    {
+        "id": 163,
+        "chapterId": 4,
+        "question": "Une `Socket` est :",
+        "options": [
+            "Un fichier physique",
+            "Une abstraction logicielle représentant une connexion réseau",
+            "Une carte mère",
+            "Un pilote"
+        ],
+        "answer": 1,
+        "explanation": "C'est l'interface de programmation (API) vers la couche Transport TCP."
     }
 ]

@@ -1,0 +1,237 @@
+1. Notion de thread en Java
+Un thread est une unité d’exécution légère s’exécutant à l’intérieur d’un processus Java.
+ Un même processus peut contenir plusieurs threads qui partagent les mêmes données (le tas (heap), les objets, les variables statiques)
+
+Piège QCM : les variables locales sont propres à chaque thread (pile différente)
+
+En Java, la gestion des threads repose principalement sur la classe Thread et l’interface Runnable.
+
+⚠️ Important :
+•	Instancier un objet Thread ne lance pas un thread.
+•	Seul l’appel à start() crée réellement le sous-processus, qui exécute ensuite la méthode run().
+t.run();   // ❌ pas un thread
+t.start(); // ✔️ nouveau thread
+
+2. La classe Thread et l’interface Runnable
+
+Classe Thread
+Caractéristiques principales :
+•	Possède une méthode run() : code exécuté par le thread.
+•	Implémente l’interface Runnable.
+•	Attributs importants : nom, priorité, statut démon.
+•	Méthodes clés : 
+Méthode	Effet	⚠️ Piège clé
+start()	Crée un nouveau thread	Appelable une seule fois
+run()	Exécute le code	Pas de nouveau thread
+sleep(ms)	Pause le thread courant	Ne libère pas le verrou
+join()	Attend la fin d’un thread	Bloque le thread appelant
+interrupt()	Demande d’arrêt	Ne stoppe pas le thread
+wait()	Met en attente	Doit être dans synchronized
+notify()	Réveille un thread	Choix arbitraire
+notifyAll()	Réveille tous	Plus sûr que notify()
+setDaemon(true)	Thread de service	Avant start()
+Static CurrentThread()	Récupère l’instance du thread en cours 	
+IsAlive()	Renvoie true si le thread est démarré et non terminé	
+PIÈGE QCM :
+•	sleep() ne libère pas le verrou
+•	run() peut être appelée sans créer de thread
+
+•	Certaines méthodes sont natives (implémentées en C/C++ et liées au système).
+
+Interface Runnable
+•	Ne contient qu’une méthode : run().
+•	Représente une tâche exécutable par un thread.
+•	Permet de séparer la logique métier de la gestion du thread.
+PIÈGE QCM :
+On ne peut pas appeler start() sur un Runnable directement.
+
+3. Création et lancement d’un thread
+Deux méthodes principales :
+
+ Héritage de Thread
+•	Créer une classe qui étend Thread
+•	Redéfinir run()
+•	Appeler start()
+
+ Implémentation de Runnable (méthode recommandée)
+•	Créer une classe qui implémente Runnable
+•	Passer l’objet à un Thread
+•	Appeler start()
+
+ Dans les deux cas :
+•	Le thread commence avec start()
+•	Il se termine quand run() se termine
+
+PIÈGE QCM :
+Les deux méthodes créent un thread identique → seule la conception change.
+
+4. Synchronisation simple : join()
+La méthode join() permet à un thread d’attendre la fin d’un autre thread avant de continuer.
+
+Utilisation typique :
+•	Le thread principal attend que des threads secondaires se terminent.
+t.join() ;
+
+PIÈGE QCM :
+•	C’est le thread appelant qui se bloque
+•	join(long) → état TIMED_WAITING
+5. Interruption des threads
+•	stop() est dépréciée (arrêt brutal, dangereux) et Risque de "Deadlocks" / interblocages et laisse les objets dans un état incohérent.
+•	On utilise interrupt() qui nous permet de signaler à un thread qu’il dois s’arrêter 
+Principe :
+•	interrupt() déclenche une InterruptedException
+•	Le thread décide comment et quand s’arrêter proprement
+•	Souvent combiné avec une variable d’état (boolean interrompu)
+
+PIÈGE QCM MAJEUR :
+interrupt() ≠ arrêt forcé.
+6. Synchronisation par moniteurs (synchronized)
+Objectif : empêcher l’accès concurrent à une section critique.
+
+Méthodes synchronized
+•	Lorsqu’un thread entre dans une méthode synchronized, il verrouille l’objet
+•	Les autres threads attendent la libération du verrou
+synchronized void m() {}          // verrou sur this
+static synchronized void m() {}   // verrou sur la classe
+
+PIÈGES QCM :
+•	Deux objets différents → pas de blocage
+•	synchronized n’est pas hérité
+
+Moniteur
+Un moniteur est un objet garantissant qu’un seul thread à la fois peut exécuter ses méthodes synchronisées.
+Caractéristiques :
+•	Moniteurs réentrants
+•	synchronized non hérité
+•	Méthodes statiques synchronized → verrou sur la classe, pas sur les objets
+
+7. Attente d’événements : wait() / notify()
+Les méthodes synchronized assurent l’exclusion mutuelle, mais pas l’attente conditionnelle.
+
+Java fournit :
+•	wait() : met le thread en attente et libère le verrou
+•	notify() : réveille un thread en attente
+•	wait(long) : attente avec timeout
+
+Note Théorique (Parallèle POSIX) :
+•	synchronized correspond aux Mutex.
+•	wait() / notify() correspondent aux Variables de Condition.
+
+
+Ces méthodes doivent être appelées dans un bloc ou une méthode synchronized.
+
+PIÈGES QCM TRÈS FRÉQUENTS :
+•	wait() hors synchronized → IllegalMonitorStateException
+•	Toujours utiliser while, jamais if
+•	notifyAll() est plus sûr que notify()
+
+Utilisation typique :
+•	Problème producteur / consommateur
+•	Attente conditionnelle sur l’état d’un objet
+
+8. Threads démons
+Deux types de threads :
+•	User threads : empêchent la fin du processus
+•	Daemon threads : threads de service
+
+Le processus Java se termine lorsqu’il ne reste que des threads démons.
+Méthode :
+setDaemon(true);
+t.start() ; 
+
+PIÈGE QCM MAJEUR :
+t.start();
+t.setDaemon(true); // ❌ exception
+
+
+
+
+
+
+9. Priorités des threads
+•	Priorités comprises entre MIN_PRIORITY et MAX_PRIORITY
+•	Par défaut : NORM_PRIORITY
+•	Influencent le scheduler, mais ne garantissent pas l’ordre d’exécution
+
+Ce n’est pas un mécanisme de synchronisation, seulement une optimisation.
+
+Méthode Thread.yield() :
+•	Suggère au planificateur de passer la main à un autre thread de même priorité.
+•	Effet : Fait passer le thread de l'état RUNNING à RUNNABLE (Prêt).
+•	Attention : C'est une suggestion, le système peut l'ignorer.
+
+
+ PIÈGE QCM :
+•	Aucune garantie d’ordre d’exécution
+•	Ce n’est PAS un mécanisme de synchronisation
+10. Groupes de threads (ThreadGroup)
+Permettent :
+•	Organisation hiérarchique des threads
+•	Gestion collective (analyse, interruption)
+Caractéristiques :
+•	Tout thread appartient à un groupe
+•	Groupe par défaut : main
+•	Un groupe peut contenir des sous-groupes
+Méthodes utiles :
+•	getName()
+•	activeCount()
+•	enumerate()
+•	interrupt() (interruption groupée)
+
+PIÈGE QCM :
+•	activeCount() donne une estimation, pas une valeur exacte
+
+
+
+
+
+
+
+
+
+
+
+
+11. Communication entre threads par pipes
+Java fournit :
+•	PipedInputStream
+•	PipedOutputStream
+Principe :
+•	Communication unidirectionnelle
+•	Toujours utilisés par paire
+•	Généralement encapsulés par DataInputStream / DataOutputStream pour envoyer des types primitifs (int, double...) ou des chaînes.
+•	
+PIÈGE QCM :
+•	Pipe non connecté → blocage
+12. Threads et interfaces graphiques (AWT/Swing)
+Problème :
+•	Accès concurrent au GUI → non thread-safe
+Solution :
+•	Un thread unique : Event Dispatch Thread (EDT) (AWT-EventQueue-0)
+•	Toute modification du GUI doit être exécutée par ce thread
+
+Méthode clé :
+EventQueue.invokeLater(Runnable)
+
+PIÈGE QCM MAJEUR :
+Modifier un composant Swing depuis un autre thread = erreur.
+13. Timers
+java.util.Timer
+•	Chaque Timer possède son propre thread
+•	Utilise des TimerTask
+•	Tâches ponctuelles ou périodiques
+javax.swing.Timer
+•	Spécifique aux interfaces graphiques
+•	Génère des ActionEvent
+•	Les événements sont traités par le thread dispatcher
+•	Thread-safe pour Swing
+PIÈGE QCM :
+Swing → toujours javax.swing.Timer
+14. Points clés à retenir
+•	start() ≠ run()
+•	Préférer Runnable à l’héritage de Thread
+•	interrupt() > stop()
+•	synchronized = exclusion mutuelle
+•	wait() / notify() = synchronisation conditionnelle
+•	GUI Swing → toujours via l’EDT
+•	Timers simplifient la gestion du temps

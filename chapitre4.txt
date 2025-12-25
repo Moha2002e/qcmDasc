@@ -1,0 +1,223 @@
+
+1. Bases Théoriques & Modèle TCP/IP (Pages 1-3)
+Le Modèle en 4 Couches
+Contrairement au modèle OSI (7 couches), le modèle utilisé ici en comporte 4 :
+1.	Application : HTTP, FTP, DNS, SMTP...
+2.	Transport : TCP, UDP.
+3.	Internet : IP.
+4.	Hôte-Réseau : Ethernet, Wi-Fi...
+
+TCP vs UDP (Comparatif technique)
+Critère	TCP (Transport Control Protocol)	UDP (User Datagram Protocol)
+Connexion	Orienté connexion (Handshake avant échange).	Non connecté (Envoi direct).
+Fiabilité	Fiable (Garantie d'arrivée et d'ordre).	Non fiable (Perte et désordre possibles).
+Type de transfert	Par Flot (Stream), comme un tuyau continu.	Par Paquets (Datagrammes).
+
+Adresses et Ports
+•	Adresse IP (32 bits) : Identifie la machine (l'hôte).
+•	Port (16 bits) : Identifie l'application (le processus) sur la machine.
+o	Plage : 0 à 65535.
+o	Ports Réservés (0-1023) :
+	HTTP : 80
+	FTP : 20 (data) et 21 (commande)
+	SSH : 22
+	Telnet : 23
+	SMTP : 25
+🚨 ZONE PIÈGE QCM
+•	Un numéro de port est codé sur 16 bits (pas 32).
+•	Une adresse IP identifie une machine, mais ça ne suffit pas pour communiquer avec un programme : il faut IP + Port = Socket.
+•	TCP assure l'ordre des paquets, UDP non.
+
+
+
+
+
+
+
+
+2. Adresses IP en Java : InetAddress (Pages 3-4)
+Cette classe représente une adresse IP (v4 ou v6).
+
+Instanciation (Factory Methods)
+La classe n'a PAS de constructeur public. On utilise des méthodes statiques :
+1.	InetAddress.getLocalHost() : Retourne l'IP de la machine locale.
+o	Exemple de résultat : moon/192.168.228.167 (Nom/IP).
+2.	InetAddress.getByName(String host) : Retourne l'IP d'une machine distante (résolution DNS).
+
+Méthodes d'instance (Une fois l'objet obtenu)
+•	getHostName() : Retourne le nom de la machine (String).
+•	getHostAddress() : Retourne l'IP sous forme textuelle (ex: "192.168.1.1").
+•	getAddress() : Retourne l'IP sous forme de tableau de byte[] (ordre réseau).
+•	isMulticastAddress() : Retourne true si c'est une adresse de classe D (Multicast).
+
+Sous-classes
+•	Inet4Address (IPv4)
+•	Inet6Address (IPv6)
+
+🚨 ZONE PIÈGE QCM
+•	Peut-on faire new InetAddress() ? NON.
+•	getByName peut lever l'exception UnknownHostException (si le domaine n'existe pas).
+•	La méthode getAddress() renvoie des byte signés (en Java les bytes vont de -128 à 127), attention à la conversion si on veut afficher 0-255.
+
+3. Communication TCP (Mode Connecté) (Pages 5-7)
+Côté Serveur : ServerSocket
+
+Permet d'attendre les clients.
+•	Constructeurs :
+o	ServerSocket(int port) : Écoute sur ce port. Limite la file d'attente à 50 connexions par défaut.
+o	ServerSocket(int port, int backlog) : Permet de changer la limite de 50.
+o	ServerSocket(int port, int backlog, InetAddress bindAddr) : Pour n'écouter que sur une carte réseau précise (IP locale spécifique).
+•	Méthode Clé : accept().
+o	Elle est BLOQUANTE.
+o	Elle retourne un objet Socket quand un client arrive.
+•	Timeout : setSoTimeout(int ms). Si activé, accept() lève SocketTimeoutException si personne ne vient après le délai.
+
+
+
+
+
+Côté Client : Socket
+Permet de se connecter.
+•	Constructeur : Socket(String host, int port).
+o	L'appel de ce constructeur tente immédiatement la connexion. C'est bloquant tant que la connexion n'est pas faite.
+•	Méthodes d'info :
+o	getPort() / getInetAddress() : Infos du Distant (Serveur).
+o	getLocalPort() / getLocalAddress() : Infos du Local (Client).
+
+🚨 ZONE PIÈGE QCM
+•	ServerSocket sert uniquement à attendre (accept). Pour discuter ensuite, on utilise la Socket retournée par accept.
+•	La limite par défaut de la file d'attente (backlog) du ServerSocket est 50.
+•	Si on instancie new Socket(...) et que le serveur n'est pas lancé -> ConnectException.
+•	setSoTimeout doit être appelé avant accept().
+
+4. Transfert de Données (Pages 8-12)
+Une fois la connexion établie, on utilise des Flux (Streams) sur la Socket.
+•	getInputStream() : Pour lire.
+•	getOutputStream() : Pour écrire.
+
+Les 3 Niveaux de Flux
+
+1. Types Primitifs (DataInputStream / DataOutputStream)
+•	Permet d'envoyer : int, double, boolean, String (UTF).
+•	Exemple : writeInt(12) -> readInt().
+•	Ordre : Il faut lire exactement dans le même ordre qu'on a écrit.
+2. Objets (ObjectInputStream / ObjectOutputStream) - Sérialisation
+•	Permet d'envoyer des instances de classes Java.
+•	Condition absolue : La classe doit implémenter java.io.Serializable.
+•	Méthodes : writeObject(obj) -> readObject().
+•	Cast : Il faut caster l'objet à la réception : (Donnee) ois.readObject().
+3. Texte (BufferedReader / BufferedWriter)
+•	Utilise InputStreamReader / OutputStreamWriter pour convertir les bytes en caractères (charset).
+•	Lecture : readLine() (lit jusqu'au saut de ligne).
+•	Écriture : write(), newLine().
+•	Flush : bw.flush() est obligatoire pour forcer l'envoi des données restées dans le tampon (buffer).
+
+🚨 ZONE PIÈGE QCM
+•	Si on oublie flush() avec un BufferedWriter, rien ne part sur le réseau.
+•	Si une classe n'est pas Serializable, writeObject lance NotSerializableException.
+•	L'ordre de création des flux est parfois important (créer ObjectOutputStream avant ObjectInputStream pour l'en-tête, bien que le PDF ne s'attarde pas sur ce bug spécifique de Java, c'est bon à savoir).
+
+5. Communication Java <-> C (Bas niveau) (Pages 13-16)
+Quand on communique avec du C, on ne peut pas utiliser la sérialisation Java. On échange des Bytes.
+
+Le problème de la fin de message
+En TCP (flux continu), comment savoir où finit le message ?
+
+Solution 1 : Délimiteurs (Fin de trame)
+•	On ajoute des caractères spéciaux à la fin (ex: $%).
+•	Le récepteur lit octet par octet jusqu'à trouver $%.
+•	Inconvénient : Il faut lire byte par byte (lent).
+Solution 2 : En-tête de taille (Header)
+•	On envoie d'abord la taille (N) du message (souvent sous forme de chaîne de caractères pour simplifier la lecture en C).
+•	Puis on lit N bytes.
+
+🚨 ZONE PIÈGE QCM
+•	readByte() est bloquant s'il n'y a pas de données.
+•	En C, les chaînes finissent par \0, pas en Java.
+•	La communication inter-langage se fait toujours au niveau Byte (Socket pure).
+
+6. Architecture Serveur Générique Multi-Threads (Pages 17-34)
+C'est le cœur complexe du cours. Objectif : Un serveur qui gère N clients et dont on peut changer le protocole sans changer le code serveur.
+
+Les Composants (Interfaces)
+1.	Requete / Reponse : Interfaces héritant de Serializable.
+2.	Protocole : Interface avec la méthode :
+o	Reponse TraiteRequete(Requete r, Socket s) throws FinConnexionException.
+3.	FinConnexionException : Exception lancée par le protocole pour dire "Le client veut partir" (ex: LOGOUT). Elle peut contenir une dernière réponse.
+4.	Logger : Interface pour afficher les traces (Console ou GUI).
+
+Les Threads
+1.	ThreadServeur :
+o	Boucle infinie sur accept().
+o	Ne traite jamais les données. Il passe la socket au ThreadClient.
+2.	ThreadClient :
+o	Reçoit la socket.
+o	Boucle : readObject (Requête) -> TraiteRequete (Protocole) -> writeObject (Réponse).
+o	Gère la fermeture propre de la socket dans le finally.
+
+
+
+
+
+Modèle 1 : À la demande ("On Demand")
+•	Principe : 1 Client arrive = 1 new ThreadClient() créé. Le client part = Thread meurt.
+•	Code Serveur : while(true) { socket = accept(); new ThreadClient(..., socket).start(); }
+•	Code Client : Constructeur reçoit directement la socket.
+•	Inconvénient : Risque de saturation mémoire (Denial of Service) si trop de clients.
+
+Modèle 2 : En Pool ("Producteur/Consommateur")
+•	Principe : On crée X threads au démarrage. Ils attendent du travail.
+•	La File d'Attente (FileAttente) :
+o	C'est un Moniteur (méthodes synchronized).
+o	addConnexion(Socket s) : Ajoute socket + notify().
+o	getConnexion() : while(empty) wait(), puis retourne socket.
+•	ThreadServeur Pool : accept() -> ajoute dans la file d'attente.
+•	ThreadClient Pool : Boucle infinie : Demande socket à la file -> Traite le client -> Revient demander une socket.
+•	Gestion de groupe : Utilise ThreadGroup pour pouvoir interrompre tous les threads du pool d'un coup via interrupt().
+
+🚨 ZONE PIÈGE QCM
+•	Dans le modèle Pool, le ThreadServeur ne crée pas de threads à chaque connexion, il dépose juste la socket dans la liste.
+•	C'est la méthode getConnexion qui est bloquante (wait) pour les ouvriers s'il n'y a pas de client.
+•	notify() réveille un thread arbitraire, notifyAll() tous. Ici notify() suffit car un seul thread prend la socket.
+•	activeCount() sur un ThreadGroup donne une estimation, pas un chiffre exact (vu dans le chap précédent mais rappelé ici).
+
+7. Exemple LILOC & Interface Graphique (Pages 35-46)
+
+Protocole LILOC (Login In Login Out Calcul)
+•	Utilise instanceof pour savoir quel type de requête arrive (RequeteLOGIN, RequeteCALCUL...).
+•	Stocke les clients connectés dans une HashMap<Login, Socket>.
+•	Sécurité : Vérifie login/pass dans une autre Map.
+
+
+
+
+
+
+
+
+
+
+Le Problème de l'EDT (Event Dispatch Thread)
+
+En Swing/AWT, un seul thread gère l'affichage et les clics.
+•	L'Erreur fatale : Faire ssocket.accept() ou lire le réseau directement dans le code d'un bouton (actionPerformed).
+•	La Conséquence : L'interface GÈLE (plus de rafraîchissement, plus de clic possible) tant que l'opération réseau n'est pas finie.
+•	La Solution : Le ThreadServeur doit être lancé via start() pour tourner en parallèle. La fenêtre Swing implémente souvent l'interface Logger pour recevoir les messages du serveur via Trace().
+
+🚨 ZONE PIÈGE QCM
+•	Si on met Thread.sleep(10000) ou un accept() dans un ActionListener d'un bouton, la fenêtre devient toute blanche/grise (freeze).
+•	Le serveur générique ne connaît pas Swing, il parle via l'interface Logger. C'est la fenêtre Swing qui implémente Logger et met à jour la JTable.
+
+8. Code / Pièges (Extraits & Astuces)
+
+
+Concept	Piège / Attention	Mini-Exemple	
+ServerSocket / Socket	accept() bloquant → ne jamais mettre dans l’EDT. File d’attente par défaut = 50. Socket(host, port) bloque ou ConnectException.	ServerSocket server = new ServerSocket(5000); Socket client = server.accept();	
+Timeout	setSoTimeout(ms) doit être appelé avant accept().	server.setSoTimeout(5000);	
+Flux – BufferedWriter	Oublier flush() → rien envoyé.	BufferedWriter bw = new BufferedWriter(...); bw.write("msg"); bw.flush();	
+Flux – ObjectOutputStream / ObjectInputStream	Classe doit être Serializable. Ordre de création important : OOS avant OIS.	ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());	
+InetAddress	new InetAddress() impossible. getByName(host) peut lever UnknownHostException. getAddress() → byte signé.	InetAddress ip = InetAddress.getByName("www.google.com");	
+TCP – Java ↔ C	TCP = flux continu → fin de message non définie. Solutions : délimiteur ($%) ou header (taille). readByte() bloquant.	while((b = in.readByte()) != '$') {...}	
+Multi-thread / Pool	Pool → serveur ne crée pas de thread par client, juste ajoute socket. getConnexion() bloque si vide. notify() réveille 1 thread.	socketQueue.add(s); synchronized(queue){queue.notify();}	
+Swing / EDT	Ne jamais faire sleep() ou accept() dans actionPerformed → interface freeze. Utiliser thread séparé, communiquer via Logger.	new ThreadServeur().start();	
+Port & Socket	Port sur 16 bits (0-65535). IP seule ≠ communication → il faut IP + Port = Socket.	Socket socket = new Socket("192.168.1.2", 80);	

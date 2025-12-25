@@ -9,7 +9,7 @@
         "id": 2,
         "title": "Threads en Java",
         "description": "Programmation concurrente et parallélisme.",
-        "status": "coming_soon"
+        "status": "active"
     },
     {
         "id": 3,
@@ -21,7 +21,7 @@
         "id": 4,
         "title": "Communications réseaux en Java",
         "description": "Socket, ServerSocket, NIO.",
-        "status": "coming_soon"
+        "status": "active"
     },
     {
         "id": 5,
@@ -40,13 +40,13 @@
         "title": "Prog. Web côté client avec Vue.js",
         "description": "Composants, Réactivité, Vite.",
         "status": "coming_soon"
-    }, 
+    },
     {
         "id": 8,
         "title": "Examen Final ",
         "description": "Qcm sur tout les parties et testez vos connaissances",
         "status": "coming_soon"
-    }, 
+    },
     {
         "id": 9,
         "title": "Examen Final version très difficile 😈😈 ",
