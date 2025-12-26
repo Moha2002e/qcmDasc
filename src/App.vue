@@ -170,6 +170,7 @@ const restartQuiz = () => {
           :score="score"
           :totalQuestions="questions.length"
           :userAnswers="userAnswers"
+          :questions="questions"
           @restart="restartQuiz"
         />
         <button class="menu-btn" @click="goHome">Choisir un autre chapitre</button>
