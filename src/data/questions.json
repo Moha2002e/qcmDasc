@@ -194,6 +194,31 @@
         "explanation": "`h` (host) `to` `n` (network) `s` (short). Les ports sont des entiers sur 16 bits (short).",
         "chapterId": 1
     },
+    { "id": 16, "question": "Quelle est la valeur de retour de `recv` sur une socket bloquante si la connexion est fermée proprement par le pair (FIN) ?", "options": ["-1", "0", "1", "Une exception"], "answer": 1, "explanation": "0 est la valeur signifiant EOF (End Of File) sur une socket.", "chapterId": 1 },
+    { "id": 17, "question": "L'option socket `SO_REUSEADDR` est utile pour :", "options": ["Économiser de la mémoire", "Réutiliser le port immédiatement après un arrêt du serveur (TIME_WAIT)", "Avoir deux serveurs sur le même port en simultané", "Crypter les données"], "answer": 1, "explanation": "Elle permet de relancer un serveur (`bind`) sans attendre la fin du délai TIME_WAIT de l'ancien processus.", "chapterId": 1 },
+    { "id": 18, "question": "Sur une machine Big Endian, que fait `htonl(1234)` ?", "options": ["Elle inverse les octets", "Elle retourne 1234 inchangé", "Elle retourne 0", "Elle plante"], "answer": 1, "explanation": "Comme la machine est déjà dans l'ordre réseau (Big Endian), la fonction est une opération d'identité (ne fait rien).", "chapterId": 1 },
+    { "id": 19, "question": "En programmation socket IPv4, quelle structure spécifique doit-on utiliser pour l'adresse ?", "options": ["`struct sockaddr`", "`struct sockaddr_in`", "`struct in_addr`", "`struct ip_addr`"], "answer": 1, "explanation": "`sockaddr` est opaque/générique. `sockaddr_in` expose les champs `sin_port` et `sin_addr` pour IPv4.", "chapterId": 1 },
+    { "id": 20, "question": "Pourquoi `gethostbyname` est-elle considérée comme dangereuse/obsolète ?", "options": ["Elle est trop lente", "Elle n'est pas thread-safe (utilise une zone mémoire statique) et ne supporte pas IPv6", "Elle ne marche que sous Linux", "Elle nécessite les droits root"], "answer": 1, "explanation": "Elle retourne un pointeur vers une donnée statique écrasée à chaque appel. Préférer `getaddrinfo`.", "chapterId": 1 },
+    { "id": 21, "question": "Que reçoit le client si le serveur ne tourne pas sur le port cible (TCP) ?", "options": ["Rien (Timeout)", "Un segment RST (Connection Refused)", "Un segment FIN", "Une connexion réussie"], "answer": 1, "explanation": "Si aucun processus n'écoute, l'OS du serveur répond immédiatement par un Reset (RST).", "chapterId": 1 },
+    { "id": 22, "question": "Lors d'un appel système (comme `read`), si le processus reçoit un signal, l'appel peut échouer avec l'erreur :", "options": ["`EAGAIN`", "`EINTR`", "`EPIPE`", "`ESIG`"], "answer": 1, "explanation": "Interrupted System Call (`EINTR`). Il faut souvent relancer l'appel manuellement.", "chapterId": 1 },
+    { "id": 23, "question": "Un utilisateur non-privilégié peut-il `bind` sur le port 80 ?", "options": ["Oui", "Non, les ports < 1024 sont réservés root", "Oui, s'il est admin", "Seulement en UDP"], "answer": 1, "explanation": "Sur les systèmes Unix, les ports privilégiés (< 1024) nécessitent root.", "chapterId": 1 },
+    { "id": 24, "question": "Si j'appelle `accept` sur une socket configurée en NON-BLOCKING et qu'aucun client n'est là :", "options": ["Le programme attend", "La fonction retourne immédiatement avec une erreur (EWOULDBLOCK/EAGAIN)", "La socket se ferme", "Le programme plante"], "answer": 1, "explanation": "C'est le principe du non-bloquant : l'appel ne bloque pas mais signale l'absence de données.", "chapterId": 1 },
+    { "id": 25, "question": "Quelle est la différence entre `close()` et `shutdown(SHUT_WR)` ?", "options": ["Aucune", "`shutdown(SHUT_WR)` envoie FIN mais permet de continuer à LIRE le retour du serveur", "`close` permet de lire encore", "`shutdown` supprime le fichier"], "answer": 1, "explanation": "`close` termine tout et libère le fd. `shutdown` ferme un canal (ici écriture) tout en laissant l'autre ouvert (lecture).", "chapterId": 1 },
+    { "id": 26, "question": "Quelle est la fonction qui permet de multiplexer plusieurs sockets (attendre sur plusieurs à la fois) ?", "options": ["`wait`", "`select` (ou `poll`/`epoll`)", "`fork`", "`bind`"], "answer": 1, "explanation": "`select` permet de surveiller un ensemble de descripteurs pour voir s'ils sont prêts à lire/écrire.", "chapterId": 1 },
+    { "id": 27, "question": "Quelle famille d'adresse désigne IPv6 ?", "options": ["`AF_INET`", "`AF_INET6`", "`AF_UNIX`", "`AF_PACKET`"], "answer": 1, "explanation": "`AF_INET` est pour IPv4. `AF_INET6` pour IPv6.", "chapterId": 1 },
+    { "id": 28, "question": "`listen(sockfd, backlog)` bloque-t-il le programme ?", "options": ["Oui, jusqu'à une connexion", "Non, il ne fait que marquer la socket comme passive", "Oui, pendant 1 seconde", "Seulement si backlog > 0"], "answer": 1, "explanation": "`listen` est une configuration d'état. C'est `accept` qui bloque.", "chapterId": 1 },
+    { "id": 29, "question": "Peut-on changer la taille des buffers d'émission/réception TCP ?", "options": ["Non, c'est fixé par l'OS", "Oui, avec `setsockopt` (SO_SNDBUF, SO_RCVBUF)", "Seulement à la compilation", "Oui, avec `bind`"], "answer": 1, "explanation": "C'est configurable par socket via `setsockopt`.", "chapterId": 1 },
+    { "id": 30, "question": "En TCP, si `send(..., len)` retourne un entier `n < len` :", "options": ["C'est une erreur grave", "C'est normal, le buffer noyau était presque plein, il faut envoyer le reste", "La connexion est morte", "Les données sont corrompues"], "answer": 1, "explanation": "`send` ne garantit pas tout envoyer d'un coup. Il faut gérer les écritures partielles.", "chapterId": 1 },
+    { "id": 31, "question": "Le descripteur de fichier (fd) standard `0` correspond à :", "options": ["Stdout", "Stderr", "Stdin", "Socket"], "answer": 2, "explanation": "0: Entrée standard, 1: Sortie standard, 2: Erreur standard.", "chapterId": 1 },
+    { "id": 32, "question": "Peut-on appeler `connect` sur une socket UDP ?", "options": ["Non, jamais", "Oui, pour enregistrer l'adresse de destination par défaut et filtrer les paquets reçus", "Oui, cela transforme l'UDP en TCP", "Cela plante"], "answer": 1, "explanation": "Cela ne crée pas de connexion réseau, mais configure la socket pour ne parler qu'à cette adresse (et permet d'utiliser `send`/`recv` au lieu de `sendto`/`recvfrom`).", "chapterId": 1 },
+    { "id": 33, "question": "Quelle fonction convertit une IP texte '192.168.1.1' en binaire ?", "options": ["`inet_ntoa`", "`inet_pton` (ou `inet_aton`)", "`htonl`", "`getnameinfo`"], "answer": 1, "explanation": "`p` (presentation) `to` `n` (network). `inet_ntoa` fait l'inverse.", "chapterId": 1 },
+    { "id": 34, "question": "Quelle commande permet de lister les connexions TCP actives ?", "options": ["`ls`", "`netstat` (ou `ss`)", "`ping`", "`ifconfig`"], "answer": 1, "explanation": "`netstat -tn` ou `ss -tn` affiche les sockets TCP.", "chapterId": 1 },
+    { "id": 35, "question": "Quel flag de `recv` permet de lire les données sans les retirer du buffer (Peek) ?", "options": ["`MSG_OOB`", "`MSG_PEEK`", "`MSG_WAITALL`", "`MSG_DONTROUTE`"], "answer": 1, "explanation": "`MSG_PEEK` permet de 'regarder' ce qui est arrivé sans consommer les données.", "chapterId": 1 },
+    { "id": 36, "question": "La plage des ports 'Bien Connus' (Well Known Ports) est :", "options": ["0-1023", "1024-49151", "49152-65535", "0-100"], "answer": 0, "explanation": "Administrés par l'IANA, ils requièrent souvent des privilèges système.", "chapterId": 1 },
+    { "id": 37, "question": "L'adresse 127.0.0.1 signifie :", "options": ["Le réseau local", "La machine elle-même (localhost/loopback)", "Le routeur", "L'adresse de broadcast"], "answer": 1, "explanation": "C'est l'interface de bouclage, les paquets ne sortent pas sur le réseau physique.", "chapterId": 1 },
+    { "id": 38, "question": "Comment le serveur obtient-il l'IP du client connecté ?", "options": ["Elle est stockée dans la structure passée au `bind`", "Elle est remplie dans la structure `sockaddr` passée à `accept`", "Le client l'envoie par message texte", "Il ne peut pas"], "answer": 1, "explanation": "`accept(sockfd, &addr, &len)` remplit `addr` avec les infos du client.", "chapterId": 1 },
+    { "id": 39, "question": "Pourquoi existe-t-il `htonl` et `ntohl` ?", "options": ["Pour crypter", "Pour gérer la différence d'ordre des octets (Endianness) entre processeurs différents", "Pour compresser", "C'est historique"], "answer": 1, "explanation": "Le réseau est Big Endian. Les PC (x86) sont Little Endian. Il faut convertir.", "chapterId": 1 },
+    { "id": 40, "question": "L'erreur `EPIPE` (Broken Pipe) survient quand :", "options": ["On lit sur une socket fermée", "On écrit sur une socket dont le lecteur a fermé sa connexion", "Le réseau est lent", "Le câble est débranché"], "answer": 1, "explanation": "Si le pair a fermé et qu'on insiste pour écrire, le noyau envoie `SIGPIPE` et retourne `EPIPE`.", "chapterId": 1 },
     {
         "id": 44,
         "chapterId": 3,
@@ -716,524 +741,296 @@
     },
     {
         "id": 84,
-        "chapterId": 2,
-        "question": "Qu'est-ce qu'un thread en Java ?",
+        "question": "Concernant la mémoire partagée dans un processus Java, quelle affirmation est EXACTE ?",
         "options": [
-            "Un processus lourd indépendant",
-            "Une unité d'exécution légère au sein d'un processus",
-            "Une méthode statique",
-            "Un type de variable"
+            "Les threads partagent le Tas (Heap) et la Pile (Stack).",
+            "Chaque thread possède son propre Tas, mais partage les variables statiques.",
+            "Les threads partagent le Tas et les variables statiques, mais chaque thread a sa propre Pile (Stack).",
+            "Tout est partagé, il n'y a aucune isolation mémoire entre threads."
         ],
-        "answer": 1,
-        "explanation": "Un thread est une unité d'exécution légère qui partage l'espace mémoire du processus parent."
+        "answer": 2,
+        "explanation": "Piège classique : Les objets (Heap) sont partagés, mais les variables locales (Stack) sont strictement isolées et propres à chaque thread.",
+        "chapterId": 2
     },
     {
         "id": 85,
-        "chapterId": 2,
-        "question": "Que partagent les threads d'un même processus ?",
+        "question": "Que se passe-t-il exactement si on exécute `monThread.run()` au lieu de `monThread.start()` ?",
         "options": [
-            "La pile d'appels (Stack)",
-            "Le tas (Heap) et les variables statiques",
-            "Le compteur ordinal (PC)",
-            "Rien du tout"
+            "Une `IllegalThreadStateException` est levée.",
+            "Le code de `run()` s'exécute, mais dans le thread courant (appelant), sans créer de nouveau thread.",
+            "Rien ne se passe, la méthode est ignorée.",
+            "Le thread démarre normalement."
         ],
         "answer": 1,
-        "explanation": "Les threads partagent le tas (Heap) où résident les objets. En revanche, chaque thread a sa propre pile (Stack)."
+        "explanation": "`run()` est une méthode normale. Seul `start()` demande à l'OS de créer un nouveau contexte d'exécution (pile, registres) pour le thread.",
+        "chapterId": 2
     },
     {
         "id": 86,
-        "chapterId": 2,
-        "question": "Comment démarrer réellement un thread `t` ?",
+        "question": "Pourquoi l'usage de `Runnable` est-il recommandé par rapport à l'héritage de `Thread` ?",
         "options": [
-            "t.run()",
-            "t.start()",
-            "t.execute()",
-            "t.init()"
+            "Car `Runnable` possède plus de méthodes que `Thread`.",
+            "Car on ne peut pas appeler `start()` sur une sous-classe de `Thread`.",
+            "Car Java ne supporte pas l'héritage multiple, donc implémenter `Runnable` laisse la possibilité d'hériter d'une autre classe.",
+            "C'est faux, l'héritage est toujours recommandé."
         ],
-        "answer": 1,
-        "explanation": "`start()` crée le nouveau contexte d'exécution système, puis appelle `run()`. Appeler `run()` directement ne crée pas de thread."
+        "answer": 2,
+        "explanation": "C'est une question de design et de limitation du langage. De plus, cela sépare la tâche (Runnable) de l'exécutant (Thread).",
+        "chapterId": 2
     },
     {
         "id": 87,
-        "chapterId": 2,
-        "question": "Quelle interface doit-on implémenter pour définir une tâche exécutable ?",
+        "question": "Quelle est la différence CRITIQUE entre `Thread.sleep(1000)` et `obj.wait(1000)` concernant les verrous ?",
         "options": [
-            "Executable",
-            "Task",
-            "Runnable",
-            "Callable"
+            "Aucune, les deux mettent en pause.",
+            "`sleep` relâche le verrou (moniteur), tandis que `wait` le garde.",
+            "`wait` relâche le verrou associé à l'objet, tandis que `sleep` garde tous les verrous acquis.",
+            "`sleep` est plus précis que `wait`."
         ],
         "answer": 2,
-        "explanation": "L'interface `Runnable` définit la méthode `run()` contenant le code à exécuter."
+        "explanation": "C'est le piège le plus fréquent. `sleep` dort 'poings fermés' (garde les verrous), alors que `wait` lâche le verrou pour laisser les autres travailler.",
+        "chapterId": 2
     },
     {
         "id": 88,
-        "chapterId": 2,
-        "question": "Que fait `Thread.sleep(1000)` ?",
+        "question": "Dans le code `t.join()`, quel thread est bloqué ?",
         "options": [
-            "Arrête le thread définitivement",
-            "Libère le verrou et attend 1s",
-            "Met le thread en pause pendant 1s sans libérer les verrous",
-            "Tue le processus"
+            "Le thread `t` (il est mis en pause).",
+            "Le thread qui appelle la méthode `join()` (souvent le main).",
+            "Tous les threads du groupe.",
+            "Le thread système."
         ],
-        "answer": 2,
-        "explanation": "`sleep` met le thread en pause (état TIMED_WAITING) mais NE libère PAS les verrous (moniteurs) détenus."
+        "answer": 1,
+        "explanation": "`t.join()` signifie 'Moi, thread appelant, j'attends que t ait fini'. `t` continue sa vie normalement.",
+        "chapterId": 2
     },
     {
         "id": 89,
-        "chapterId": 2,
-        "question": "Quelle méthode permet d'attendre la fin d'un autre thread ?",
+        "question": "Que fait réellement la méthode `t.interrupt()` ?",
         "options": [
-            "wait()",
-            "stop()",
-            "join()",
-            "yield()"
+            "Elle tue le thread immédiatement (arrêt forcé).",
+            "Elle met le thread en pause.",
+            "Elle positionne simplement un drapeau (flag) indiquant que l'interruption est demandée. Le thread doit le gérer.",
+            "Elle lance une exception dans le thread appelant."
         ],
         "answer": 2,
-        "explanation": "`join()` bloque le thread appelant jusqu'à ce que le thread cible se termine."
+        "explanation": "L'interruption est coopérative. Si le thread ignore le flag (ou ne gère pas l'exception InterruptedException), il ne s'arrêtera pas.",
+        "chapterId": 2
     },
     {
         "id": 90,
-        "chapterId": 2,
-        "question": "Pourquoi la méthode `stop()` est-elle dépréciée ?",
+        "question": "Si deux threads exécutent deux méthodes `synchronized` DIFFÉRENTES sur la MÊME instance d'objet :",
         "options": [
-            "Elle est trop lente",
-            "Elle risque de provoquer des interblocages et de laisser les objets dans un état incohérent",
-            "Elle ne marche pas sous Linux",
-            "Elle ferme l'application"
+            "Ils peuvent s'exécuter en parallèle sans problème.",
+            "Ils sont bloqués mutuellement, l'un doit attendre la fin de l'autre.",
+            "Seule la méthode la plus prioritaire passe.",
+            "Cela dépend si les méthodes sont statiques."
         ],
         "answer": 1,
-        "explanation": "`stop()` tue le thread brutalement, potentiellement au milieu d'une opération critique, corrompant les données."
+        "explanation": "Le verrou est sur l'objet (`this`). Un seul thread peut détenir le verrou de l'instance, quel que soit le nombre de méthodes synchronized.",
+        "chapterId": 2
     },
     {
         "id": 91,
-        "chapterId": 2,
-        "question": "Comment demander proprement l'arrêt d'un thread ?",
+        "question": "Quelle instruction lève une `IllegalMonitorStateException` ?",
         "options": [
-            "t.kill()",
-            "t.interrupt()",
-            "t.stop()",
-            "System.exit(0)"
+            "Appeler `notify()` dans un bloc `synchronized`.",
+            "Appeler `wait()` sans détenir le verrou de l'objet (hors bloc synchronized).",
+            "Appeler `sleep()` dans un bloc `synchronized`.",
+            "Appeler `start()` deux fois."
         ],
         "answer": 1,
-        "explanation": "`interrupt()` positionne un drapeau d'interruption. C'est au thread de vérifier ce drapeau et de s'arrêter proprement."
+        "explanation": "On ne peut attendre (`wait`) ou notifier sur un objet que si on en possède la clé (le moniteur).",
+        "chapterId": 2
     },
     {
         "id": 92,
-        "chapterId": 2,
-        "question": "Quel mot-clé assure l'exclusion mutuelle ?",
+        "question": "Analysez ce code : `t.start(); t.setDaemon(true);`",
         "options": [
-            "volatile",
-            "synchronized",
-            "transient",
-            "static"
+            "Le thread devient un démon correctement.",
+            "Le thread s'arrête.",
+            "Une exception `IllegalThreadStateException` est levée dans le thread appelant.",
+            "Le thread est mis en pause."
         ],
-        "answer": 1,
-        "explanation": "`synchronized` permet d'acquérir le verrou (moniteur) d'un objet, empêchant d'autres threads d'entrer dans un bloc synchronisé sur le même objet."
+        "answer": 2,
+        "explanation": "Le statut Daemon doit OBLIGATOIREMENT être défini *avant* le démarrage du thread (`start`).",
+        "chapterId": 2
     },
     {
         "id": 93,
-        "chapterId": 2,
-        "question": "Si j'ai deux méthodes `synchronized` sur le même objet, deux threads peuvent-ils les exécuter en simultané ?",
+        "question": "Que garantit l'appel à `Thread.yield()` ?",
         "options": [
-            "Oui, car ce sont deux méthodes différentes",
-            "Non, car le verrou est sur l'objet (this)",
-            "Oui, si elles sont void",
-            "Cela dépend de l'OS"
+            "Que le thread va s'arrêter pour laisser la place aux autres.",
+            "Que le thread va dormir pendant 100ms.",
+            "Rien de strict : c'est une simple suggestion au planificateur (scheduler) de passer la main.",
+            "Que les threads de priorité inférieure vont s'exécuter."
         ],
-        "answer": 1,
-        "explanation": "Le verrou est lié à l'instance de l'objet (`this`). Un seul thread à la fois peut détenir le verrou de cet objet."
+        "answer": 2,
+        "explanation": "`yield` est une heuristique. L'OS peut choisir de l'ignorer totalement. Ce n'est pas un mécanisme de synchronisation fiable.",
+        "chapterId": 2
     },
     {
         "id": 94,
-        "chapterId": 2,
-        "question": "Que se passe-t-il si on appelle `wait()` hors d'un bloc `synchronized` ?",
+        "question": "Concernant `ThreadGroup.activeCount()`, pourquoi est-ce un 'piège' ?",
         "options": [
-            "Rien",
-            "Le thread attend indéfiniment",
-            "Une `IllegalMonitorStateException` est levée",
-            "Une `InterruptedException` est levée"
+            "La méthode retourne toujours 0.",
+            "La valeur retournée est une estimation instantanée qui peut être fausse la nanoseconde suivante.",
+            "Elle compte aussi les threads arrêtés.",
+            "Elle lance une exception."
         ],
-        "answer": 2,
-        "explanation": "Pour appeler `wait()`, le thread doit posséder le moniteur de l'objet, donc être dans un bloc `synchronized`."
+        "answer": 1,
+        "explanation": "Comme les threads démarrent et meurent en permanence, ce nombre est intrinsèquement imprécis.",
+        "chapterId": 2
     },
     {
         "id": 95,
-        "chapterId": 2,
-        "question": "Quelle est la différence fondamentale entre `wait()` et `sleep()` ?",
+        "question": "Quelle est la règle d'or de Swing avec les Threads ?",
         "options": [
-            "Aucune",
-            "`wait()` libère le verrou, `sleep()` le garde",
-            "`sleep()` libère le verrou, `wait()` le garde",
-            "`wait()` est plus précis"
+            "Tout code Swing doit être exécuté dans le thread principal (main).",
+            "Swing est Thread-Safe, on peut modifier l'UI depuis n'importe où.",
+            "Toute modification de l'UI doit se faire exclusivement dans l'EDT (Event Dispatch Thread).",
+            "On doit utiliser `synchronized` sur chaque composant Swing."
         ],
-        "answer": 1,
-        "explanation": "`wait()` relâche le moniteur pour permettre à d'autres threads (ex: notify) de prendre la main, contrairement à `sleep()`."
+        "answer": 2,
+        "explanation": "Swing n'est pas Thread-Safe. Modifier un bouton depuis un thread worker peut corrompre l'affichage ou causer des plantages.",
+        "chapterId": 2
     },
     {
         "id": 96,
-        "chapterId": 2,
-        "question": "À quoi sert `notifyAll()` ?",
+        "question": "Quelle est la différence entre `synchronized void m()` et `static synchronized void m()` ?",
         "options": [
-            "À afficher une notification à l'utilisateur",
-            "À réveiller tous les threads en attente sur cet objet",
-            "À réveiller un seul thread aléatoire",
-            "À terminer le programme"
+            "Aucune, c'est juste une syntaxe.",
+            "La première verrouille l'instance (`this`), la seconde verrouille la classe (`Class object`).",
+            "La statique est plus rapide.",
+            "La statique empêche l'héritage."
         ],
         "answer": 1,
-        "explanation": "`notifyAll()` réveille tous les threads en wait() sur le moniteur. C'est souvent plus sûr que `notify()` pour éviter des blocages."
+        "explanation": "Ce sont deux verrous distincts. Un thread peut appeler la méthode d'instance et un autre la méthode statique en même temps sans se bloquer.",
+        "chapterId": 2
     },
     {
         "id": 97,
-        "chapterId": 2,
-        "question": "Qu'est-ce qu'un thread Daemon ?",
+        "question": "Si un thread capture une exception non gérée (RuntimeException) :",
         "options": [
-            "Un thread malveillant",
-            "Un thread de service qui ne bloque pas la fin du programme",
-            "Un thread prioritaire",
-            "Un thread administrateur"
+            "Le thread meurt, mais les autres threads continuent leur exécution.",
+            "Tout le processus Java (JVM) s'arrête immédiatement.",
+            "Le thread redémarre automatiquement.",
+            "L'exception est convertie en `InterruptedException`."
         ],
-        "answer": 1,
-        "explanation": "La JVM s'arrête dès qu'il ne reste plus que des threads Daemons. Ils servent aux tâches de fond (ex: Garbage Collector)."
+        "answer": 0,
+        "explanation": "Une exception non catchée tue le thread concerné. Si ce n'est pas le seul thread user, l'application survit.",
+        "chapterId": 2
     },
     {
         "id": 98,
-        "chapterId": 2,
-        "question": "Quand peut-on appeler `setDaemon(true)` ?",
+        "question": "Peut-on utiliser `PipedInputStream` sans le connecter à un `PipedOutputStream` ?",
         "options": [
-            "N'importe quand",
-            "Uniquement après start()",
-            "Uniquement avant start()",
-            "Dans la méthode run()"
+            "Oui, il lira des 0.",
+            "Non, cela provoquera une exception ou un blocage.",
+            "Oui, il agira comme un ByteArrayInputStream.",
+            "Oui, mais seulement en écriture."
         ],
-        "answer": 2,
-        "explanation": "Le statut Daemon doit être défini avant le démarrage du thread. Sinon, une exception est levée."
+        "answer": 1,
+        "explanation": "Les Pipes fonctionnent par paire. Un tube doit avoir deux bouts pour fonctionner.",
+        "chapterId": 2
     },
     {
         "id": 99,
-        "chapterId": 2,
-        "question": "Quelle méthode permet de passer la main volontairement ?",
+        "question": "À quoi correspond `synchronized` dans le monde système POSIX ?",
         "options": [
-            "Thread.pass()",
-            "Thread.yield()",
-            "Thread.stop()",
-            "Thread.give()"
+            "Aux Sémaphores",
+            "Aux Pipes",
+            "Aux Mutex (Mutual Exclusion)",
+            "Aux signaux"
         ],
-        "answer": 1,
-        "explanation": "`yield()` suggère au planificateur de passer la main à un autre thread de même priorité."
+        "answer": 2,
+        "explanation": "Le bloc synchronized agit comme un verrou d'exclusion mutuelle (Mutex) : un seul peut entrer.",
+        "chapterId": 2
     },
     {
         "id": 100,
-        "chapterId": 2,
-        "question": "La priorité d'un thread garantit-elle l'ordre d'exécution ?",
+        "question": "Pourquoi `stop()` est-elle dangereuse et dépréciée ?",
         "options": [
-            "Oui, absolument",
-            "Non, c'est juste une indication (optimisation) pour le scheduler",
-            "Oui, sauf sous Windows",
-            "Oui si on est root"
+            "Elle ne ferme pas les fichiers.",
+            "Elle relâche brutalement tous les verrous, laissant les objets dans des états incohérents.",
+            "Elle consomme trop de CPU.",
+            "Elle ne marche que sur Windows."
         ],
         "answer": 1,
-        "explanation": "Les spécifications Java ne garantissent pas que la priorité sera strictement respectée par l'OS."
+        "explanation": "Si un thread modifiait une liste en 3 étapes et est tué à l'étape 2, la liste est corrompue pour tout le monde.",
+        "chapterId": 2
     },
     {
         "id": 101,
-        "chapterId": 2,
-        "question": "Quel stream utiliser pour commmuniquer entre threads ?",
+        "question": "Un thread 'User' (non-daemon) peut-il empêcher l'application de s'arrêter ?",
         "options": [
-            "FileStream",
-            "PipedInputStream / PipedOutputStream",
-            "ThreadStream",
-            "SocketStream"
+            "Non, seul le main compte.",
+            "Oui, la JVM ne s'arrête que si tous les threads User sont terminés.",
+            "Non, si le main finit, tout finit.",
+            "Oui, mais seulement s'il est prioritaire."
         ],
         "answer": 1,
-        "explanation": "Les Pipes (tubes) permettent une communication unidirectionnelle entre deux threads."
+        "explanation": "C'est la différence avec les démons. Un thread User actif maintient la JVM en vie, même si le `main` est fini.",
+        "chapterId": 2
     },
     {
         "id": 102,
-        "chapterId": 2,
-        "question": "Dans quel thread doit-on modifier l'interface graphique Swing ?",
+        "question": "Que retourne `Thread.currentThread().isAlive()` ?",
         "options": [
-            "Le thread main",
-            "N'importe quel thread",
-            "Le thread EDT (Event Dispatch Thread)",
-            "Un thread Daemon"
+            "False",
+            "Toujours True (puisqu'il exécute cette ligne)",
+            "Null",
+            "Cela dépend de l'état WAITING"
         ],
-        "answer": 2,
-        "explanation": "Swing n'est pas Thread-Safe. Toutes les mutations d'UI doivent se faire dans l'EDT via `invokeLater`."
+        "answer": 1,
+        "explanation": "Si le thread est capable d'exécuter du code, c'est qu'il est vivant.",
+        "chapterId": 2
     },
     {
         "id": 103,
-        "chapterId": 2,
-        "question": "Quelle méthode permet d'exécuter du code dans l'EDT ?",
+        "question": "Pour mettre à jour une barre de progression Swing depuis un calcul long, j'utilise :",
         "options": [
-            "SwingUtilities.run()",
-            "EventQueue.invokeLater(Runnable)",
-            "Thread.start()",
-            "System.run()"
+            "progressBar.setValue(n) directement.",
+            "`SwingUtilities.invokeLater(() -> progressBar.setValue(n))`",
+            "Thread.yield()",
+            "new Thread(() -> progressBar.setValue(n)).start()"
         ],
         "answer": 1,
-        "explanation": "`EventQueue.invokeLater` place la tâche dans la file d'attente de l'Event Dispatch Thread."
+        "explanation": "Il faut encapsuler la modification de l'UI dans un Runnable envoyé à l'EDT via `invokeLater`.",
+        "chapterId": 2
     },
     {
         "id": 104,
-        "chapterId": 2,
-        "question": "Quel Timer utiliser pour faire une animation Swing ?",
+        "question": "Est-il garanti qu'un thread de priorité MAX_PRIORITY s'exécutera avant un MIN_PRIORITY ?",
         "options": [
-            "java.util.Timer",
-            "javax.swing.Timer",
-            "Thread.sleep",
-            "Cron"
+            "Oui, c'est la norme Java.",
+            "Non, la gestion des priorités dépend de l'OS et n'est pas garantie stricte.",
+            "Oui, sauf sur Linux.",
+            "Non, les priorités sont ignorées par toutes les JVM modernes."
         ],
         "answer": 1,
-        "explanation": "`javax.swing.Timer` exécute ses actions directement dans l'EDT, ce qui permet de modifier l'UI en toute sécurité."
+        "explanation": "C'est une 'indication' d'importance. Sur certains systèmes, cela ne change presque rien. Ne jamais baser la logique du programme dessus.",
+        "chapterId": 2
     },
-    {
-        "id": 105,
-        "chapterId": 2,
-        "question": "Une méthode statique synchronisée verrouille :",
-        "options": [
-            "L'instance (this)",
-            "La classe (Class object)",
-            "Toutes les instances",
-            "Rien"
-        ],
-        "answer": 1,
-        "explanation": "`static synchronized` prend le verrou sur l'objet `Class` correspondant, pas sur une instance `this`."
-    },
-    {
-        "id": 106,
-        "chapterId": 2,
-        "question": "L'interface `Runnable` contient combien de méthodes ?",
-        "options": [
-            "2 (start et run)",
-            "1 (run)",
-            "0 (interface marqueur)",
-            "Plusieurs"
-        ],
-        "answer": 1,
-        "explanation": "Elle est une interface fonctionnelle avec une seule méthode abstraite : `public void run()`."
-    },
-    {
-        "id": 107,
-        "chapterId": 2,
-        "question": "Peut-on redémarrer un thread (appeler start 2 fois) ?",
-        "options": [
-            "Oui, sans problème",
-            "Non, cela lève une IllegalThreadStateException",
-            "Oui, après un stop()",
-            "Seulement s'il est Daemon"
-        ],
-        "answer": 1,
-        "explanation": "Un thread une fois terminé est mort. On ne peut pas le relancer."
-    },
-    {
-        "id": 108,
-        "chapterId": 2,
-        "question": "A quoi sert `Thread.currentThread()` ?",
-        "options": [
-            "À créer un thread",
-            "À obtenir une référence sur le thread en cours d'exécution",
-            "À arrêter le thread courant",
-            "À changer de thread"
-        ],
-        "answer": 1,
-        "explanation": "C'est une méthode statique permettant au code de savoir quel thread l'exécute actuellement."
-    },
-    {
-        "id": 109,
-        "chapterId": 2,
-        "question": "Quelle méthode permet de vérifier si un thread tourne encore ?",
-        "options": [
-            "check()",
-            "isAlive()",
-            "isRunning()",
-            "status()"
-        ],
-        "answer": 1,
-        "explanation": "`isAlive()` retourne true si le thread a été démarré et n'est pas encore mort."
-    },
-    {
-        "id": 110,
-        "chapterId": 2,
-        "question": "Le mot-clé `synchronized` est-il hérité par les sous-classes ?",
-        "options": [
-            "Oui",
-            "Non",
-            "Uniquement si public",
-            "Uniquement si abstract"
-        ],
-        "answer": 1,
-        "explanation": "La synchronisation est une propriété de l'implémentation de la méthode, pas de sa signature. Elle n'est pas héritée."
-    },
-    {
-        "id": 111,
-        "chapterId": 2,
-        "question": "Qu'est-ce qu'un moniteur réentrant ?",
-        "options": [
-            "Un thread qui peut entrer plusieurs fois dans un bloc qu'il verrouille déjà",
-            "Un thread qui peut entrer dans n'importe quel bloc",
-            "Un verrou cassé",
-            "Un mécanisme interdit"
-        ],
-        "answer": 0,
-        "explanation": "En Java, si un thread possède un verrou, il peut ré-entrer dans d'autres blocs synchronisés sur ce MÊME verrou sans se bloquer."
-    },
-    {
-        "id": 112,
-        "chapterId": 2,
-        "question": "Les variables locales d'une méthode sont-elles partagées entre threads ?",
-        "options": [
-            "Oui",
-            "Non, elles sont sur la pile (thread-local)",
-            "Oui si elles sont finales",
-            "Oui si elles sont objets"
-        ],
-        "answer": 1,
-        "explanation": "Chaque thread a sa propre pile. Les variables locales vivent dans la pile, donc elles sont isolées."
-    },
-    {
-        "id": 113,
-        "chapterId": 2,
-        "question": "En cas d'exception non gérée dans `run()`, que se passe-t-il ?",
-        "options": [
-            "Le programme entier plante",
-            "Le thread se termine, le reste du programme continue",
-            "L'exception est ignorée",
-            "Le thread redémarre"
-        ],
-        "answer": 1,
-        "explanation": "La mort d'un thread sur exception ne tue pas tout le processus (sauf si c'était le dernier User Thread ou le main)."
-    },
-    {
-        "id": 114,
-        "chapterId": 2,
-        "question": "Comment grouper plusieurs threads pour les gérer ensemble ?",
-        "options": [
-            "ThreadList",
-            "ThreadGroup",
-            "ThreadCollection",
-            "ThreadPool"
-        ],
-        "answer": 1,
-        "explanation": "`ThreadGroup` permet d'organiser les threads en arborescence et d'agir sur eux collectivement (ex: interrupt)."
-    },
-    {
-        "id": 115,
-        "chapterId": 2,
-        "question": "La méthode `activeCount()` d'un ThreadGroup est :",
-        "options": [
-            "Exacte",
-            "Une estimation",
-            "Toujours nulle",
-            "Obsolète"
-        ],
-        "answer": 1,
-        "explanation": "Comme les threads naissent et meurent dynamiquement, ce nombre n'est qu'une estimation instantanée."
-    },
-    {
-        "id": 116,
-        "chapterId": 2,
-        "question": "Pourquoi préférer `Runnable` à l'héritage de `Thread` ?",
-        "options": [
-            "C'est plus performant",
-            "Pour contourner l'héritage unique de Java (une classe peut étendre autre chose et implémenter Runnable)",
-            "Thread est déprécié",
-            "C'est obligatoire"
-        ],
-        "answer": 1,
-        "explanation": "Cela permet une meilleure séparation des préoccupations (tâche vs exécution) et de garder la possibilité d'hériter d'une autre classe métier."
-    },
-    {
-        "id": 117,
-        "chapterId": 2,
-        "question": "Quel état n'existe PAS pour un thread Java ?",
-        "options": [
-            "NEW",
-            "RUNNABLE",
-            "BLOCKED",
-            "PAUSED"
-        ],
-        "answer": 3,
-        "explanation": "L'état 'PAUSED' n'existe pas dans l'enum `Thread.State`. On a WAITING ou TIMED_WAITING."
-    },
-    {
-        "id": 118,
-        "chapterId": 2,
-        "question": "Si j'appelle `wait()` avec un temps (timeout), le thread :",
-        "options": [
-            "Se réveille au bout du temps OU si on le notifie",
-            "Doit forcément être notifié",
-            "Ne peut pas être notifié",
-            "Se termine"
-        ],
-        "answer": 0,
-        "explanation": "`wait(timeout)` attend au maximum le temps donné, ou un `notify`/`notifyAll` précoce."
-    },
-    {
-        "id": 119,
-        "chapterId": 2,
-        "question": "Le scheduler (ordonnanceur) Java est-il préemptif ?",
-        "options": [
-            "Oui, généralement",
-            "Non, coopératif uniquement",
-            "Java n'a pas de scheduler",
-            "Cela dépend de la JVM et de l'OS"
-        ],
-        "answer": 3,
-        "explanation": "Bien que souvent préemptif sur les OS modernes, la spécification Java ne garantit pas le mode d'ordonnancement (Time Slicing)."
-    },
-    {
-        "id": 120,
-        "chapterId": 2,
-        "question": "Comment envoyer des types primitifs (int, double) via un Pipe ?",
-        "options": [
-            "Directement dans PipedInputStream",
-            "Via DataInputStream / DataOutputStream qui enveloppent le pipe",
-            "Impossible",
-            "Via ObjectOutputStream"
-        ],
-        "answer": 1,
-        "explanation": "Les Pipes gèrent des octets. Utiliser `DataOuputStream` permet d'écrire des types structurés Java."
-    },
-    {
-        "id": 121,
-        "chapterId": 2,
-        "question": "Que se passe-t-il si un Pipe n'est connecté à rien ?",
-        "options": [
-            "Rien",
-            "Blocage ou Exception si on tente d'écrire/lire",
-            "Il se connecte tout seul",
-            "Il écrit sur la console"
-        ],
-        "answer": 1,
-        "explanation": "Un pipe doit être appairé (connect). Sinon, une exception peut survenir."
-    },
-    {
-        "id": 122,
-        "chapterId": 2,
-        "question": "Quelle méthode permet d'interrompre tout un groupe de threads ?",
-        "options": [
-            "group.killAll()",
-            "group.interrupt()",
-            "group.stop()",
-            "group.halt()"
-        ],
-        "answer": 1,
-        "explanation": "La classe `ThreadGroup` possède une méthode `interrupt()` qui appelle `interrupt()` sur tous ses threads membres."
-    },
-    {
-        "id": 123,
-        "chapterId": 2,
-        "question": "Quelle classe permet d'exécuter une tâche répétitive ?",
-        "options": [
-            "java.util.Repeat",
-            "java.util.Timer",
-            "java.lang.Looper",
-            "java.io.Repeater"
-        ],
-        "answer": 1,
-        "explanation": "`Timer` permet de planifier des `TimerTask` pour une exécution unique ou répétitive."
-    },
+    { "id": 105, "question": "L'interface `Callable` se différencie de `Runnable` car :", "options": ["Elle est statique", "Elle retourne un résultat (Future) et peut lancer une exception", "Elle est plus rapide", "Elle est obsolète"], "answer": 1, "explanation": "`Runnable.run` est void. `Callable.call` retourne `V` et déclare `throws Exception`.", "chapterId": 2 },
+    { "id": 106, "question": "Quel risque principal court-on avec l'usage abusif ou mal ordonné de `synchronized` ?", "options": ["Famine (Starvation)", "Deadlock (Interblocage)", "StackOverflow", "NullPointerException"], "answer": 1, "explanation": "Si deux threads attendent chacun le verrou de l'autre, ils se bloquent indéfiniment.", "chapterId": 2 },
+    { "id": 107, "question": "Dans un pool de threads, si tous les threads sont occupés et que la file est pleine :", "options": ["La tâche est rejetée (RejectedExecutionException)", "Un nouveau thread est créé (illimité)", "Le thread appelant exécute la tâche (CallerRunsPolicy)", "Cela dépend de la politique de rejet configurée"], "answer": 3, "explanation": "Le `ThreadPoolExecutor` a un `RejectedExecutionHandler`. Par défaut, il lance une exception (`AbortPolicy`).", "chapterId": 2 },
+    { "id": 108, "question": "Quelle méthode permet de réveiller un thread en `sleep` ?", "options": ["wake()", "notify()", "interrupt()", "start()"], "answer": 2, "explanation": "`sleep()` lance `InterruptedException` si le thread est interrompu pendant son sommeil.", "chapterId": 2 },
+    { "id": 109, "question": "Quelle classe permet d'avoir une variable dont la valeur est propre à chaque thread ?", "options": ["`ThreadLocal`", "`Volatile`", "`AtomicVariable`", "`GlobalVar`"], "answer": 0, "explanation": "`ThreadLocal<T>` fournit un espace de stockage distinct pour chaque thread qui y accède.", "chapterId": 2 },
+    { "id": 110, "question": "Quelle structure de données est Thread-Safe par défaut ?", "options": ["`ArrayList`", "`HashMap`", "`Vector`", "`HashSet`"], "answer": 2, "explanation": "`Vector` (et `Hashtable`) sont les anciennes collections synchronisées. `ArrayList` ne l'est pas.", "chapterId": 2 },
+    { "id": 111, "question": "Le mot-clé `volatile` garantit :", "options": ["L'atomicité des opérations (ex: ++)", "La visibilité des changements de valeur entre threads immédiatement", "Le verrouillage de l'objet", "La persistance disque"], "answer": 1, "explanation": "`volatile` assure que toute lecture voit la dernière écriture (Happens-Before), mais ne gère pas les conflits d'écriture concurrents (pas d'exclusion mutuelle).", "chapterId": 2 },
+    { "id": 112, "question": "Pour attendre qu'un `CountDownLatch` atteigne zéro, on appelle :", "options": ["`wait()`", "`join()`", "`await()`", "`sleep()`"], "answer": 2, "explanation": "`await()` bloque le thread jusqu'à ce que le décompte soit fini.", "chapterId": 2 },
+    { "id": 113, "question": "Si le thread `main` se termine, les threads Daemons :", "options": ["Se terminent immédiatement", "Continuent de s'exécuter jusqu'à la fin", "Se mettent en pause", "Lancent une exception"], "answer": 0, "explanation": "La JVM s'arrête s'il ne reste que des Daemons.", "chapterId": 2 },
+    { "id": 114, "question": "La méthode `Future.get()` :", "options": ["Est non-bloquante", "Bloque jusqu'à ce que le résultat soit disponible", "Retourne null si pas prêt", "Annule la tâche"], "answer": 1, "explanation": "Elle attend la fin du calcul asynchrone.", "chapterId": 2 },
+    { "id": 115, "question": "Quel est l'avantage du verrou `ReentrantLock` sur `synchronized` ?", "options": ["Il est automatique", "Il permet le `tryLock()` (tentative non bloquante) et la gestion de l'équité (fairness)", "Il est plus lent", "Il n'a aucun avantage"], "answer": 1, "explanation": "Il offre plus de contrôle (polling, timeout, interruptible lock waits).", "chapterId": 2 },
+    { "id": 116, "question": "`AtomicInteger` utilise-t-il des verrous (locks) ?", "options": ["Oui", "Non, il utilise des instructions CPU CAS (Compare-And-Swap)", "Oui, synchronized", "Non, il est unsafe"], "answer": 1, "explanation": "C'est une opération non-bloquante matérielle, plus performante qu'un verrou complet.", "chapterId": 2 },
+    { "id": 117, "question": "L'inanition (Starvation) survient quand :", "options": ["Un thread mange trop de mémoire", "Un thread n'obtient jamais l'accès au CPU/Verrou car d'autres plus prioritaires le monopolisent", "Il y a un Deadlock", "Le programme est vide"], "answer": 1, "explanation": "Contrairement au deadlock (personne ne bouge), ici ça bouge mais certains sont exclus indéfiniment.", "chapterId": 2 },
+    { "id": 118, "question": "Que retourne `Runtime.getRuntime().availableProcessors()` ?", "options": ["Le nombre de threads en cours", "Le nombre de cœurs logiques disponibles pour la JVM", "La charge CPU", "La mémoire libre"], "answer": 1, "explanation": "Utile pour dimensionner les ThreadPools.", "chapterId": 2 },
+    { "id": 119, "question": "La classe `Semaphore` avec 3 permis permet :", "options": ["À 3 threads d'accéder à la ressource simultanément", "À 1 thread d'accéder 3 fois", "De bloquer 3 threads", "Rien"], "answer": 0, "explanation": "C'est un mécanisme de contrôle de flux pour limiter la concurrence.", "chapterId": 2 },
+    { "id": 120, "question": "Le phénomène de 'Spurious Wakeup' impose de :", "options": ["Ne jamais utiliser `wait`", "Utiliser `wait` dans une boucle `while(condition)` et non un `if`", "Augmenter la RAM", "Utiliser `sleep` à la place"], "answer": 1, "explanation": "Un thread peut se réveiller sans raison apparente (niveau OS). Il faut revérifier la condition.", "chapterId": 2 },
+    { "id": 121, "question": "Pourquoi `ConcurrentHashMap` est-elle plus performante que `Hashtable` ?", "options": ["Elle n'est pas synchronisée", "Elle utilise un verrouillage par segment (Lock Striping) ou CAS, réduisant la contention", "Elle est en C++", "Elle est plus petite"], "answer": 1, "explanation": "Au lieu de verrouiller toute la map pour chaque opération, elle ne verrouille qu'une partie.", "chapterId": 2 },
+    { "id": 122, "question": "La méthode `run()` peut-elle être appelée directement ?", "options": ["Oui, mais cela ne lance pas de thread (exécution synchrone)", "Non, c'est interdit", "Oui, cela lance un thread", "Seulement dans le constructeur"], "answer": 0, "explanation": "C'est une erreur classique. Le code s'exécute, mais dans le thread appelant.", "chapterId": 2 },
+    { "id": 123, "question": "Pour exécuter une tâche périodique moderne (post Java 5), on préfère :", "options": ["`Timer`", "`ScheduledExecutorService`", "`Thread.sleep` en boucle", "`Cron`"], "answer": 1, "explanation": "`ScheduledExecutorService` est plus robuste (gère mieux les exceptions et le multi-threading) que `Timer`.", "chapterId": 2 },
     {
         "id": 124,
         "chapterId": 4,
