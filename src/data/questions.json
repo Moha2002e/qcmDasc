@@ -1,530 +1,197 @@
 [
     {
         "id": 1,
-        "question": "Qu'est-ce qu'une socket ?",
+        "question": "Juste après l'appel à `socket(AF_INET, SOCK_STREAM, 0)`, quel est l'état exact de la socket ?",
         "options": [
-            "Un câble physique",
-            "Un point de communication bidirectionnel",
-            "Un type de variable en C",
-            "Un protocole Internet"
+            "Elle est connectée à l'hôte local sur un port aléatoire.",
+            "Elle est créée, mais anonyme (sans adresse IP ni port) et non connectée.",
+            "Elle est automatiquement liée au port 0 en attente de `connect`.",
+            "Elle est en mode écoute (listen) en attente de `accept`."
         ],
         "answer": 1,
-        "explanation": "Une socket est un point de communication (endpoint) permettant l'échange de données entre processus.",
+        "explanation": "La socket est créée (descripteur alloué) mais n'a aucune identité réseau (anonyme) tant que `bind` ou `connect` n'est pas appelé. Elle n'est ni liée ni connectée.",
         "chapterId": 1
     },
     {
         "id": 2,
-        "question": "Quel mode de communication le protocole TCP utilise-t-il ?",
+        "question": "Concernant la primitive `bind()` dans une architecture TCP Client/Serveur, quelle affirmation est strictement vraie ?",
         "options": [
-            "Mode non connecté (datagramme)",
-            "Mode déconnecté",
-            "Mode connecté (stream)",
-            "Mode aléatoire"
+            "Elle est optionnelle pour le serveur mais obligatoire pour le client afin de fixer son port source.",
+            "Elle est obligatoire pour le serveur pour définir son écoute, mais le client comportement est indéfini s'il l'utilise.",
+            "Elle est obligatoire pour le serveur, tandis que le client peut l'utiliser mais s'en remet généralement au noyau (bind implicite).",
+            "Elle est obligatoire pour les deux parties afin de garantir l'unicité du couple {IP, Port}."
         ],
         "answer": 2,
-        "explanation": "TCP (Transmission Control Protocol) utilise le mode connecté (SOCK_STREAM), garantissant fiabilité et ordre.",
+        "explanation": "Le serveur *doit* être joignable sur un port connu. Le client *peut* choisir son port, mais laisse généralement l'OS choisir un port éphémère via un bind implicite.",
         "chapterId": 1
     },
     {
         "id": 3,
-        "question": "Quel couple identifie de manière unique une socket en mode connecté ?",
+        "question": "Dans `listen(sockfd, backlog)`, que représente exactement l'entier `backlog` ?",
         "options": [
-            "{Adresse MAC, Port}",
-            "{Adresse IP, Protocole}",
-            "{Adresse IP, Port}",
-            "{Nom d'hôte, Adresse IP}"
+            "Le nombre maximum de connexions actives simultanées que le serveur peut gérer.",
+            "Le nombre maximum de demandes de connexions en attente (handshake terminé, en attente d'accept).",
+            "La taille en octets du buffer de réception pour cette socket.",
+            "Le délai d'attente (timeout) en secondes avant de rejeter un client."
         ],
-        "answer": 2,
-        "explanation": "En mode connecté, une socket est identifiée par le couple unique {Adresse IP, Port}.",
+        "answer": 1,
+        "explanation": "Le backlog définit la taille de la file d'attente des connexions *pending* (3-way handshake fini) que l'application n'a pas encore acceptées via `accept()`.",
         "chapterId": 1
     },
     {
         "id": 4,
-        "question": "Quelle primitive crée une socket ?",
+        "question": "Quelle est la relation précise entre `write(fd, buf, len)` et `send(fd, buf, len, flags)` sous UNIX ?",
         "options": [
-            "make_socket()",
-            "create()",
-            "open()",
-            "socket()"
+            "Elles sont strictement identiques, `write` est juste une macro pour `send` avec `flags=0`.",
+            "Si `flags=0`, elles effectuent la même opération, mais `send` ne fonctionne que sur des sockets.",
+            " `send` est plus rapide que `write` car elle contourne la couche VFS (Virtual File System).",
+            " `write` ajoute automatiquement un terminateur nul au buffer, contrairement à `send`."
         ],
-        "answer": 3,
-        "explanation": "La fonction `socket()` est l'appel système permettant de créer une nouvelle socket.",
+        "answer": 1,
+        "explanation": "Sur une socket, `send` avec `flags=0` est équivalent à `write`. Cependant `send` est spécifique aux sockets, alors que `write` est générique pour tout fichier.",
         "chapterId": 1
     },
     {
         "id": 5,
-        "question": "Quel paramètre de `socket()` spécifie IPv4 ?",
+        "question": "Que retourne l'appel système `accept(listening_socket, ...)` en cas de succès ?",
         "options": [
-            "AF_INET6",
-            "AF_UNIX",
-            "AF_INET",
-            "SOCK_INET"
+            "L'entier `0` pour confirmer que le handshake a réussi.",
+            "Le même descripteur `listening_socket`, mais passé en mode connecté.",
+            "Un nouveau descripteur de fichier spécifiquement dédié à cette connexion client.",
+            "L'adresse IP du client sous forme d'entier."
         ],
         "answer": 2,
-        "explanation": "`AF_INET` est la famille d'adresses correspondant aux adresses Internet IPv4.",
+        "explanation": "`accept` crée une *nouvelle* socket pour la connexion établie. La socket d'origine reste en mode écoute (LISTEN) pour d'autres clients.",
         "chapterId": 1
     },
     {
         "id": 6,
-        "question": "Quel type de socket correspond au mode UDP ?",
+        "question": "Vous lancez votre serveur et il échoue immédiatement avec l'erreur `EADDRINUSE`. Quelle est la cause la plus probable ?",
         "options": [
-            "SOCK_STREAM",
-            "SOCK_RAW",
-            "SOCK_DGRAM",
-            "SOCK_PACKET"
+            "Le client distant a rejeté la connexion.",
+            "Le serveur tente de se lier (bind) à un port déjà occupé par un autre processus ou une socket en attente.",
+            "Le câble réseau est débranché.",
+            "Les permissions root sont requises pour ouvrir une socket (EACCES)."
         ],
-        "answer": 2,
-        "explanation": "`SOCK_DGRAM` (Datagram) est utilisé pour le mode non connecté (UDP).",
+        "answer": 1,
+        "explanation": "`EADDRINUSE` signifie que l'adresse (IP + Port) demandée est déjà utilisée localement par une autre socket.",
         "chapterId": 1
     },
     {
         "id": 7,
-        "question": "Que retourne `socket()` en cas d'erreur ?",
+        "question": "Quel appel système déclenche l'envoi du paquet TCP SYN par le client ?",
         "options": [
-            "0",
-            "NULL",
-            "-1",
-            "false"
+            "Au moment de la création de la socket avec `socket()`.",
+            "Au moment de l'appel à `bind()`.",
+            "Au moment de l'appel à `connect()`.",
+            "Lors du premier `send()` de données."
         ],
         "answer": 2,
-        "explanation": "La fonction retourne -1 en cas d'erreur et met à jour la variable globale `errno`.",
+        "explanation": "C'est `connect()` qui initie le '3-way handshake', commençant par l'envoi du SYN.",
         "chapterId": 1
     },
     {
         "id": 8,
-        "question": "Après création par `socket()`, l'état initial de la socket est :",
+        "question": "Si un client TCP appelle `close()` sur sa socket alors que le serveur ne fait rien, dans quel état finit la socket côté serveur ?",
         "options": [
-            "Connectée",
-            "Liée à un port 80",
-            "Anonyme (ni IP ni port)",
-            "En écoute"
+            "La connexion reste totalement active jusqu'à ce que le serveur ferme aussi.",
+            "La socket serveur passe immédiatement à l'état `CLOSED`.",
+            "La socket serveur reçoit un EOF mais reste en `ESTABLISHED`.",
+            "La connexion entre dans un état de fermeture passive (ex: `CLOSE_WAIT`), attendant que l'application serveur appelle `close`."
         ],
-        "answer": 2,
-        "explanation": "Juste après `socket()`, la socket existe mais n'est attachée à aucune adresse ni port (elle est anonyme).",
+        "answer": 3,
+        "explanation": "Le serveur reçoit un paquet FIN. L'OS passe la socket en `CLOSE_WAIT` et notifie l'application (read retourne 0). L'application *doit* fermer pour libérer les ressources.",
         "chapterId": 1
     },
     {
         "id": 9,
-        "question": "Quelle fonction associe une socket à une adresse IP et un port ?",
+        "question": "Quelle combinaison de paramètres crée une socket UDP IPv4 valide ?",
         "options": [
-            "connect()",
-            "link()",
-            "bind()",
-            "listen()"
+            "`socket(AF_INET, SOCK_STREAM, IPPROTO_UDP)`",
+            "`socket(AF_INET6, SOCK_DGRAM, 0)`",
+            "`socket(AF_INET, SOCK_DGRAM, 0)`",
+            "`socket(AF_UNIX, SOCK_DGRAM, 0)`"
         ],
         "answer": 2,
-        "explanation": "`bind()` est utilisée pour 'lier' la socket à une adresse locale spécifique.",
+        "explanation": "`AF_INET` pour IPv4, `SOCK_DGRAM` pour le mode datagramme (UDP). Le 0 sélectionne le protocole par défaut (UDP).",
         "chapterId": 1
     },
     {
         "id": 10,
-        "question": "Qui doit OBLIGATOIREMENT utiliser `bind()` ?",
+        "question": "Pourquoi l'erreur `ECONNREFUSED` survient-elle généralement lors d'un `connect()` ?",
         "options": [
-            "Le Client",
-            "Le Serveur",
-            "Les deux",
-            "Aucun des deux"
+            "Le réseau est physiquement déconnecté.",
+            "Aucun processus n'écoute sur l'IP et le port cibles (port fermé).",
+            "Le pare-feu a droppé le paquet silencieusement.",
+            "L'adresse IP de destination est introuvable (Host Unreachable)."
         ],
         "answer": 1,
-        "explanation": "Le serveur doit utiliser `bind()` pour être joignable sur un port connu. Le client peut laisser le système choisir.",
+        "explanation": "`Connection Refused` signifie qu'un paquet RST a été renvoyé par la machine cible, indiquant qu'aucune socket n'écoute sur ce port.",
+        "chapterId": 1
+    },
+    {
+        "id": 11,
+        "question": "Quel est la conséquence exacte de l'appel `socket()` sur le réseau ?",
+        "options": [
+            "Il envoie un paquet broadcast pour annoncer la présence.",
+            "Il réserve un port auprès du switch réseau.",
+            "Il n'a aucun effet sur le réseau, c'est une opération purement locale au noyau.",
+            "Il ouvre une session TCP."
+        ],
+        "answer": 2,
+        "explanation": "`socket()` alloue seulement des structures de données dans le noyau du système d'exploitation local. Aucun paquet n'est émis sur le réseau.",
         "chapterId": 1
     },
     {
         "id": 12,
-        "question": "Quel est le rôle du DNS ?",
+        "question": "Quel est l'effet d'un `bind()` sur le port 0 ?",
         "options": [
-            "Sécuriser la connexion",
-            "Traduire un nom d'hôte en adresse IP",
-            "Compresser les données",
-            "Gérer les erreurs réseaux"
+            "Cela provoque immédiatement une erreur `EINVAL`.",
+            "Cela lie la socket au port 0, qui est réservé et inutilisable.",
+            "Cela demande au système d'exploitation d'attribuer automatiquement un port éphémère disponible.",
+            "Cela lie la socket à tous les ports disponibles."
         ],
-        "answer": 1,
-        "explanation": "Le DNS (Domain Name System) permet de faire correspondre un nom d'hôte convivial à une adresse IP numérique.",
+        "answer": 2,
+        "explanation": "Binder sur le port 0 est une convention pour demander au noyau de choisir un port libre aléatoire (port éphémère).",
         "chapterId": 1
     },
     {
         "id": 13,
-        "question": "La fonction `listen(sockfd, count)` :",
+        "question": "Dans le modèle OSI simplifié pour les sockets, quelle structure doit être castée en `(struct sockaddr *)` ?",
         "options": [
-            "Accepte une connexion immédiatement",
-            "Attend des données",
-            "Finit la connexion",
-            "Met la socket en mode passif (attente)"
+            "`struct in_addr`",
+            "`struct sockaddr_in`",
+            "`struct ip_mreq`",
+            "`struct hostent`"
         ],
-        "answer": 3,
-        "explanation": "`listen()` indique au noyau d'accepter les demandes de connexion entrantes sur cette socket.",
+        "answer": 1,
+        "explanation": "Les fonctions sockets attendent un pointeur générique `struct sockaddr *`. On manipule `struct sockaddr_in` (pour IPv4) et on doit la caster lors de l'appel.",
         "chapterId": 1
     },
     {
         "id": 14,
-        "question": "Que représente le paramètre 'count' (ou backlog) dans `listen()` ?",
+        "question": "Pourquoi le protocole UDP est-il qualifié de 'non fiable' par rapport à TCP ?",
         "options": [
-            "Le nombre maximum de sockets créables",
-            "Le nombre maximum de connexions actives",
-            "La taille de la file d'attente des connexions pendantes",
-            "Le délai d'attente avant timeout"
+            "Parce qu'il crypte mal les données.",
+            "Parce qu'il ne garantit ni l'ordre, ni la livraison, ni la non-duplication des paquets.",
+            "Parce qu'il a une limite de taille de 512 octets.",
+            "Parce qu'il nécessite une reconnexion fréquente."
         ],
-        "answer": 2,
-        "explanation": "Le backlog spécifie combien de connexions peuvent être en attente d'acceptation (handshake terminé mais pas encore accept()) avant d'être rejetées.",
+        "answer": 1,
+        "explanation": "UDP est un service 'Best Effort'. Il envoie le datagramme mais ne gère pas les accusés de réception (ACK) ni les retransmissions en cas de perte.",
         "chapterId": 1
     },
     {
         "id": 15,
-        "question": "Quelle erreur survient si on tente un `bind()` sur un port déjà pris ?",
+        "question": "Quelle fonction permet de convertir l'endianness d'un entier court (port) de l'hôte vers le réseau ?",
         "options": [
-            "ENOMEM",
-            "EADDRNOTAVAIL",
-            "EADDRINUSE",
-            "ECONNREFUSED"
+            "`htonl()`",
+            "`ntohl()`",
+            "`htons()`",
+            "`ntohs()`"
         ],
         "answer": 2,
-        "explanation": "`EADDRINUSE` signifie que l'adresse (IP/Port) est déjà utilisée par une autre socket.",
-        "chapterId": 1
-    },
-    {
-        "id": 16,
-        "question": "Quelle fonction permet au CLIENT d'initier le handshake TCP ?",
-        "options": [
-            "accept()",
-            "dial()",
-            "connect()",
-            "init()"
-        ],
-        "answer": 2,
-        "explanation": "`connect()` lance la procédure d'établissement de connexion vers le serveur.",
-        "chapterId": 1
-    },
-    {
-        "id": 17,
-        "question": "Si un client n'appelle pas `bind()`, que se passe-t-il ?",
-        "options": [
-            "Erreur à la compilation",
-            "Erreur à l'exécution",
-            "Le noyau attribue une IP et un port éphémère",
-            "Le client utilise le port 0 par défaut"
-        ],
-        "answer": 2,
-        "explanation": "C'est le 'bind implicite'. Le système alloue automatiquement un port libre lorsque `connect()` est appelé.",
-        "chapterId": 1
-    },
-    {
-        "id": 18,
-        "question": "Les fonctions `send` et `recv` avec flags=0 sont équivalentes à :",
-        "options": [
-            "printf et scanf",
-            "write et read",
-            "put et get",
-            "sendto et recvfrom"
-        ],
-        "answer": 1,
-        "explanation": "Sous Unix, écrire sur une socket connectée revient à écrire dans un descripteur de fichier via `write`.",
-        "chapterId": 1
-    },
-    {
-        "id": 19,
-        "question": "Quelle primitive est bloquante par défaut ?",
-        "options": [
-            "socket()",
-            "bind()",
-            "listen()",
-            "connect()"
-        ],
-        "answer": 3,
-        "explanation": "`connect()` bloque le processus jusqu'à ce que la connexion soit établie ou échoue (timeout/refus).",
-        "chapterId": 1
-    },
-    {
-        "id": 20,
-        "question": "Pourquoi faut-il fermer une socket avec `close()` ?",
-        "options": [
-            "Pour éteindre l'ordinateur",
-            "Pour libérer le descripteur et les ressources noyau",
-            "Pour envoyer les dernières données",
-            "Ce n'est pas nécessaire"
-        ],
-        "answer": 1,
-        "explanation": "Il faut libérer les ressources. Une socket non fermée peut laisser un port en état 'bloqué' (CLOSE_WAIT, etc.).",
-        "chapterId": 1
-    },
-    {
-        "id": 21,
-        "question": "Analysez ce code. Que fait-il ?",
-        "code": "int s = socket(AF_INET, SOCK_STREAM, 0);",
-        "options": [
-            "Crée une socket UDP IPv4",
-            "Crée une socket TCP IPv6",
-            "Crée une socket TCP IPv4",
-            "Crée une socket brute (RAW)"
-        ],
-        "answer": 2,
-        "explanation": "AF_INET = IPv4, SOCK_STREAM = TCP. Le 0 indique le protocole par défaut (TCP).",
-        "chapterId": 1
-    },
-    {
-        "id": 22,
-        "question": "Trouvez l'erreur dans ce code serveur :",
-        "code": "bind(sd, (struct sockaddr *)&addr, sizeof(addr));\n// Manque quelque chose ici...\naccept(sd, NULL, NULL);",
-        "options": [
-            "Il manque socket()",
-            "Il manque connect()",
-            "Il manque listen()",
-            "Il manque close()"
-        ],
-        "answer": 2,
-        "explanation": "Entre `bind` (attacher l'adresse) et `accept` (accepter les clients), il faut impérativement appeler `listen()` pour passer en mode passif.",
-        "chapterId": 1
-    },
-    {
-        "id": 23,
-        "question": "Que signifie un retour de -1 sur cet appel ?",
-        "code": "if (connect(sockfd, &addr, len) == -1) { ... }",
-        "options": [
-            "La connexion est établie",
-            "La connexion a échoué",
-            "La socket est fermée",
-            "Le serveur est en attente"
-        ],
-        "answer": 1,
-        "explanation": "Comme la plupart des appels système Unix, -1 signale une erreur (serveur éteint, réseau coupé, etc.).",
-        "chapterId": 1
-    },
-    {
-        "id": 24,
-        "question": "Ce code est-il valide pour envoyer une structure ?",
-        "code": "struct Data d = {1, 2};\nsend(sock, &d, sizeof(d), 0);",
-        "options": [
-            "Non, on ne peut envoyer que des chaînes",
-            "Oui, mais attention à l'endianness (ordre des octets)",
-            "Non, sizeof() ne marche pas sur les structures",
-            "Oui, c'est parfaitement portable tel quel"
-        ],
-        "answer": 1,
-        "explanation": "C'est syntaxiquement valide en C (envoi d'octets bruts), mais risqué entre architectures différentes si on ne gère pas l'endianness (ntohl/htonl).",
-        "chapterId": 1
-    },
-    {
-        "id": 25,
-        "question": "Dans quel état finit une socket si le serveur ferme mais pas le client ?",
-        "code": "// Serveur fait close(s)\n// Client ne fait rien",
-        "options": [
-            "ESTABLISHED",
-            "CLOSE_WAIT (côté Client)",
-            "LISTEN",
-            "CLOSED"
-        ],
-        "answer": 1,
-        "explanation": "Le client reçoit un FIN, l'OS passe sa socket en CLOSE_WAIT, attendant que l'application cliente appelle `close()` explicitement.",
-        "chapterId": 1
-    },
-    {
-        "id": 26,
-        "question": "Quelle constante définit le backlog maximum possible ?",
-        "code": "listen(sockfd, SOMAXCONN);",
-        "options": [
-            "MAX_CONN",
-            "TCP_MAX",
-            "SOMAXCONN",
-            "LIMIT_BACKLOG"
-        ],
-        "answer": 2,
-        "explanation": "`SOMAXCONN` est la constante système définissant la limite supérieure de la file d'attente.",
-        "chapterId": 1
-    },
-    {
-        "id": 29,
-        "question": "Quel est le problème potentiel ici ?",
-        "code": "char buf[10];\nrecv(s, buf, 100, 0);",
-        "options": [
-            "Aucun problème",
-            "Buffer overflow (débordement de tampon)",
-            "Erreur de syntaxe",
-            "La socket va se fermer"
-        ],
-        "answer": 1,
-        "explanation": "On demande de lire jusqu'à 100 octets dans un buffer qui ne peut en contenir que 10. Risque critique de corruption mémoire.",
-        "chapterId": 1
-    },
-    {
-        "id": 30,
-        "question": "Quelle fonction permet de récupérer l'adresse IP d'un client qui vient de se connecter ?",
-        "code": "int client_sock = accept(srv_sock, ...);",
-        "options": [
-            "getpeername() (ou via les arguments de accept)",
-            "getsockname()",
-            "ipconfig()",
-            "whoami()"
-        ],
-        "answer": 0,
-        "explanation": "Les arguments pointeurs de `accept()` (struct sockaddr *) ou la fonction `getpeername()` permettent d'obtenir l'IP et le port du client distant.",
-        "chapterId": 1
-    },
-    {
-        "id": 31,
-        "question": "Que retourne la fonction `accept()` en cas de succès ?",
-        "options": [
-            "0",
-            "Le même descripteur que la socket d'écoute",
-            "Un nouveau descripteur de fichier dédié à la connexion",
-            "L'adresse IP du client"
-        ],
-        "answer": 2,
-        "explanation": "`accept()` crée et retourne une *nouvelle* socket connectée spécifiquement à ce client. La socket d'écoute originale reste disponible pour d'autres connexions.",
-        "chapterId": 1
-    },
-    {
-        "id": 32,
-        "question": "L'appel à la fonction `listen()` est-il bloquant ?",
-        "options": [
-            "Oui, il attend une connexion",
-            "Non, il retourne immédiatement",
-            "Oui, mais avec un timeout",
-            "Cela dépend des flags"
-        ],
-        "answer": 1,
-        "explanation": "`listen()` est purement déclaratif : il informe l'OS que la socket acceptera des connexions. Il ne bloque pas le programme.",
-        "chapterId": 1
-    },
-    {
-        "id": 33,
-        "question": "Combien de canaux de communication conceptuels imagine-t-on pour une connexion TCP ?",
-        "options": [
-            "Un seul canal bidirectionnel mélangé",
-            "Deux canaux unidirectionnels (un Emission, un Réception)",
-            "Quatre canaux",
-            "Aucun, c'est des paquets"
-        ],
-        "answer": 1,
-        "explanation": "Bien que ce soit le même câble, on conceptualise TCP comme deux 'pipes' distincts : un flux allant du Client vers le Serveur, et un flux Serveur vers Client.",
-        "chapterId": 1
-    },
-    {
-        "id": 34,
-        "question": "Que signifie généralement l'erreur `ECONNREFUSED` lors d'un `connect()` ?",
-        "options": [
-            "Le câble réseau est débranché",
-            "Le serveur n'est pas lancé ou n'écoute pas sur ce port",
-            "Le pare-feu bloque la connexion",
-            "L'adresse IP n'existe pas"
-        ],
-        "answer": 1,
-        "explanation": "Cela indique qu'il n'y a 'personne au bout du fil' : aucune application n'a fait de `bind/listen` sur l'IP/Port ciblé.",
-        "chapterId": 1
-    },
-    {
-        "id": 35,
-        "question": "Pourquoi peut-on utiliser `read()` et `write()` sur une socket sous Unix ?",
-        "options": [
-            "C'est une spécificité du langage C",
-            "Car 'Tout est fichier' dans la philosophie Unix",
-            "C'est une erreur, on ne devrait pas le faire",
-            "Car les sockets sont des fichiers textes"
-        ],
-        "answer": 1,
-        "explanation": "Le descripteur de socket est un descripteur de fichier standard, permettant l'usage des outils génériques de manipulation de fichiers.",
-        "chapterId": 1
-    },
-    {
-        "id": 36,
-        "question": "Quel est l'ordre typique des appels système pour un SERVEUR TCP ?",
-        "options": [
-            "socket -> connect -> write",
-            "socket -> bind -> listen -> accept",
-            "socket -> accept -> listen -> bind",
-            "connect -> send -> close"
-        ],
-        "answer": 1,
-        "explanation": "Le serveur crée la socket, la lie à un port (bind), se met en attente (listen), puis accepte les clients (accept).",
-        "chapterId": 1
-    },
-    {
-        "id": 37,
-        "question": "Dans `socket(domain, type, protocol)`, que signifie `protocol = 0` ?",
-        "options": [
-            "Pas de protocole",
-            "Protocole expérimental",
-            "Le système choisit le protocole par défaut pour le type (ex: TCP pour STREAM)",
-            "Mode raw socket"
-        ],
-        "answer": 2,
-        "explanation": "Mettre 0 demande au système d'utiliser le standard : TCP pour SOCK_STREAM et UDP pour SOCK_DGRAM.",
-        "chapterId": 1
-    },
-    {
-        "id": 38,
-        "question": "Qu'est-ce qu'un 'port éphémère' ?",
-        "options": [
-            "Un port qui change toutes les secondes",
-            "Un port temporaire attribué automatiquement par le système",
-            "Un port > 65535",
-            "Un port réservé à l'administrateur"
-        ],
-        "answer": 1,
-        "explanation": "Lorsqu'un client ne fait pas de `bind()`, le système lui prête un port libre aléatoire (ex: 49152) pour la durée de la connexion.",
-        "chapterId": 1
-    },
-    {
-        "id": 39,
-        "question": "Quel appel système déclenche réellement le 'Handshake TCP' sur le réseau ?",
-        "options": [
-            "socket()",
-            "bind()",
-            "connect()",
-            "listen()"
-        ],
-        "answer": 2,
-        "explanation": "C'est au moment où le client appelle `connect()` que les paquets SYN sont envoyés pour établir la connexion.",
-        "chapterId": 1
-    },
-    {
-        "id": 40,
-        "question": "Quelle affirmation est vraie concernant le mode UDP (SOCK_DGRAM) ?",
-        "options": [
-            "Il garantit l'ordre d'arrivée des paquets",
-            "Il nécessite une connexion préalable",
-            "Il envoie des messages (datagrammes) indépendants sans garantie",
-            "Il est plus lent que TCP"
-        ],
-        "answer": 2,
-        "explanation": "UDP est un protocole 'fire and forget' : on envoie le paquet, mais on ne sait pas s'il arrive ni dans quel ordre.",
-        "chapterId": 1
-    },
-    {
-        "id": 41,
-        "question": "Que signifie la famille d'adresse `AF_INET6` ?",
-        "options": [
-            "Internet Protocol v4",
-            "Internet Protocol v6",
-            "Réseau local Unix",
-            "Bluetooth"
-        ],
-        "answer": 1,
-        "explanation": "AF_INET correspond à IPv4, tandis que AF_INET6 correspond aux adresses IPv6 (128 bits).",
-        "chapterId": 1
-    },
-    {
-        "id": 42,
-        "question": "Où sont stockées les connexions en attente (backlog) gérées par `listen` ?",
-        "options": [
-            "Dans le disque dur",
-            "Dans une file d'attente (FIFO) en mémoire noyau",
-            "Dans l'application serveur",
-            "Elles sont rejetées immédiatement"
-        ],
-        "answer": 1,
-        "explanation": "Le noyau stocke les connexions 'prêtes' (handshake fini) dans une file jusqu'à ce que l'application les récupère via `accept()`.",
-        "chapterId": 1
-    },
-    {
-        "id": 43,
-        "question": "Quel est le type de retour de la fonction `socket()` ?",
-        "options": [
-            "void",
-            "char *",
-            "int (descripteur de fichier)",
-            "struct socket"
-        ],
-        "answer": 2,
-        "explanation": "Elle retourne un entier (int) qui est l'indice dans la table des descripteurs de fichier du processus.",
+        "explanation": "`h` (host) `to` `n` (network) `s` (short). Les ports sont des entiers sur 16 bits (short).",
         "chapterId": 1
     },
     {
