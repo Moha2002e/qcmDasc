@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import { jsPDF } from 'jspdf'
 
 const props = defineProps({
   score: Number,
@@ -31,6 +32,79 @@ const wrongAnswers = computed(() => {
     })
     .filter(item => item && !item.isCorrect)
 })
+
+const downloadPDF = () => {
+  const doc = new jsPDF()
+  
+  // Title
+  doc.setFontSize(22)
+  doc.setTextColor(44, 62, 80)
+  doc.text("Rapport d'erreurs - QCM", 105, 20, { align: 'center' })
+  
+  doc.setFontSize(12)
+  doc.setTextColor(100)
+  doc.text(`Score: ${props.score} / ${props.totalQuestions}`, 105, 30, { align: 'center' })
+
+  let y = 50
+  const margin = 20
+  const pageWidth = 210
+  const maxWidth = pageWidth - (margin * 2)
+
+  if (wrongAnswers.value.length === 0) {
+    doc.setFontSize(14)
+    doc.setTextColor(40, 167, 69) // Green
+    doc.text("Félicitations ! Aucune erreur à signaler 👏", 105, 60, { align: 'center' })
+  } else {
+    wrongAnswers.value.forEach((item, index) => {
+      // Check for page break
+      if (y > 250) {
+        doc.addPage()
+        y = 20
+      }
+
+      // Question
+      doc.setFontSize(12)
+      doc.setTextColor(0, 0, 0)
+      doc.setFont("helvetica", "bold")
+      
+      const questionTitle = `Question ${index + 1}: ${item.question.question}`
+      const splitTitle = doc.splitTextToSize(questionTitle, maxWidth)
+      doc.text(splitTitle, margin, y)
+      y += splitTitle.length * 7
+
+      // User Answer (Wrong)
+      doc.setFont("helvetica", "normal")
+      doc.setFontSize(11)
+      doc.setTextColor(220, 53, 69) // Red
+      const wrongTxt = `❎ Votre réponse : ${item.question.options[item.userSelected]}`
+      const splitWrong = doc.splitTextToSize(wrongTxt, maxWidth)
+      doc.text(splitWrong, margin + 5, y)
+      y += splitWrong.length * 6
+
+      // Correct Answer
+      doc.setTextColor(40, 167, 69) // Green
+      const correctTxt = `✅ Bonne réponse : ${item.question.options[item.question.answer]}`
+      const splitCorrect = doc.splitTextToSize(correctTxt, maxWidth)
+      doc.text(splitCorrect, margin + 5, y)
+      y += splitCorrect.length * 6
+
+      // Explanation
+      if (item.question.explanation) {
+        doc.setTextColor(80, 80, 80) // Gray
+        doc.setFont("helvetica", "italic")
+        const explTxt = `💡 Explication : ${item.question.explanation}`
+        const splitExpl = doc.splitTextToSize(explTxt, maxWidth)
+        doc.text(splitExpl, margin + 5, y)
+        y += splitExpl.length * 6
+      }
+
+      y += 10 // Spacing
+    })
+  }
+
+  doc.save("resultat_qcm.pdf")
+}
+
 </script>
 
 <template>
@@ -50,12 +124,16 @@ const wrongAnswers = computed(() => {
       <button class="restart-btn" @click="$emit('restart')">
         Recommencer le Quiz
       </button>
+
+      <button class="pdf-btn" @click="downloadPDF">
+        📥 Télécharger le résultat (PDF)
+      </button>
     </div>
 
     <!-- Review Section -->
     <div v-if="wrongAnswers.length > 0" class="review-section">
       <h3>Questions à revoir ({{ wrongAnswers.length }})</h3>
-      
+
       <div v-for="(item, index) in wrongAnswers" :key="index" class="review-item">
         <div class="review-question">
           <strong>Question :</strong> {{ item.question.question }}
@@ -183,6 +261,26 @@ const wrongAnswers = computed(() => {
 
 .restart-btn:active {
   transform: translateY(1px);
+}
+
+.pdf-btn {
+  background: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  color: #333;
+  font-weight: 600;
+  cursor: pointer;
+  display: block;
+  margin-top: 1.5rem; 
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.pdf-btn:hover {
+  background: #f8f9fa;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
 /* Review Section Styles */
