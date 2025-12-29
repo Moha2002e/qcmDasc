@@ -92,7 +92,7 @@ const downloadPDF = () => {
       if (item.question.explanation) {
         doc.setTextColor(80, 80, 80) // Gray
         doc.setFont("helvetica", "italic")
-        const explTxt = `💡 Explication : ${item.question.explanation}`
+        const explTxt = `Explication : ${item.question.explanation}`
         const splitExpl = doc.splitTextToSize(explTxt, maxWidth)
         doc.text(splitExpl, margin + 5, y)
         y += splitExpl.length * 6
