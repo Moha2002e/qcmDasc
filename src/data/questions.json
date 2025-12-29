@@ -391,523 +391,393 @@
     },
     {
         "id": 44,
-        "chapterId": 3,
-        "question": "Quel est le rôle principal de `Class.forName('driver...')` ?",
+        "question": "Que retourne exactement `Class.forName('com.mysql.cj.jdbc.Driver')` ?",
         "options": [
-            "Créer la connexion à la BD",
-            "Charger le driver JDBC en mémoire",
-            "Exécuter des requêtes SQL",
-            "Trier les résultats"
+            "Une instance du Driver",
+            "Un objet `Class` représentant le driver",
+            "Une connexion",
+            "Rien (void)"
         ],
         "answer": 1,
-        "explanation": "`Class.forName()` charge dynamiquement la classe du driver et déclenche son auto-enregistrement auprès du `DriverManager`."
+        "explanation": "Elle retourne l'objet `Class<?>`. Le driver s'enregistre de lui-même via son bloc statique.",
+        "chapterId": 3
     },
     {
         "id": 45,
-        "chapterId": 3,
-        "question": "Depuis JDBC 4, `Class.forName()` est-il obligatoire ?",
+        "question": "`DriverManager` est :",
         "options": [
-            "Oui, toujours",
-            "Non, le chargement est souvent automatique",
-            "Oui, si on utilise MySQL",
-            "Non, JDBC ne nécessite plus de driver"
+            "Une interface",
+            "Une classe abstraite",
+            "Une classe utilitaire avec méthodes statiques",
+            "Un Singleton"
         ],
-        "answer": 1,
-        "explanation": "Les drivers modernes sont détectés automatiquement via le mécanisme SPI de Java."
+        "answer": 2,
+        "explanation": "On appelle `DriverManager.getConnection()` statiquement. On ne l'instancie pas.",
+        "chapterId": 3
     },
     {
         "id": 46,
-        "chapterId": 3,
-        "question": "Quelle classe gère la liste des drivers et fournit les connexions ?",
+        "question": "La méthode `DriverManager.getConnection()` retourne :",
         "options": [
-            "Connection",
-            "Driver",
-            "DriverManager",
-            "DataSource"
+            "Un objet de la classe `Connection`",
+            "Un objet implémentant l'interface `Connection`",
+            "Un `Socket`",
+            "Un `Statement`"
         ],
-        "answer": 2,
-        "explanation": "`DriverManager` est la classe utilitaire qui sélectionne le bon driver en fonction de l'URL JDBC fournie."
+        "answer": 1,
+        "explanation": "`Connection` est une interface. Le type réel est une classe du driver (ex: `ConnectionImpl` de MySQL).",
+        "chapterId": 3
     },
     {
         "id": 47,
-        "chapterId": 3,
-        "question": "`Connection` en JDBC est :",
+        "question": "Quelle est la faille MAJEURE de l'utilisation de `Statement` avec concaténation de chaînes ?",
         "options": [
-            "Une classe",
-            "Une interface",
-            "Une méthode",
-            "Une exception"
+            "Performance médiocre",
+            "Injection SQL",
+            "Fuite de mémoire",
+            "Impossible de compiler"
         ],
         "answer": 1,
-        "explanation": "`Connection` est une interface définissant le contrat standard. L'implémentation réelle est fournie par le driver (ex: MySQL)."
+        "explanation": "L'attaquant peut manipuler la requête SQL en injectant du code malveillant.",
+        "chapterId": 3
     },
     {
         "id": 48,
-        "chapterId": 3,
-        "question": "Quel est le format typique d'une URL JDBC MySQL ?",
+        "question": "Dans 'SELECT * FROM users WHERE name = ?', le '?' est :",
         "options": [
-            "http://mysql/db",
-            "jdbc:mysql://host:port/db",
-            "sql:jdbc:mysql:db",
-            "mysql:host:db"
+            "Un caractère générique (wildcard)",
+            "Un placeholder (paramètre substituable)",
+            "Une erreur de syntaxe",
+            "Un pointeur"
         ],
         "answer": 1,
-        "explanation": "Le format standard est `jdbc:<sous-protocole>:<détails>`."
+        "explanation": "C'est l'emplacement où `PreparedStatement` insérera la valeur de manière sécurisée.",
+        "chapterId": 3
     },
     {
         "id": 49,
-        "chapterId": 3,
-        "question": "Quelle méthode permet d'obtenir une connexion ?",
+        "question": "`stmt.executeQuery(sql)` retourne :",
         "options": [
-            "new Connection()",
-            "DriverManager.getConnection()",
-            "Statement.connect()",
-            "Class.forName()"
+            "Un `int` (nombre de lignes)",
+            "Un `ResultSet`",
+            "Un `boolean`",
+            "Une `List`"
         ],
         "answer": 1,
-        "explanation": "On ne fait jamais `new Connection()`. C'est `DriverManager` qui fabrique l'objet."
+        "explanation": "Pour un SELECT, on obtient toujours un curseur de résultats (`ResultSet`).",
+        "chapterId": 3
     },
     {
         "id": 50,
-        "chapterId": 3,
-        "question": "Par défaut, le mode Auto-Commit d'une connexion est :",
+        "question": "`stmt.executeUpdate(sql)` retourne :",
         "options": [
-            "Désactivé (false)",
-            "Activé (true)",
-            "Aléatoire",
-            "Réservé à l'admin"
+            "Un `ResultSet`",
+            "Un `boolean`",
+            "Un `int` indiquant le nombre de lignes modifiées",
+            "L'ID généré"
         ],
-        "answer": 1,
-        "explanation": "Par défaut, chaque requête SQL (INSERT/UPDATE...) est validée immédiatement."
+        "answer": 2,
+        "explanation": "Retourne le 'row count' pour INSERT/UPDATE/DELETE.",
+        "chapterId": 3
     },
     {
         "id": 51,
-        "chapterId": 3,
-        "question": "Quand `rollback()` a-t-il un effet ?",
+        "question": "Si `stmt.execute(sql)` retourne `true`, cela signifie :",
         "options": [
-            "Toujours",
-            "Jamais",
-            "Seulement si Auto-Commit est désactivé (false)",
-            "Seulement après un SELECT"
+            "La requête a réussi",
+            "La requête a retourné un `ResultSet` (c'est un SELECT)",
+            "La requête a retourné un compteur de mise à jour",
+            "La connexion est active"
         ],
-        "answer": 2,
-        "explanation": "Si Auto-Commit est true, les transactions sont instantanées. Pour utiliser rollback, il faut gérer la transaction manuellement."
+        "answer": 1,
+        "explanation": "`execute()` est générique. `true` = ResultSet disponible, `false` = Update Count disponible (ou pas de résultat).",
+        "chapterId": 3
     },
     {
         "id": 52,
-        "chapterId": 3,
-        "question": "Quelle interface permet d'envoyer des requêtes SQL basiques ?",
+        "question": "À l'ouverture, le curseur d'un `ResultSet` est positionné :",
         "options": [
-            "ResultSet",
-            "Statement",
-            "Query",
-            "Transaction"
+            "Sur la première ligne",
+            "Avant la première ligne (BeforeFirst)",
+            "Sur la dernière ligne",
+            "Sur la ligne null"
         ],
         "answer": 1,
-        "explanation": "`Statement` est l'interface de base pour l'exécution d'instructions SQL statiques."
+        "explanation": "Il faut impérativement appeler `next()` au moins une fois pour lire la première ligne.",
+        "chapterId": 3
     },
     {
         "id": 53,
-        "chapterId": 3,
-        "question": "Que retourne `stmt.executeUpdate(...)` ?",
+        "question": "Que retourne `rs.next()` ?",
         "options": [
-            "Un ResultSet",
-            "Un boolean",
-            "Un int (nombre de lignes affectées)",
-            "Une Connection"
+            "Le prochain tuple (objet)",
+            "Un `boolean` (true si une ligne existe, false sinon)",
+            "Un `int`",
+            "Rien"
         ],
-        "answer": 2,
-        "explanation": "Il retourne le nombre de lignes insérées, modifiées ou supprimées."
+        "answer": 1,
+        "explanation": "Permet de piloter une boucle `while(rs.next())`.",
+        "chapterId": 3
     },
     {
         "id": 54,
-        "chapterId": 3,
-        "question": "Que retourne `stmt.executeQuery(...)` ?",
-        "options": [
-            "Un ResultSet",
-            "Un int",
-            "Un boolean",
-            "Un tableau"
-        ],
-        "answer": 0,
-        "explanation": "Il est utilisé pour les SELECT et retourne toujours un objet `ResultSet`."
-    },
-    {
-        "id": 55,
-        "chapterId": 3,
-        "question": "La méthode `execute(sql)` peut exécuter :",
-        "options": [
-            "Seulement des SELECT",
-            "Seulement des UPDATE",
-            "N'importe quel type de requête SQL",
-            "Rien, elle n'existe pas"
-        ],
-        "answer": 2,
-        "explanation": "`execute()` est générique. Elle retourne `true` si le résultat est un ResultSet, `false` sinon."
-    },
-    {
-        "id": 56,
-        "chapterId": 3,
-        "question": "Pourquoi faut-il appeler `rs.next()` avant de lire des données ?",
-        "options": [
-            "Pour trier les données",
-            "Car le curseur est initialement placé AVANT la première ligne",
-            "C'est optionnel",
-            "Pour se connecter à la base"
-        ],
-        "answer": 1,
-        "explanation": "Le curseur démarre 'beforeFirst'. Le premier appel à `next()` le place sur la première ligne réelle."
-    },
-    {
-        "id": 57,
-        "chapterId": 3,
-        "question": "En JDBC, les index des colonnes commencent généralement à :",
+        "question": "Pour lire la première colonne d'un ResultSet, on utilise l'index :",
         "options": [
             "0",
             "1",
             "-1",
-            "Cela dépend du driver"
+            "2"
         ],
         "answer": 1,
-        "explanation": "Dans l'API JDBC standard, les index de colonnes sont 1-based (commencent à 1)."
+        "explanation": "En JDBC, contrairement aux tableaux Java, les indices de colonnes commencent à 1.",
+        "chapterId": 3
+    },
+    {
+        "id": 55,
+        "question": "Si on oublie de fermer une `Connection` :",
+        "options": [
+            "Le Garbage Collector le fera immédiatement",
+            "On risque une fuite de ressources et un blocage du pool de connexions",
+            "Ce n'est pas grave",
+            "Le programme plante à la sortie"
+        ],
+        "answer": 1,
+        "explanation": "Les ressources externes (sockets DB) ne sont pas gérées automatiquement et rapidement par le GC.",
+        "chapterId": 3
+    },
+    {
+        "id": 56,
+        "question": "Par défaut, `autoCommit` est à :",
+        "options": [
+            "`true` (chaque instruction est validée immédiatement)",
+            "`false` (il faut commit manuellement)",
+            "`null`",
+            "Dépend du driver"
+        ],
+        "answer": 0,
+        "explanation": "C'est le mode par défaut dangereux pour les transactions complexes.",
+        "chapterId": 3
+    },
+    {
+        "id": 57,
+        "question": "Appeler `rollback()` sur une connexion en `autoCommit(true)` :",
+        "options": [
+            "Annule la dernière requête",
+            "Lance une `SQLException`",
+            "Ne fait rien",
+            "Ferme la connexion"
+        ],
+        "answer": 1,
+        "explanation": "On ne peut pas rollback une transaction qui n'existe pas (car déjà committée ligne par ligne).",
+        "chapterId": 3
     },
     {
         "id": 58,
-        "chapterId": 3,
-        "question": "Quel est le risque principal de `Statement` classique ?",
+        "question": "Quel est le but PRINCIPAL d'un DAO ?",
         "options": [
-            "Il est trop rapide",
-            "L'injection SQL",
-            "Il ne supporte pas les SELECT",
-            "Il utilise trop de mémoire"
+            "Afficher les données",
+            "Encapsuler la logique d'accès aux données (CRUD) et masquer le SQL",
+            "Optimiser la base",
+            "Gérer les sessions HTTP"
         ],
         "answer": 1,
-        "explanation": "En concaténant des chaînes pour créer la requête, on est vulnérable aux injections SQL."
+        "explanation": "Séparation des préoccupations (Separation of Concerns). Le métier ne doit pas voir le SQL.",
+        "chapterId": 3
     },
     {
         "id": 59,
-        "chapterId": 3,
-        "question": "Quelle est la version sécurisée et précompilée de `Statement` ?",
+        "question": "Quelle exception DOIT être gérée (catch/throws) avec JDBC ?",
         "options": [
-            "SecureStatement",
-            "PreparedStatement",
-            "CompiledQuery",
-            "FocusStatement"
+            "`RuntimeException`",
+            "`SQLException` (Checked)",
+            "`DbException`",
+            "`IOException`"
         ],
         "answer": 1,
-        "explanation": "`PreparedStatement` permet de séparer le code SQL des données (paramètres), empêchant l'injection."
+        "explanation": "JDBC force la gestion des erreurs SQL via une Checked Exception.",
+        "chapterId": 3
     },
     {
         "id": 60,
-        "chapterId": 3,
-        "question": "Dans `PreparedStatement`, par quoi sont remplacés les paramètres ?",
+        "question": "Dans `SearchVM`, si `minPrice` est `null`, la requête générée doit :",
         "options": [
-            "Des %",
-            "Des $",
-            "Des points d'interrogation (?)",
-            "Des étoiles (*)"
+            "Inclure `WHERE price = NULL`",
+            "Ignorer ce critère (pas de clause pour price)",
+            "Chercher `price = 0`",
+            "Planter"
         ],
-        "answer": 2,
-        "explanation": "Les placeholders sont des `?`. Exemple : `SELECT * FROM users WHERE id = ?`."
+        "answer": 1,
+        "explanation": "Un filtre null signifie 'aucune restriction sur ce champ'.",
+        "chapterId": 3
     },
     {
         "id": 61,
-        "chapterId": 3,
-        "question": "Que signifie DAO ?",
+        "question": "Pourquoi utiliser `PreparedStatement` est-il plus performant ?",
         "options": [
-            "Data Access Object",
-            "Direct Access Output",
-            "Driver Auto Open",
-            "Database Abstract Organization"
+            "Il ne l'est pas",
+            "La base peut pré-compiler le plan d'exécution de la requête (Statement Caching)",
+            "Il utilise moins de RAM coté Java",
+            "Il n'utilise pas le réseau"
         ],
-        "answer": 0,
-        "explanation": "DAO est un motif de conception (pattern) encapsulant l'accès aux données."
+        "answer": 1,
+        "explanation": "La structure SQL étant fixe, le SGBD optimise son analyse.",
+        "chapterId": 3
     },
     {
         "id": 62,
-        "chapterId": 3,
-        "question": "Quelle méthode permet d'obtenir les métadonnées (noms des colonnes...) ?",
+        "question": "`java.sql.Date` hérite de :",
         "options": [
-            "rs.getMetaData()",
-            "con.getInfo()",
-            "stmt.getDetails()",
-            "System.getMeta()"
+            "`java.util.Date`",
+            "`java.lang.Object`",
+            "`java.time.LocalDate`",
+            "`java.sql.Timestamp`"
         ],
         "answer": 0,
-        "explanation": "`ResultSetMetaData` s'obtient via `rs.getMetaData()` et décrit la structure des résultats."
+        "explanation": "C'est un héritage historique maladroit. Il supprime la partie heure/minute/seconde logiquement.",
+        "chapterId": 3
     },
     {
         "id": 63,
-        "chapterId": 3,
-        "question": "Quelle classe Java correspond au type SQL `DATE` ?",
+        "question": "Pour obtenir le nombre de colonnes d'un résultat, on utilise :",
         "options": [
-            "java.util.Date",
-            "java.sql.Date",
-            "java.time.Instant",
-            "String"
+            "`rs.size()`",
+            "`rs.getColumnCount()`",
+            "`rs.getMetaData().getColumnCount()`",
+            "`rs.width()`"
         ],
-        "answer": 1,
-        "explanation": "`java.sql.Date` est le wrapper JDBC standard pour les dates (sans partie heure)."
+        "answer": 2,
+        "explanation": "Ces informations structurelles sont dans les Métadonnées.",
+        "chapterId": 3
     },
     {
         "id": 64,
-        "chapterId": 3,
-        "question": "Pourquoi utiliser `Integer` au lieu de `int` dans une classe entité ?",
+        "question": "Pourquoi mapper les champs INT SQL en `Integer` Java dans les entités ?",
         "options": [
-            "C'est plus rapide",
-            "Pour autoriser la valeur `null`",
-            "C'est obligatoire en Java",
-            "Pour faire des calculs"
+            "C'est la norme",
+            "Pour pouvoir représenter la valeur SQL `NULL`",
+            "Pour gagner de la place",
+            "C'est obligatoire pour Hibernate"
         ],
         "answer": 1,
-        "explanation": "Les types primitifs (`int`) ne peuvent pas être null. Les bases de données acceptant NULL, les wrappers (`Integer`) sont préférables."
+        "explanation": "Le type primitif `int` ne peut pas valoir null, or `NULL` est fréquent en BD.",
+        "chapterId": 3
     },
     {
         "id": 65,
-        "chapterId": 3,
-        "question": "Si `executeUpdate` retourne 0, cela signifie :",
+        "question": "L'URL JDBC commence toujours par :",
         "options": [
-            "Une erreur SQL",
-            "Aucune ligne n'a été affectée",
-            "La base est vide",
-            "La requête est invalide"
+            "`http:`",
+            "`jdbc:`",
+            "`sql:`",
+            "`db:`"
         ],
         "answer": 1,
-        "explanation": "Cela signifie que la requête a réussi techniquement, mais qu'elle n'a modifié aucune ligne (ex: UPDATE avec WHERE introuvable)."
+        "explanation": "Protocole `jdbc`, suivi du sous-protocole (ex: `mysql`).",
+        "chapterId": 3
     },
     {
         "id": 66,
-        "chapterId": 3,
-        "question": "Que doit-on faire absolument après avoir utilisé une Connection ?",
+        "question": "Quelle méthode permet de définir un paramètre entier à l'index 1 ?",
         "options": [
-            "La laisser ouverte pour gagner du temps",
-            "La fermer (`close()`)",
-            "La supprimer",
-            "Redémarrer le serveur"
+            "`setInt(0, val)`",
+            "`setInt(1, val)`",
+            "`putInt(1, val)`",
+            "`bindParam(1, val)`"
         ],
         "answer": 1,
-        "explanation": "Les connexions sont des ressources limitées et coûteuses. Il faut les libérer pour éviter les fuites."
+        "explanation": "`setInt(index, value)`. Rappel : index 1-based.",
+        "chapterId": 3
     },
     {
         "id": 67,
-        "chapterId": 3,
-        "question": "Dans le pattern DAO, que contient la classe DAO ?",
+        "question": "Quand peut-on appeler `rs.getString()` ?",
         "options": [
-            "L'interface graphique",
-            "Les requêtes SQL et la gestion de connexion",
-            "Les règles CSS",
-            "Le code HTML"
+            "Tout de suite après `executeQuery`",
+            "Seulement après un `rs.next()` qui retourne `true`",
+            "Après `rs.close()`",
+            "N'importe quand"
         ],
         "answer": 1,
-        "explanation": "Le DAO isole la couche persistance. L'UI ne doit pas contenir de SQL."
+        "explanation": "Si le curseur n'est pas sur une ligne valide, l'appel échoue.",
+        "chapterId": 3
     },
     {
         "id": 68,
-        "chapterId": 3,
-        "question": "Quelle méthode permet de passer un entier à un PreparedStatement ?",
+        "question": "Quel est le type de curseur par défaut d'un `ResultSet` ?",
         "options": [
-            "setId()",
-            "putInt()",
-            "setInt(index, valeur)",
-            "addParam()"
+            "`TYPE_FORWARD_ONLY` (on ne peut qu'avancer)",
+            "`TYPE_SCROLL_INSENSITIVE` (on peut reculer)",
+            "`TYPE_SCROLL_SENSITIVE`",
+            "`CONCUR_UPDATABLE`"
         ],
-        "answer": 2,
-        "explanation": "On utilise les setters typés comme `setInt`, `setString`, etc. en précisant l'index du `?`."
+        "answer": 0,
+        "explanation": "Optimisé pour la lecture séquentielle rapide.",
+        "chapterId": 3
     },
     {
         "id": 69,
-        "chapterId": 3,
-        "question": "Comment vérifier si un ResultSet contient encore des lignes ?",
+        "question": "`Class.forName()` est-il obligatoire en JDBC 4.0+ (Java 6+) ?",
         "options": [
-            "rs.hasNext()",
-            "rs.next() retourne true",
-            "rs.isEmpty()",
-            "rs.check()"
+            "Oui",
+            "Non, le chargement est automatique via SPI si le JAR est présent",
+            "Seulement pour Oracle",
+            "Non, JDBC est déprécié"
         ],
         "answer": 1,
-        "explanation": "La méthode `next()` déplace le curseur et indique (boolean) s'il y a une ligne valide à lire."
+        "explanation": "`DriverManager` détecte les implementations de `Driver` dans le classpath.",
+        "chapterId": 3
     },
     {
         "id": 70,
-        "chapterId": 3,
-        "question": "Dans le modèle SearchVM (ViewModel), si un champ est null :",
+        "question": "La méthode `executeBatch()` :",
         "options": [
-            "On plante le programme",
-            "On cherche les valeurs NULL en base",
-            "On ignore ce critère de recherche",
-            "On cherche une chaine vide"
+            "Exécute une seule commande",
+            "Exécute un lot de commandes groupées pour la performance",
+            "Annule la transaction",
+            "Ferme la connexion"
         ],
-        "answer": 2,
-        "explanation": "C'est une convention courante : un champ null dans un filtre de recherche signifie 'peu importe cette valeur'."
+        "answer": 1,
+        "explanation": "Permet d'envoyer plusieurs INSERT/UPDATE en un seul aller-retour réseau.",
+        "chapterId": 3
     },
     {
         "id": 71,
-        "chapterId": 3,
-        "question": "`ResultSet` permet-il de revenir en arrière par défaut ?",
+        "question": "Pour gérer l'ID auto-incrémenté lors d'un `INSERT` :",
         "options": [
-            "Oui, avec previous()",
-            "Non, c'est un curseur forward-only par défaut",
-            "Oui, toujours",
-            "Oui, avec back()"
+            "On le passe dans la requête",
+            "On utilise `Statement.RETURN_GENERATED_KEYS`",
+            "On fait un SELECT MAX(id) avant",
+            "On ne peut pas le récupérer"
         ],
         "answer": 1,
-        "explanation": "Par défaut, le ResultSet est TYPE_FORWARD_ONLY."
+        "explanation": "`conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)` permet de récupérer l'ID créé.",
+        "chapterId": 3
     },
     {
         "id": 72,
-        "chapterId": 3,
-        "question": "Quel objet contient les données d'une ligne de la table 'Car' ?",
+        "question": "Une transaction assure les propriétés ACID. Que signifie le 'A' ?",
         "options": [
-            "L'objet Car (Entité)",
-            "L'objet Connection",
-            "L'objet Driver",
-            "L'objet String"
+            "Asynchronous",
+            "Atomic (Tout ou rien)",
+            "Automatic",
+            "Available"
         ],
-        "answer": 0,
-        "explanation": "L'entité (Entity) est une classe Java simple (POJO) qui mappe la structure de la table."
+        "answer": 1,
+        "explanation": "Atomicité : la transaction s'exécute entièrement ou pas du tout.",
+        "chapterId": 3
     },
     {
         "id": 73,
-        "chapterId": 3,
-        "question": "Quelle exception principale les méthodes JDBC lèvent-elles ?",
+        "question": "Si `rs.next()` retourne `false`, que se passe-t-il si appelle `rs.getString(1)` ?",
         "options": [
-            "IOException",
-            "SQLException",
-            "DatabaseException",
-            "NullPointerException"
+            "Ça retourne null",
+            "Ça retourne la dernière valeur",
+            "Une `SQLException` est levée",
+            "Ça retourne vide"
         ],
-        "answer": 1,
-        "explanation": "La quasi-totalité des opérations JDBC déclarent lancer `SQLException` (checked exception)."
-    },
-    {
-        "id": 74,
-        "chapterId": 3,
-        "question": "Peut-on avoir plusieurs `Statement` ouverts sur une même `Connection` ?",
-        "options": [
-            "Non, un seul à la fois",
-            "Oui, c'est possible",
-            "Oui, mais seulement en lecture",
-            "Non, risque de crash"
-        ],
-        "answer": 1,
-        "explanation": "Une connexion peut fabriquer plusieurs Statements distincts."
-    },
-    {
-        "id": 75,
-        "chapterId": 3,
-        "question": "Quelle méthode permet de convertir une date SQL en LocalDate ?",
-        "options": [
-            "toLocalDate()",
-            "getDate()",
-            "parse()",
-            "convert()"
-        ],
-        "answer": 0,
-        "explanation": "Depuis Java 8, `java.sql.Date` possède la méthode de commodité `toLocalDate()`."
-    },
-    {
-        "id": 76,
-        "chapterId": 3,
-        "question": "Dans le code `Class.forName('xyz')`, quel est le but du bloc `static` du driver ?",
-        "options": [
-            "Afficher un message",
-            "S'enregistrer auprès du DriverManager",
-            "Ouvrir la connexion",
-            "Créer la table"
-        ],
-        "answer": 1,
-        "explanation": "Le bloc statique du Driver contient l'appel à `DriverManager.registerDriver(new Driver())`."
-    },
-    {
-        "id": 77,
-        "chapterId": 3,
-        "question": "Si j'utilise `statement.executeQuery` pour un INSERT, que se passe-t-il ?",
-        "options": [
-            "Cela fonctionne normalement",
-            "Une SQLException est levée",
-            "Rien ne se passe",
-            "La base est supprimée"
-        ],
-        "answer": 1,
-        "explanation": "L'API JDBC lève souvent une exception si on utilise la mauvaise méthode (bien que certains drivers soient permissifs, la spec dit que executeQuery doit retourner un ResultSet)."
-    },
-    {
-        "id": 78,
-        "chapterId": 3,
-        "question": "SOLID : Quel principe le DAO respecte-t-il particulièrement ?",
-        "options": [
-            "Single Responsibility Principle (SRP)",
-            "Liskov Substitution",
-            "Interface Segregation",
-            "None"
-        ],
-        "answer": 0,
-        "explanation": "Le DAO isole la responsabilité de l'accès aux données, laissant la logique métier aux autres classes."
-    },
-    {
-        "id": 79,
-        "chapterId": 3,
-        "question": "Mapping : Une table 'cars' et une table 'engines' liée. L'entité `Car` aura :",
-        "options": [
-            "Un champ `int engine_id`",
-            "Un champ `Engine engine` (objet)",
-            "Rien",
-            "Une méthode SQL"
-        ],
-        "answer": 1,
-        "explanation": "En POO, on préfère mapper les relations par des références d'objets (composition) plutôt que par des ID étrangers bruts."
-    },
-    {
-        "id": 80,
-        "chapterId": 3,
-        "question": "Quel est l'avantage de `PreparedStatement` pour la maintenance ?",
-        "options": [
-            "Le code est plus court",
-            "Il sépare la structure de la requête des données variables, améliorant la lisibilité",
-            "Il supprime le besoin de connexion",
-            "Il génère du HTML"
-        ],
-        "answer": 1,
-        "explanation": "C'est plus propre que la concaténation de chaînes de caractères."
-    },
-    {
-        "id": 81,
-        "chapterId": 3,
-        "question": "Comment savoir combien de colonnes contient un ResultSet ?",
-        "options": [
-            "rs.size()",
-            "rs.getMetaData().getColumnCount()",
-            "rs.length",
-            "rs.count()"
-        ],
-        "answer": 1,
-        "explanation": "Il faut passer par les métadonnées."
-    },
-    {
-        "id": 82,
-        "chapterId": 3,
-        "question": "Que fait `Statement.execute()` si le résultat est un update count ?",
-        "options": [
-            "Elle retourne true",
-            "Elle retourne false",
-            "Elle retourne l'entier",
-            "Elle plante"
-        ],
-        "answer": 1,
-        "explanation": "Elle retourne `false` si le résultat n'est PAS un ResultSet."
-    },
-    {
-        "id": 83,
-        "chapterId": 3,
-        "question": "Quelle est la bonne pratique pour gérer les exceptions JDBC ?",
-        "options": [
-            "Les ignorer (catch vide)",
-            "Utiliser try-with-resources pour fermer automatiquement",
-            "Ne pas utiliser de try-catch",
-            "Relancer en RuntimeException sans logger"
-        ],
-        "answer": 1,
-        "explanation": "`try(Connection c = ...) { ... }` garantit la fermeture propre des ressources même en cas d'erreur."
+        "answer": 2,
+        "explanation": "Le curseur est 'AfterLast', plus aucune donnée n'est accessible.",
+        "chapterId": 3
     },
     {
         "id": 84,
@@ -1299,524 +1169,34 @@
         "explanation": "La JVM s'arrête s'il ne reste que des Daemons.",
         "chapterId": 2
     },
-    {
-        "id": 124,
-        "chapterId": 4,
-        "question": "Combien de couches comporte le modèle utilisé dans ce cours (TCP/IP simplifié) ?",
-        "options": [
-            "7 couches (OSI)",
-            "4 couches (Application, Transport, Internet, Hôte-Réseau)",
-            "5 couches",
-            "3 couches"
-        ],
-        "answer": 1,
-        "explanation": "Le modèle TCP/IP simplifié présenté comporte 4 couches : Application, Transport, Internet, Hôte-Réseau."
-    },
-    {
-        "id": 125,
-        "chapterId": 4,
-        "question": "Quelle est la différence fondamentale entre TCP et UDP concernant la connexion ?",
-        "options": [
-            "TCP est non connecté, UDP est connecté",
-            "TCP est orienté connexion (Handshake), UDP est non connecté",
-            "Les deux sont connectés",
-            "Aucun n'est connecté"
-        ],
-        "answer": 1,
-        "explanation": "TCP nécessite l'établissement d'une connexion (Handshake) avant d'envoyer des données, contrairement à UDP."
-    },
-    {
-        "id": 126,
-        "chapterId": 4,
-        "question": "Sur combien de bits est codé un numéro de port ?",
-        "options": [
-            "8 bits",
-            "16 bits",
-            "32 bits",
-            "64 bits"
-        ],
-        "answer": 1,
-        "explanation": "Un port est un entier non signé de 16 bits, allant de 0 à 65535."
-    },
-    {
-        "id": 127,
-        "chapterId": 4,
-        "question": "Comment appelle-t-on l'association unique {Adresse IP + Port} ?",
-        "options": [
-            "Un Packet",
-            "Une Socket",
-            "Un Thread",
-            "Un Stream"
-        ],
-        "answer": 1,
-        "explanation": "Une socket est définie par ce couple qui permet d'identifier un processus spécifique sur une machine spécifique."
-    },
-    {
-        "id": 128,
-        "chapterId": 4,
-        "question": "Peut-on instancier `InetAddress` via `new InetAddress()` ?",
-        "options": [
-            "Oui, c'est la méthode standard",
-            "Non, elle n'a pas de constructeur public",
-            "Oui, mais c'est déprécié",
-            "Seulement pour IPv6"
-        ],
-        "answer": 1,
-        "explanation": "`InetAddress` utilise des méthodes de fabrique statiques (Factory Methods) comme `getLocalHost` ou `getByName`."
-    },
-    {
-        "id": 129,
-        "chapterId": 4,
-        "question": "Quelle méthode permet d'obtenir l'adresse IP d'un nom de domaine (ex: www.google.com) ?",
-        "options": [
-            "InetAddress.create()",
-            "InetAddress.getByName()",
-            "DNS.resolve()",
-            "Server.find()"
-        ],
-        "answer": 1,
-        "explanation": "`InetAddress.getByName(\"...\")` effectue la résolution DNS pour retourner l'objet adresse correspondant."
-    },
-    {
-        "id": 130,
-        "chapterId": 4,
-        "question": "Quelle exception est levée si `InetAddress.getByName` ne trouve pas l'hôte ?",
-        "options": [
-            "IOException",
-            "SocketException",
-            "UnknownHostException",
-            "NullPointerException"
-        ],
-        "answer": 2,
-        "explanation": "Si le DNS ne parvient pas à résoudre le nom, une `UnknownHostException` est levée."
-    },
-    {
-        "id": 131,
-        "chapterId": 4,
-        "question": "Quel objet Java sert à ATTENDRE les connexions des clients (côté serveur) ?",
-        "options": [
-            "Socket",
-            "ServerSocket",
-            "ClientSocket",
-            "ConnectionFactory"
-        ],
-        "answer": 1,
-        "explanation": "`ServerSocket` est la classe dédiée à l'écoute d'un port et à l'acceptation des connexions entrantes."
-    },
-    {
-        "id": 132,
-        "chapterId": 4,
-        "question": "Par défaut, quelle est la taille de la file d'attente (backlog) d'un `ServerSocket` ?",
-        "options": [
-            "10",
-            "50",
-            "100",
-            "Illimitée"
-        ],
-        "answer": 1,
-        "explanation": "Si on ne spécifie pas le second argument du constructeur, la file des connexions en attente est limitée à 50 par défaut."
-    },
-    {
-        "id": 133,
-        "chapterId": 4,
-        "question": "La méthode `accept()` de `ServerSocket` est-elle bloquante ?",
-        "options": [
-            "Non, elle retourne null immédiatement si personne n'est là",
-            "Oui, elle bloque jusqu'à ce qu'un client se connecte (ou timeout)",
-            "Oui, mais maximum 1 seconde",
-            "Non, elle lance un thread"
-        ],
-        "answer": 1,
-        "explanation": "`accept()` met le thread en pause jusqu'à l'arrivée d'une connexion. C'est un appel bloquant."
-    },
-    {
-        "id": 134,
-        "chapterId": 4,
-        "question": "Que retourne la méthode `ServerSocket.accept()` ?",
-        "options": [
-            "Un boolean",
-            "Une adresse IP",
-            "Un objet `Socket` permettant de communiquer avec le client",
-            "Un entier"
-        ],
-        "answer": 2,
-        "explanation": "Elle retourne une `Socket` de service dédiée à la communication avec le client qui vient d'arriver."
-    },
-    {
-        "id": 135,
-        "chapterId": 4,
-        "question": "Quelle exception survient si `new Socket(host, port)` n'arrive pas à se connecter ?",
-        "options": [
-            "NoRouteToHostException",
-            "ConnectException",
-            "BindException",
-            "InterruptException"
-        ],
-        "answer": 1,
-        "explanation": "`ConnectException` indique que le serveur est éteint ou inaccessible sur ce port (Connection refused)."
-    },
-    {
-        "id": 136,
-        "chapterId": 4,
-        "question": "Pour envoyer des objets Java sur le réseau, quelle classe utilise-t-on ?",
-        "options": [
-            "DataOutputStream",
-            "ObjectOutputStream",
-            "BufferedOutputStream",
-            "PrintStream"
-        ],
-        "answer": 1,
-        "explanation": "`ObjectOutputStream` permet de sérialiser des objets Java dans le flux."
-    },
-    {
-        "id": 137,
-        "chapterId": 4,
-        "question": "Quelle interface doit implémenter une classe pour être envoyée via `ObjectOutputStream` ?",
-        "options": [
-            "Cloneable",
-            "Runnable",
-            "Serializable",
-            "Remote"
-        ],
-        "answer": 2,
-        "explanation": "L'interface marqueur `java.io.Serializable` est obligatoire pour la sérialisation."
-    },
-    {
-        "id": 138,
-        "chapterId": 4,
-        "question": "Si j'utilise `BufferedWriter` sans faire `flush()`, que se passe-t-il ?",
-        "options": [
-            "Les données sont envoyées instantanément",
-            "Les données restent dans le tampon et ne partent pas sur le réseau",
-            "Une exception est levée",
-            "Le socket se ferme"
-        ],
-        "answer": 1,
-        "explanation": "Les flux bufférisés gardent les données en mémoire pour optimiser. `flush()` force l'envoi physique."
-    },
-    {
-        "id": 139,
-        "chapterId": 4,
-        "question": "Lors d'une communication Java <-> C, peut-on utiliser la sérialisation Java ?",
-        "options": [
-            "Oui, le C comprend le Java",
-            "Non, il faut échanger des octets bruts (Bytes) ou du texte standard",
-            "Oui avec un plugin",
-            "Oui si la classe est Serializable en C"
-        ],
-        "answer": 1,
-        "explanation": "La sérialisation Java est un format binaire spécifique à la JVM. Le C ne sait pas le lire nativement."
-    },
-    {
-        "id": 140,
-        "chapterId": 4,
-        "question": "En TCP (flux continu), comment délimiter la fin d'un message textuel ?",
-        "options": [
-            "C'est automatique",
-            "On utilise un caractère de fin (ex: fin de ligne ou $%) ou un entête de taille",
-            "On ferme la socket après chaque mot",
-            "On attend 1 seconde"
-        ],
-        "answer": 1,
-        "explanation": "Comme c'est un flux (tuyau), il n'y a pas de notion de 'paquet' visible. Il faut définir un protocole de délimitation."
-    },
-    {
-        "id": 141,
-        "chapterId": 4,
-        "question": "Dans le modèle 'Serveur Multi-Threads à la demande', que fait-on à chaque connexion ?",
-        "options": [
-            "On traite la requête dans le thread principal",
-            "On crée un nouveau Thread dédié au client",
-            "On refuse le client",
-            "On met le client en attente"
-        ],
-        "answer": 1,
-        "explanation": "Chaque `accept()` est suivi d'un `new ThreadClient(socket).start()`."
-    },
-    {
-        "id": 142,
-        "chapterId": 4,
-        "question": "Quel est le risque principal du modèle 'Thread à la demande' ?",
-        "options": [
-            "C'est lent",
-            "Saturation mémoire (DoS) si trop de clients arrivent simultanément",
-            "C'est trop complexe",
-            "Les données se mélangent"
-        ],
-        "answer": 1,
-        "explanation": "Créer un thread par client consomme des ressources. Une attaque massive peut faire crasher le serveur."
-    },
-    {
-        "id": 143,
-        "chapterId": 4,
-        "question": "Dans le modèle 'Pool de Threads', que fait le ThreadServeur ?",
-        "options": [
-            "Il traite les clients",
-            "Il crée des threads",
-            "Il récupère la socket et la dépose dans une File d'Attente",
-            "Il ne fait rien"
-        ],
-        "answer": 2,
-        "explanation": "Le ThreadServeur ne fait que `accept()` et `queue.add(socket)`. Ce sont les threads du pool qui consomment la file."
-    },
-    {
-        "id": 144,
-        "chapterId": 4,
-        "question": "Que se passe-t-il si un Thread du pool veut prendre une connexion mais que la file est vide ?",
-        "options": [
-            "Il s'arrête",
-            "Il se met en attente (wait) jusqu'à ce qu'une connexion arrive",
-            "Il lance une exception",
-            "Il crée une fausse connexion"
-        ],
-        "answer": 1,
-        "explanation": "C'est le principe Producteur/Consommateur bloquant. `getConnexion()` utilise `wait()`."
-    },
-    {
-        "id": 145,
-        "chapterId": 4,
-        "question": "Pourquoi utiliser `notify()` (et pas `notifyAll`) dans le pool de threads ?",
-        "options": [
-            "C'est obligatoire",
-            "Car une seule socket ne peut être traitée que par UN seul thread",
-            "Car `notifyAll` est déprécié",
-            "Pour économiser de la batterie"
-        ],
-        "answer": 1,
-        "explanation": "Lorsqu'on ajoute UNE socket, inutile de réveiller tous les threads, un seul pourra la prendre."
-    },
-    {
-        "id": 146,
-        "chapterId": 4,
-        "question": "Que se passe-t-il si on fait `socket.accept()` dans le thread de l'interface graphique (EDT) ?",
-        "options": [
-            "Tout fonctionne bien",
-            "L'interface graphique gèle (freeze) jusqu'à la connexion d'un client",
-            "Une exception swing est lancée",
-            "La fenêtre change de couleur"
-        ],
-        "answer": 1,
-        "explanation": "L'appel étant bloquant, l'EDT ne peut plus redessiner la fenêtre ni gérer les clics."
-    },
-    {
-        "id": 147,
-        "chapterId": 4,
-        "question": "Comment le Serveur doit-il communiquer avec l'interface graphique Swing ?",
-        "options": [
-            "En modifiant directement les composants JTable/JLabel",
-            "Via une interface Logger (ou callback) utilisant `invokeLater`",
-            "Par télépathie",
-            "En écrivant dans un fichier texte"
-        ],
-        "answer": 1,
-        "explanation": "Le serveur ne doit pas toucher au GUI directement. Il passe par une abstraction (Logger) qui redirige vers l'EDT."
-    },
-    {
-        "id": 148,
-        "chapterId": 4,
-        "question": "À quoi sert la classe `DataInputStream` ?",
-        "options": [
-            "À lire des objets",
-            "À lire des types primitifs (int, double, boolean) de manière portable",
-            "À lire des fichiers MP3",
-            "À lire des images"
-        ],
-        "answer": 1,
-        "explanation": "Elle permet de lire des données binaires (comme `readInt`) encodées de manière indépendante de la plateforme."
-    },
-    {
-        "id": 149,
-        "chapterId": 4,
-        "question": "Si j'écris `writeInt(42)`, que dois-je appeler en face ?",
-        "options": [
-            "readDouble()",
-            "readByte()",
-            "readInt()",
-            "readString()"
-        ],
-        "answer": 2,
-        "explanation": "L'ordre et le type de lecture doivent correspondre exactement à l'écriture."
-    },
-    {
-        "id": 150,
-        "chapterId": 4,
-        "question": "Quelle méthode active le timeout sur une Socket ?",
-        "options": [
-            "setTimeout()",
-            "setSoTimeout()",
-            "waitTimeout()",
-            "limitTime()"
-        ],
-        "answer": 1,
-        "explanation": "`setSoTimeout(int ms)` définit le temps max d'attente pour `read()` ou `accept()`."
-    },
-    {
-        "id": 151,
-        "chapterId": 4,
-        "question": "Quel port est généralement associé au protocole HTTP ?",
-        "options": [
-            "21",
-            "25",
-            "80",
-            "443"
-        ],
-        "answer": 2,
-        "explanation": "Le port standard pour le web non sécurisé est 80. (443 pour HTTPS)."
-    },
-    {
-        "id": 152,
-        "chapterId": 4,
-        "question": "Un thread démon (Daemon) empêche-t-il la JVM de s'arrêter ?",
-        "options": [
-            "Oui",
-            "Non, la JVM s'arrête s'il ne reste que des Daemons",
-            "Cela dépend de sa priorité",
-            "Oui s'il est en boucle infinie"
-        ],
-        "answer": 1,
-        "explanation": "Les threads démons sont des threads de service qui sont tués automatiquement à la fin des threads utilisateurs."
-    },
-    {
-        "id": 153,
-        "chapterId": 4,
-        "question": "Dans l'architecture proposée, à quoi sert l'interface `Protocole` ?",
-        "options": [
-            "À définir TCP ou UDP",
-            "À isoler la logique métier (traiteRequete) du code réseau",
-            "À crypter les données",
-            "À connecter la base de données"
-        ],
-        "answer": 1,
-        "explanation": "Elle permet de changer le comportement du serveur (ex: Chat, Calcul, Login) sans toucher au code du serveur lui-même."
-    },
-    {
-        "id": 154,
-        "chapterId": 4,
-        "question": "Qu'est-ce que `InetAddress.getLocalHost()` retourne ?",
-        "options": [
-            "L'adresse 127.0.0.1 (localhost)",
-            "L'adresse IP réelle de la machine sur le réseau (avec son nom d'hôte)",
-            "L'adresse du serveur Google",
-            "Null"
-        ],
-        "answer": 1,
-        "explanation": "Elle interroge le système pour obtenir l'IP de la carte réseau principale."
-    },
-    {
-        "id": 155,
-        "chapterId": 4,
-        "question": "Pourquoi mettre `ObjectOutputStream` avant `ObjectInputStream` à la création ?",
-        "options": [
-            "Pour éviter un blocage (deadlock) lors de l'envoi de l'en-tête de sérialisation",
-            "C'est une convention esthétique",
-            "Cela n'a aucune importance",
-            "Pour aller plus vite"
-        ],
-        "answer": 0,
-        "explanation": "`new ObjectOutputStream` écrit un header immédiatement. Si les deux côtés font `new ObjectInputStream` en premier, ils attendent tous les deux un header qui n'arrive jamais."
-    },
-    {
-        "id": 156,
-        "chapterId": 4,
-        "question": "Quelle classe permet de lire des lignes de texte entières ?",
-        "options": [
-            "FileReader",
-            "BufferedReader",
-            "LineReader",
-            "TextInputStream"
-        ],
-        "answer": 1,
-        "explanation": "`BufferedReader` possède la méthode `readLine()` très pratique pour le texte."
-    },
-    {
-        "id": 157,
-        "chapterId": 4,
-        "question": "Dans le modèle OSI, quelle couche manque dans le modèle 4 couches ?",
-        "options": [
-            "Application",
-            "Transport",
-            "Présentation (et Session)",
-            "Réseau"
-        ],
-        "answer": 2,
-        "explanation": "Le modèle TCP/IP regroupe Session, Présentation et Application en une seule couche 'Application'."
-    },
-    {
-        "id": 158,
-        "chapterId": 4,
-        "question": "Quand on sérialise un objet, ses champs `transient` sont-ils envoyés ?",
-        "options": [
-            "Oui",
-            "Non, ils sont ignorés",
-            "Seulement s'ils sont publics",
-            "Oui mais chiffrés"
-        ],
-        "answer": 1,
-        "explanation": "Le mot-clé `transient` sert justement à exclure un champ de la sérialisation."
-    },
-    {
-        "id": 159,
-        "chapterId": 4,
-        "question": "La méthode `getAddress()` de `InetAddress` retourne des octets. Quelle est leur particularité en Java ?",
-        "options": [
-            "Ils sont non signés (0..255)",
-            "Ils sont signés (-128..127)",
-            "Ce sont des int",
-            "Ce sont des char"
-        ],
-        "answer": 1,
-        "explanation": "En Java, le type `byte` est signé. Il faut faire attention lors de l'affichage (souvent `b & 0xFF` pour retrouver 0-255)."
-    },
-    {
-        "id": 160,
-        "chapterId": 4,
-        "question": "Quel composant Swing est utilisé dans l'exemple LILOC pour afficher les logs ?",
-        "options": [
-            "JTable",
-            "JLabel",
-            "JButton",
-            "JFrame"
-        ],
-        "answer": 0,
-        "explanation": "L'exemple du cours utilise une `JTable` (modèle `LogTableModel`) pour lister les traces du serveur."
-    },
-    {
-        "id": 161,
-        "chapterId": 4,
-        "question": "Comment le serveur sait-il qu'un client C a fini son message ?",
-        "options": [
-            "Grâce à la fin de l'objet Java",
-            "Grâce à un caractère délimiteur (ex: $) ou une taille en entête",
-            "Il devine",
-            "Le client ferme la connexion"
-        ],
-        "answer": 1,
-        "explanation": "En communication bas niveau, c'est au protocole applicatif de définir la structure (Header+Body ou Delimiter)."
-    },
-    {
-        "id": 162,
-        "chapterId": 4,
-        "question": "Dans un `catch(IOException e)`, que doit-on faire de la socket ?",
-        "options": [
-            "La laisser ouverte",
-            "La fermer proprement (socket.close())",
-            "La relancer",
-            "Rien"
-        ],
-        "answer": 1,
-        "explanation": "En cas d'erreur de communication, il faut libérer les ressources en fermant la socket."
-    },
-    {
-        "id": 163,
-        "chapterId": 4,
-        "question": "Une `Socket` est :",
-        "options": [
-            "Un fichier physique",
-            "Une abstraction logicielle représentant une connexion réseau",
-            "Une carte mère",
-            "Un pilote"
-        ],
-        "answer": 1,
-        "explanation": "C'est l'interface de programmation (API) vers la couche Transport TCP."
-    }
+    { "id": 124, "question": "La méthode `ServerSocket.accept()` retourne :", "options": ["Un boolean", "Un `ServerSocket`", "Une `Socket`", "Rien"], "answer": 2, "explanation": "Elle retourne une `Socket` de communication fraîchement créée, dédiée à ce client spécifique.", "chapterId": 4 },
+    { "id": 125, "question": "Que signifie TCP ?", "options": ["Transfer Control Protocol", "Transmission Control Protocol", "Transport Connected Protocol", "Total Connection Process"], "answer": 1, "explanation": "Transmission Control Protocol.", "chapterId": 4 },
+    { "id": 126, "question": "Si j'écris `new ServerSocket(80)`, combien de clients simultanés peuvent se connecter ?", "options": ["50", "1", "Illimité (dépend de l'OS)", "80"], "answer": 0, "explanation": "Le constructeur par défaut définit la taille de la file d'attente (backlog) à 50. Au-delà, ils sont rejetés.", "chapterId": 4 },
+    { "id": 127, "question": "UDP est dit 'non connecté', cela signifie :", "options": ["On ne peut pas envoyer de données", "Il n'y a pas de phase d'établissement (Handshake) avant l'envoi", "L'adresse IP est inutile", "C'est du Wifi"], "answer": 1, "explanation": "Les paquets (Datagrammes) sont envoyés directement sans vérifier si l'autre est prêt.", "chapterId": 4 },
+    { "id": 128, "question": "Dans le modèle OSI, la couche Transport correspond à la couche n° :", "options": ["3", "4", "7", "2"], "answer": 1, "explanation": "Couche 4 (Transport). En dessous : Réseau (3). Au dessus : Session (5).", "chapterId": 4 },
+    { "id": 129, "question": "Quel flux utiliser pour envoyer des objets Java `Serializable` ?", "options": ["`DataOutputStream`", "`ObjectOutputStream`", "`BufferedOutputStream`", "`PrintWriter`"], "answer": 1, "explanation": "C'est le seul capable de sérialiser des graphes d'objets.", "chapterId": 4 },
+    { "id": 130, "question": "Si un serveur lit avec `readInt()`, le client DOIT envoyer avec :", "options": ["`printInt()`", "`write(int)`", "`writeInt()`", "`sendInt()`"], "answer": 2, "explanation": "`DataOutputStream.writeInt` envoie 4 octets. `write(int)` n'en envoie qu'un seul (le moins significatif) !", "chapterId": 4 },
+    { "id": 131, "question": "Quelle exception est levée si le délai `setSoTimeout` est dépassé lors d'un `read` ?", "options": ["`TimeoutException`", "`SocketTimeoutException`", "`InterruptedIOException`", "`TimeLimitExceeded`"], "answer": 1, "explanation": "C'est une sous-classe de `InterruptedIOException`.", "chapterId": 4 },
+    { "id": 132, "question": "Dans le modèle 'Worker Pool', la méthode `getConnexion()` de la file d'attente est :", "options": ["Non bloquante", "Bloquante (wait)", "Asynchrone", "Récursive"], "answer": 1, "explanation": "Elle met le thread worker en sommeil tant qu'il n'y a pas de travail.", "chapterId": 4 },
+    { "id": 133, "question": "Pourquoi l'ordre `new OOS` puis `new OIS` est-il recommandé ?", "options": ["Pour faire joli", "Car `new OIS` bloque en attendant le header que `new OOS` écrit", "Car `OIS` est plus lent", "Ça n'a pas d'importance"], "answer": 1, "explanation": "Si les deux côtés font `new OIS` en premier, ils se bloquent mutuellement (Deadlock d'initialisation).", "chapterId": 4 },
+    { "id": 134, "question": "Un port TCP peut-il avoir le même numéro qu'un port UDP sur la même machine ?", "options": ["Non, conflit", "Oui, ce sont des espaces de nommage distincts", "Seulement si IP différente", "Oui mais c'est buggé"], "answer": 1, "explanation": "L'OS gère deux tables de ports séparées pour TCP et UDP.", "chapterId": 4 },
+    { "id": 135, "question": "La classe `InetAddress` protège contre ?", "options": ["Le spoofing", "Rien du tout", "Les malwares", "L'instanciation directe (constructeur privé)"], "answer": 3, "explanation": "On n'appelle pas `new`, on passe par des Factory Methods.", "chapterId": 4 },
+    { "id": 136, "question": "Si je fais `bw.write('A');` sans `bw.flush()`, quand 'A' est-il envoyé ?", "options": ["Tout de suite", "Quand le buffer est plein ou à la fermeture du flux", "Jamais", "Au bout de 1s"], "answer": 1, "explanation": "C'est le principe du buffering. `flush()` force l'envoi immédiat.", "chapterId": 4 },
+    { "id": 137, "question": "Le thread `EDT` (Event Dispatch Thread) de Swing ne doit JAMAIS :", "options": ["Modifier l'IHM", "Être bloqué par une opération longue (I/O réseau)", "Lancer des événements", "Être nommé"], "answer": 1, "explanation": "Sinon l'interface graphique gèle (freeze).", "chapterId": 4 },
+    { "id": 138, "question": "Que vaut `activeCount()` sur un `ThreadGroup` ?", "options": ["Le nombre exact de threads", "Une estimation du nombre de threads actifs", "Le nombre de processus", "L'ID du groupe"], "answer": 1, "explanation": "C'est une estimation car des threads peuvent mourir/naître pendant le comptage.", "chapterId": 4 },
+    { "id": 139, "question": "Pour fermer proprement une connexion :", "options": ["Il suffit de tuer le processus", "On ferme les flux puis la socket", "On met la socket à null", "On coupe le wifi"], "answer": 1, "explanation": "Fermer le flux de sortie ferme généralement la socket, mais `socket.close()` est la méthode explicite.", "chapterId": 4 },
+    { "id": 140, "question": "Quelle classe permet de lire ligne par ligne proprement ?", "options": ["`BufferedReader`", "`FileReader`", "`LineInputStream`", "`StringReader`"], "answer": 0, "explanation": "Méthode `readLine()`.", "chapterId": 4 },
+    { "id": 141, "question": "Si une classe contient un champ `Thread`, est-elle Serializable ?", "options": ["Oui", "Non, `Thread` n'est pas Serializable", "Oui si le thread est daemon", "Oui si transient"], "answer": 1, "explanation": "Un Thread est lié à l'OS, on ne peut pas le sérialiser. Il faut le marquer `transient`.", "chapterId": 4 },
+    { "id": 142, "question": "L'adresse locale (loopback) est généralement :", "options": ["192.168.1.1", "127.0.0.1", "0.0.0.0", "255.255.255.255"], "answer": 1, "explanation": "localhost.", "chapterId": 4 },
+    { "id": 143, "question": "`bind()` sert à :", "options": ["Se connecter", "Associer une socket à une IP et un port local", "Écouter", "Accepter"], "answer": 1, "explanation": "C'est l'étape avant `listen()` pour un serveur.", "chapterId": 4 },
+    { "id": 144, "question": "Si le client envoie 'Hello' mais que le serveur lit un Objet :", "options": ["Ça marche", "StreamCorruptedException", "ClassCastException", "EOFException"], "answer": 1, "explanation": "Le flux d'objets attend un header magique spécifique. Du texte brut corrompt ce flux.", "chapterId": 4 },
+    { "id": 145, "question": "Quel est l'intérêt du mot clé `synchronized` dans la file d'attente du Pool ?", "options": ["Rendre la méthode plus rapide", "Assurer l'exclusion mutuelle et la cohérence mémoire entre threads", "Empêcher le compilateur d'optimiser", "Aucun"], "answer": 1, "explanation": "Sans ça, deux threads pourraient prendre la même connexion.", "chapterId": 4 },
+    { "id": 146, "question": "`notify()` réveille :", "options": ["Tous les threads", "Un seul thread choisi arbitrairement par le scheduler", "Le thread le plus prioritaire", "Le thread main"], "answer": 1, "explanation": "Il faut utiliser `notifyAll()` si on veut tous les réveiller (mais ici un seul suffit).", "chapterId": 4 },
+    { "id": 147, "question": "Le garbage collector ferme-t-il les sockets oubliées ?", "options": ["Oui, tout de suite", "Oui, mais on ne sait pas quand (risqué)", "Non, jamais", "Seulement en debug"], "answer": 1, "explanation": "Il faut toujours utiliser `close()` dans un `finally` ou try-with-resources.", "chapterId": 4 },
+    { "id": 148, "question": "Quel composant permet d'éviter de bloquer l'EDT Swing lors d'un accès réseau ?", "options": ["`SwingWorker` (ou un Thread séparé)", "`JPanel`", "`ActionListener`", "`Timer`"], "answer": 0, "explanation": "Il permet d'exécuter une tâche en arrière-plan et de mettre à jour l'UI à la fin.", "chapterId": 4 },
+    { "id": 149, "question": "Un `DataInputStream` lit :", "options": ["Des octets bruts uniquement", "Des types primitifs Java (int, long...) portables", "Du XML", "Des objets"], "answer": 1, "explanation": "Il gère l'endianness standard du réseau (Big Endian) pour les primitifs.", "chapterId": 4 },
+    { "id": 150, "question": "L'interface `Serializable` a combien de méthodes ?", "options": ["0 (marqueur)", "1 (serialize)", "2 (read/write)", "10"], "answer": 0, "explanation": "C'est une interface marqueur vide.", "chapterId": 4 },
+    { "id": 151, "question": "`InetAddress.getAllByName(host)` retourne :", "options": ["Une seule IP", "Un tableau d'IPs (équilibrage de charge)", "Une exception", "Le DNS"], "answer": 1, "explanation": "Un nom de domaine peut pointer vers plusieurs IP (Round Robin DNS).", "chapterId": 4 },
+    { "id": 152, "question": "Si j'utilise `ObjectOutputStream` sur un socket, le pair doit utiliser :", "options": ["`DataInputStream`", "`ObjectInputStream`", "`FileInputStream`", "`Reader`"], "answer": 1, "explanation": "Symétrie obligatoire des flux.", "chapterId": 4 },
+    { "id": 153, "question": "Quelle est la limite théorique du nombre de ports TCP ?", "options": ["1024", "65535", "4 milliards", "Infini"], "answer": 1, "explanation": "Limité par le champ de 16 bits de l'en-tête TCP (2^16 - 1).", "chapterId": 4 }
 ]
