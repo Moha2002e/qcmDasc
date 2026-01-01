@@ -1,0 +1,392 @@
+[
+    {
+        "id": 124,
+        "question": "Quelle est la nature exacte de l'appel `serverSocket.accept()` ?",
+        "options": [
+            "Il est non-bloquant et retourne null si personne n'est là.",
+            "Il est bloquant : il suspend le thread jusqu'à l'arrivée d'une connexion entrante.",
+            "Il est asynchrone (retourne un Future).",
+            "Il crée un nouveau thread automatiquement."
+        ],
+        "answer": 1,
+        "explanation": "Fondamental : `accept()` gèle l'exécution. C'est pourquoi on ne doit JAMAIS le mettre dans l'EDT Swing.",
+        "chapterId": 4
+    },
+    {
+        "id": 125,
+        "question": "Si j'instancie `new Socket(\"192.168.1.5\", 80)` et que le serveur distant est éteint, que se passe-t-il ?",
+        "options": [
+            "La socket est créée en mode 'déconnecté'.",
+            "Le constructeur retourne `null`.",
+            "Une `ConnectException` est levée immédiatement (ou après timeout TCP).",
+            "Le programme attend indéfiniment."
+        ],
+        "answer": 2,
+        "explanation": "Le constructeur de `Socket` tente la connexion (SYN). Si échoué, exception. Il diffère de `ServerSocket` qui lui ne fait qu'attendre.",
+        "chapterId": 4
+    },
+    {
+        "id": 126,
+        "question": "La limite de la file d'attente (backlog) par défaut d'un `ServerSocket(port)` est de :",
+        "options": [
+            "10",
+            "50",
+            "100",
+            "Infini"
+        ],
+        "answer": 1,
+        "explanation": "Valeur précise du cours. Si 51 clients arrivent en même temps sans être acceptés, le 51ème se fait rejeter.",
+        "chapterId": 4
+    },
+    {
+        "id": 127,
+        "question": "Dans le protocole LILOC (architecture multicouche), comment le serveur distingue-t-il une requête de Login d'une requête de Calcul ?",
+        "options": [
+            "En lisant le premier octet.",
+            "En utilisant l'opérateur `instanceof` sur l'objet reçu.",
+            "En parsant du JSON.",
+            "Par le numéro de port."
+        ],
+        "answer": 1,
+        "explanation": "Architecture Java pure : on reçoit un `Object`, et on teste son type dynamique (`if (obj instanceof RequeteLogin)...`).",
+        "chapterId": 4
+    },
+    {
+        "id": 128,
+        "question": "Quelle est la principale différence entre TCP et UDP concernant l'envoi de données ?",
+        "options": [
+            "TCP est plus rapide.",
+            "TCP est un flux continu (Stream) garanti sans perte, UDP est un envoi de paquets (Datagram) sans garantie.",
+            "UDP est crypté par défaut.",
+            "TCP ne supporte pas le Multicast."
+        ],
+        "answer": 1,
+        "explanation": "La notion de 'Fiabilité' et de 'Connexion' distingue TCP. UDP est 'Fire and Forget'.",
+        "chapterId": 4
+    },
+    {
+        "id": 129,
+        "question": "Pour échanger des objets Java entre deux machines, quelle condition est ABSOLUE pour les classes échangées ?",
+        "options": [
+            "Elles doivent hériter de `Thread`.",
+            "Elles doivent implémenter l'interface `Serializable`.",
+            "Elles doivent avoir un constructeur vide.",
+            "Elles doivent être `final`."
+        ],
+        "answer": 1,
+        "explanation": "Sans `Serializable`, `writeObject` lance `NotSerializableException`.",
+        "chapterId": 4
+    },
+    {
+        "id": 130,
+        "question": "Pourquoi est-il recommandé de créer le `ObjectOutputStream` AVANT le `ObjectInputStream` lors de l'initialisation des flux ?",
+        "options": [
+            "C'est une superstition.",
+            "Pour éviter un interblocage (Deadlock) au niveau de l'échange des en-têtes (headers) de sérialisation.",
+            "Car le flux de sortie est plus prioritaire.",
+            "Car `ObjectInputStream` ne peut pas être créé sur une socket vide."
+        ],
+        "answer": 1,
+        "explanation": "Point technique pointu : le constructeur de OIS lit le header envoyé par le constructeur de OOS. Si tout le monde lit en même temps, tout le monde bloque.",
+        "chapterId": 4
+    },
+    {
+        "id": 131,
+        "question": "Si je communique en TCP avec un programme C, comment savoir que le message est fini (problème du flux continu) ?",
+        "options": [
+            "C'est impossible.",
+            "On utilise soit un délimiteur (ex: '\\n' ou '$'), soit un en-tête de taille (Header fixe).",
+            "TCP gère ça tout seul avec des paquets.",
+            "On attend le timeout."
+        ],
+        "answer": 1,
+        "explanation": "TCP est un 'tuyau'. Si j'envoie 'AB' puis 'CD', l'autre peut recevoir 'ABCD', 'A' puis 'BCD', etc. Il faut structurer le flux applicativement.",
+        "chapterId": 4
+    },
+    {
+        "id": 132,
+        "question": "Dans le modèle 'Pool de Workers', que fait le ThreadServeur (celui qui fait accept) quand un client arrive ?",
+        "options": [
+            "Il crée un `new Thread` pour ce client.",
+            "Il traite la requête lui-même.",
+            "Il dépose simplement la socket dans une File d'Attente partagée et retourne écouter.",
+            "Il ferme la connexion."
+        ],
+        "answer": 2,
+        "explanation": "Optimisation : Le patron ne travaille pas, il délègue via une file tampon. Ce sont les ouvriers (déjà créés) qui dépilent.",
+        "chapterId": 4
+    },
+    {
+        "id": 133,
+        "question": "Le mot-clé `transient` dans une classe Serializable sert à :",
+        "options": [
+            "Rendre le champ persistant.",
+            "Exclure un champ de la sérialisation (il ne sera pas envoyé sur le réseau).",
+            "Accélérer l'envoi.",
+            "Crypter le champ."
+        ],
+        "answer": 1,
+        "explanation": "Indispensable pour les champs non sérialisables (comme un Thread ou une Socket stockée dans l'objet).",
+        "chapterId": 4
+    },
+    {
+        "id": 134,
+        "question": "Quelle classe permet d'obtenir l'adresse IP d'un nom de domaine (ex: 'google.com') ?",
+        "options": [
+            "`socket.getIP()`",
+            "`InetAddress.getByName(\"google.com\")`",
+            "`DNS.resolve(\"google.com\")`",
+            "`NetworkInterface.find(\"google.com\")`"
+        ],
+        "answer": 1,
+        "explanation": "Méthode statique de résolution DNS.",
+        "chapterId": 4
+    },
+    {
+        "id": 135,
+        "question": "Si j'utilise `BufferedWriter`, que se passe-t-il si j'oublie d'appeler `flush()` à la fin de mon envoi ?",
+        "options": [
+            "Tout va bien, c'est automatique.",
+            "Les données restent dans le tampon mémoire local et ne partent jamais sur le réseau.",
+            "Une exception est levée.",
+            "Les données sont envoyées au prochain `write`."
+        ],
+        "answer": 1,
+        "explanation": "Piège classique du débutant réseau. Le tampon attend d'être plein. Sans flush explicite, le paquet ne part pas.",
+        "chapterId": 4
+    },
+    {
+        "id": 136,
+        "question": "Quel est le risque majeur d'effectuer un `socket.accept()` ou un `read()` dans l'EDT (Event Dispatch Thread) de Swing ?",
+        "options": [
+            "Une `NetworkOnMainThreadException` (comme sur Android).",
+            "Le gel complet de l'interface graphique (Freeze) tant que l'opération n'est pas finie.",
+            "Une baisse de débit.",
+            "Rien, c'est autorisé."
+        ],
+        "answer": 1,
+        "explanation": "L'EDT gère le dessin. S'il est bloqué en attente réseau, il ne redessine plus la fenêtre (écran blanc/gris).",
+        "chapterId": 4
+    },
+    {
+        "id": 137,
+        "question": "`DataOutputStream.writeInt(v)` envoie combien d'octets sur le réseau ?",
+        "options": [
+            "1 octet (valeur tronquée).",
+            "2 octets.",
+            "4 octets (Big Endian).",
+            "Cela dépend de la valeur de v."
+        ],
+        "answer": 2,
+        "explanation": "Un `int` Java fait toujours 32 bits (4 octets). Contrairement à `write(int)` (méthode d'OutputStream) qui n'en envoie qu'un seul !",
+        "chapterId": 4
+    },
+    {
+        "id": 138,
+        "question": "Une adresse IP identifie une machine. Un numéro de Port identifie :",
+        "options": [
+            "L'utilisateur.",
+            "Le processus (application) destinataire sur cette machine.",
+            "Le protocole (TCP ou UDP).",
+            "La carte réseau."
+        ],
+        "answer": 1,
+        "explanation": "Le couple IP:Port est nécessaire pour router le paquet jusqu'au bon logiciel.",
+        "chapterId": 4
+    },
+    {
+        "id": 139,
+        "question": "Comment le serveur 'Pool de threads' gère-t-il l'attente des workers s'il n'y a pas de client (méthode de retrait de la file) ?",
+        "options": [
+            "Il fait une boucle (Active Waiting) `while(empty) {}`.",
+            "Il utilise `wait()` dans une boucle `while(empty)` pour dormir efficacement.",
+            "Il retourne `null` immédiatement.",
+            "Il lance une exception."
+        ],
+        "answer": 1,
+        "explanation": "Utilisation correcte des moniteurs : attente passive (`wait`) tant que la condition n'est pas remplie.",
+        "chapterId": 4
+    },
+    {
+        "id": 140,
+        "question": "Quelle exception est levée par le protocole si un objet reçu n'est pas de la classe attendue (problème de version ou d'attaque) lors du cast ?",
+        "options": [
+            "`ClassCastException`",
+            "`ClassNotFoundException`",
+            "`IOException`",
+            "`SocketException`"
+        ],
+        "answer": 0,
+        "explanation": "Si j'attends `(Requete)` et que je reçois `String`, le cast explicite échoue.",
+        "chapterId": 4
+    },
+    {
+        "id": 141,
+        "question": "Si le serveur active `setSoTimeout(5000)` avant le `accept()`, que se passe-t-il après 5 secondes d'inactivité ?",
+        "options": [
+            "Le serveur s'éteint.",
+            "La méthode `accept()` lève une `SocketTimeoutException` (mais le serveur peut la catcher et boucler).",
+            "Le port est fermé.",
+            "Rien."
+        ],
+        "answer": 1,
+        "explanation": "Permet de rendre `accept` non-infiniment bloquant, utile pour vérifier des conditions d'arrêt propres.",
+        "chapterId": 4
+    },
+    {
+        "id": 142,
+        "question": "La classe `InetAddress` possède-t-elle un constructeur public ?",
+        "options": [
+            "Oui, `new InetAddress(\"1.2.3.4\")`.",
+            "Non, on doit utiliser des méthodes statiques de fabrique (Factory Methods).",
+            "Oui, mais sans arguments.",
+            "Seulement pour IPv6."
+        ],
+        "answer": 1,
+        "explanation": "Conception Singleton/Factory. `InetAddress.getByName` est la voie obligatoire.",
+        "chapterId": 4
+    },
+    {
+        "id": 143,
+        "question": "Dans une communication Java <-> C, pourquoi ne peut-on pas utiliser `ObjectOutputStream` ?",
+        "options": [
+            "Car le C n'est pas orienté objet.",
+            "Car le format de sérialisation Java est propriétaire et spécifique à la JVM.",
+            "Car le C est Little Endian.",
+            "C'est possible avec une librairie spéciale."
+        ],
+        "answer": 1,
+        "explanation": "La sérialisation Java envoie des métadonnées de classes Java incompréhensibles pour un programme C standard. On doit échanger des bytes/structs.",
+        "chapterId": 4
+    },
+    {
+        "id": 144,
+        "question": "Quelle méthode permet de fermer proprement le flux de sortie ET de signaler la fin à l'autre partie sans fermer la socket (TCP Half-Close) ?",
+        "options": [
+            "`socket.close()`",
+            "`socket.shutdownOutput()`",
+            "`stream.flush()`",
+            "`socket.disconnect()`"
+        ],
+        "answer": 1,
+        "explanation": "Envoie un paquet FIN, mais permet de continuer à lire les réponses. `close()` coupe tout.",
+        "chapterId": 4
+    },
+    {
+        "id": 145,
+        "question": "Pourquoi la méthode `activeCount()` de `ThreadGroup` est-elle considérée comme une simple estimation ?",
+        "options": [
+            "Elle est buggée.",
+            "Car des threads peuvent démarrer ou mourir pendant l'exécution de la méthode.",
+            "Car elle ne compte pas les démons.",
+            "Car elle compte en double."
+        ],
+        "answer": 1,
+        "explanation": "La nature dynamique du multithreading rend tout comptage instantané 'flou'.",
+        "chapterId": 4
+    },
+    {
+        "id": 146,
+        "question": "Quelle interface doit implémenter une fenêtre Swing pour recevoir des messages de log du serveur générique ?",
+        "options": [
+            "`Runnable`",
+            "`Logger` (interface définie dans le cours).",
+            "`Observer`",
+            "`ActionListener`"
+        ],
+        "answer": 1,
+        "explanation": "Découplage : Le serveur ne connaît pas `MaFenetre`, il connaît une interface `Logger` qui a une méthode `Trace(String)`.",
+        "chapterId": 4
+    },
+    {
+        "id": 147,
+        "question": "Un `readByte()` sur un flux vide (mais connexion ouverte) :",
+        "options": [
+            "Retourne -1.",
+            "Retourne 0.",
+            "Bloque indéfiniment jusqu'à l'arrivée d'un octet.",
+            "Lance une EOFException."
+        ],
+        "answer": 2,
+        "explanation": "Lecture synchrone bloquante. C'est pourquoi un thread dédié est nécessaire par client.",
+        "chapterId": 4
+    },
+    {
+        "id": 148,
+        "question": "Quel est le port réservé pour le protocole HTTP standard ?",
+        "options": [
+            "21",
+            "25",
+            "80",
+            "8080"
+        ],
+        "answer": 2,
+        "explanation": "Culture générale réseau indispensable. 21=FTP, 25=SMTP, 8080=HTTP alternatif.",
+        "chapterId": 4
+    },
+    {
+        "id": 149,
+        "question": "Si j'envoie une String Java (\"Hello\") à un programme C via un socket brut, que reçoit le C ?",
+        "options": [
+            "Une `struct String`.",
+            "La séquence d'octets (ASCII/UTF) sans le caractère nul `\\0` final.",
+            "La séquence avec `\\0`.",
+            "Une erreur."
+        ],
+        "answer": 1,
+        "explanation": "Piège inter-langage : Java ne met pas de null terminator ('\\0') à la fin des chaînes, contrairement au C. Le programme C risque de lire la mémoire en dépassement (Buffer Overread) s'il l'attend.",
+        "chapterId": 4
+    },
+    {
+        "id": 150,
+        "question": "Dans le modèle 'Pool', que se passe-t-il si tous les threads sont occupés et qu'un nouveau client arrive ?",
+        "options": [
+            "Il est rejeté.",
+            "La `accept` du serveur met la socket dans la file, et le client attendra qu'un worker se libère pour être traité.",
+            "Un nouveau thread est créé dynamiquement.",
+            "Le serveur plante."
+        ],
+        "answer": 1,
+        "explanation": "C'est l'avantage du pool avec file d'attente : on lisse la charge. Le client est connecté (TCP ok), mais son traitement est différé.",
+        "chapterId": 4
+    },
+    {
+        "id": 151,
+        "question": "L'interface `Protocole` définie dans le cours contient la méthode :",
+        "options": [
+            "`void run()`",
+            "`Reponse TraiteRequete(Requete r, Socket s)`",
+            "`void connect()`",
+            "`String getName()`"
+        ],
+        "answer": 1,
+        "explanation": "Cœur de la généricité : on passe la requête au protocole, il rend la réponse. Le serveur ne sait pas ce qu'il fait.",
+        "chapterId": 4
+    },
+    {
+        "id": 152,
+        "question": "Si une exception `FinConnexionException` est levée par le protocole, que doit faire le ThreadClient ?",
+        "options": [
+            "Arrêter le serveur.",
+            "Envoyer la réponse éventuelle contenue dans l'exception, puis fermer la boucle et la socket.",
+            "Ignorer et continuer.",
+            "Lancer un `System.exit(0)`."
+        ],
+        "answer": 1,
+        "explanation": "Gestion propre de la déconnexion volontaire (ex: commande LOGOUT).",
+        "chapterId": 4
+    },
+    {
+        "id": 153,
+        "question": "Quelle méthode permet de connaître l'IP du client connecté sur le serveur ?",
+        "options": [
+            "`socket.getInetAddress()`",
+            "`socket.getLocalAddress()`",
+            "`ServerSocket.getInetAddress()`",
+            "`Ip.get()`"
+        ],
+        "answer": 0,
+        "explanation": "`getInetAddress` donne l'adresse du pair (distant). `getLocalAddress` donne la nôtre.",
+        "chapterId": 4
+    }
+]

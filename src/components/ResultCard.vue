@@ -53,7 +53,7 @@ const downloadPDF = () => {
   if (wrongAnswers.value.length === 0) {
     doc.setFontSize(14)
     doc.setTextColor(40, 167, 69) // Green
-    doc.text("Félicitations ! Aucune erreur à signaler 👏", 105, 60, { align: 'center' })
+    doc.text("Félicitations ! Aucune erreur à signaler !", 105, 60, { align: 'center' })
   } else {
     wrongAnswers.value.forEach((item, index) => {
       // Check for page break
@@ -76,14 +76,14 @@ const downloadPDF = () => {
       doc.setFont("helvetica", "normal")
       doc.setFontSize(11)
       doc.setTextColor(220, 53, 69) // Red
-      const wrongTxt = `❎ Votre réponse : ${item.question.options[item.userSelected]}`
+      const wrongTxt = `Votre réponse : ${item.question.options[item.userSelected]}`
       const splitWrong = doc.splitTextToSize(wrongTxt, maxWidth)
       doc.text(splitWrong, margin + 5, y)
       y += splitWrong.length * 6
 
       // Correct Answer
       doc.setTextColor(40, 167, 69) // Green
-      const correctTxt = `✅ Bonne réponse : ${item.question.options[item.question.answer]}`
+      const correctTxt = `Bonne réponse : ${item.question.options[item.question.answer]}`
       const splitCorrect = doc.splitTextToSize(correctTxt, maxWidth)
       doc.text(splitCorrect, margin + 5, y)
       y += splitCorrect.length * 6

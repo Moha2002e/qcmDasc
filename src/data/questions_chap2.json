@@ -1,0 +1,392 @@
+[
+    {
+        "id": 84,
+        "question": "Concernant la mémoire partagée dans un processus Java, quelle affirmation est EXACTE ?",
+        "options": [
+            "Les threads partagent le Tas (Heap) et la Pile (Stack).",
+            "Chaque thread possède son propre Tas, mais partage les variables statiques.",
+            "Les threads partagent le Tas et les variables statiques, mais chaque thread a sa propre Pile (Stack).",
+            "Tout est partagé, il n'y a aucune isolation mémoire entre threads."
+        ],
+        "answer": 2,
+        "explanation": "Piège classique : Les objets (Heap) sont partagés, mais les variables locales (Stack) sont strictement isolées et propres à chaque thread.",
+        "chapterId": 2
+    },
+    {
+        "id": 85,
+        "question": "Que se passe-t-il exactement si on exécute `monThread.run()` au lieu de `monThread.start()` ?",
+        "options": [
+            "Une `IllegalThreadStateException` est levée.",
+            "Le code de `run()` s'exécute, mais dans le thread courant (appelant), sans créer de nouveau thread.",
+            "Rien ne se passe, la méthode est ignorée.",
+            "Le thread démarre normalement."
+        ],
+        "answer": 1,
+        "explanation": "`run()` est une méthode normale. Seul `start()` demande à l'OS de créer un nouveau contexte d'exécution (pile, registres) pour le thread.",
+        "chapterId": 2
+    },
+    {
+        "id": 86,
+        "question": "Pourquoi l'usage de `Runnable` est-il recommandé par rapport à l'héritage de `Thread` ?",
+        "options": [
+            "Car `Runnable` possède plus de méthodes que `Thread`.",
+            "Car on ne peut pas appeler `start()` sur une sous-classe de `Thread`.",
+            "Car Java ne supporte pas l'héritage multiple, donc implémenter `Runnable` laisse la possibilité d'hériter d'une autre classe.",
+            "C'est faux, l'héritage est toujours recommandé."
+        ],
+        "answer": 2,
+        "explanation": "C'est une question de design et de limitation du langage. De plus, cela sépare la tâche (Runnable) de l'exécutant (Thread).",
+        "chapterId": 2
+    },
+    {
+        "id": 87,
+        "question": "Quelle est la différence CRITIQUE entre `Thread.sleep(1000)` et `obj.wait(1000)` concernant les verrous ?",
+        "options": [
+            "Aucune, les deux mettent en pause.",
+            "`sleep` relâche le verrou (moniteur), tandis que `wait` le garde.",
+            "`wait` relâche le verrou associé à l'objet, tandis que `sleep` garde tous les verrous acquis.",
+            "`sleep` est plus précis que `wait`."
+        ],
+        "answer": 2,
+        "explanation": "C'est le piège le plus fréquent. `sleep` dort 'poings fermés' (garde les verrous), alors que `wait` lâche le verrou pour laisser les autres travailler.",
+        "chapterId": 2
+    },
+    {
+        "id": 88,
+        "question": "Dans le code `t.join()`, quel thread est bloqué ?",
+        "options": [
+            "Le thread `t` (il est mis en pause).",
+            "Le thread qui appelle la méthode `join()` (souvent le main).",
+            "Tous les threads du groupe.",
+            "Le thread système."
+        ],
+        "answer": 1,
+        "explanation": "`t.join()` signifie 'Moi, thread appelant, j'attends que t ait fini'. `t` continue sa vie normalement.",
+        "chapterId": 2
+    },
+    {
+        "id": 89,
+        "question": "Que fait réellement la méthode `t.interrupt()` ?",
+        "options": [
+            "Elle tue le thread immédiatement (arrêt forcé).",
+            "Elle met le thread en pause.",
+            "Elle positionne simplement un drapeau (flag) indiquant que l'interruption est demandée. Le thread doit le gérer.",
+            "Elle lance une exception dans le thread appelant."
+        ],
+        "answer": 2,
+        "explanation": "L'interruption est coopérative. Si le thread ignore le flag (ou ne gère pas l'exception InterruptedException), il ne s'arrêtera pas.",
+        "chapterId": 2
+    },
+    {
+        "id": 90,
+        "question": "Si deux threads exécutent deux méthodes `synchronized` DIFFÉRENTES sur la MÊME instance d'objet :",
+        "options": [
+            "Ils peuvent s'exécuter en parallèle sans problème.",
+            "Ils sont bloqués mutuellement, l'un doit attendre la fin de l'autre.",
+            "Seule la méthode la plus prioritaire passe.",
+            "Cela dépend si les méthodes sont statiques."
+        ],
+        "answer": 1,
+        "explanation": "Le verrou est sur l'objet (`this`). Un seul thread peut détenir le verrou de l'instance, quel que soit le nombre de méthodes synchronized.",
+        "chapterId": 2
+    },
+    {
+        "id": 91,
+        "question": "Quelle instruction lève une `IllegalMonitorStateException` ?",
+        "options": [
+            "Appeler `notify()` dans un bloc `synchronized`.",
+            "Appeler `wait()` sans détenir le verrou de l'objet (hors bloc synchronized).",
+            "Appeler `sleep()` dans un bloc `synchronized`.",
+            "Appeler `start()` deux fois."
+        ],
+        "answer": 1,
+        "explanation": "On ne peut attendre (`wait`) ou notifier sur un objet que si on en possède la clé (le moniteur).",
+        "chapterId": 2
+    },
+    {
+        "id": 92,
+        "question": "Analysez ce code : `t.start(); t.setDaemon(true);`",
+        "options": [
+            "Le thread devient un démon correctement.",
+            "Le thread s'arrête.",
+            "Une exception `IllegalThreadStateException` est levée dans le thread appelant.",
+            "Le thread est mis en pause."
+        ],
+        "answer": 2,
+        "explanation": "Le statut Daemon doit OBLIGATOIREMENT être défini *avant* le démarrage du thread (`start`).",
+        "chapterId": 2
+    },
+    {
+        "id": 93,
+        "question": "Que garantit l'appel à `Thread.yield()` ?",
+        "options": [
+            "Que le thread va s'arrêter pour laisser la place aux autres.",
+            "Que le thread va dormir pendant 100ms.",
+            "Rien de strict : c'est une simple suggestion au planificateur (scheduler) de passer la main.",
+            "Que les threads de priorité inférieure vont s'exécuter."
+        ],
+        "answer": 2,
+        "explanation": "`yield` est une heuristique. L'OS peut choisir de l'ignorer totalement. Ce n'est pas un mécanisme de synchronisation fiable.",
+        "chapterId": 2
+    },
+    {
+        "id": 94,
+        "question": "Concernant `ThreadGroup.activeCount()`, pourquoi est-ce un 'piège' ?",
+        "options": [
+            "La méthode retourne toujours 0.",
+            "La valeur retournée est une estimation instantanée qui peut être fausse la nanoseconde suivante.",
+            "Elle compte aussi les threads arrêtés.",
+            "Elle lance une exception."
+        ],
+        "answer": 1,
+        "explanation": "Comme les threads démarrent et meurent en permanence, ce nombre est intrinsèquement imprécis.",
+        "chapterId": 2
+    },
+    {
+        "id": 95,
+        "question": "Quelle est la règle d'or de Swing avec les Threads ?",
+        "options": [
+            "Tout code Swing doit être exécuté dans le thread principal (main).",
+            "Swing est Thread-Safe, on peut modifier l'UI depuis n'importe où.",
+            "Toute modification de l'UI doit se faire exclusivement dans l'EDT (Event Dispatch Thread).",
+            "On doit utiliser `synchronized` sur chaque composant Swing."
+        ],
+        "answer": 2,
+        "explanation": "Swing n'est pas Thread-Safe. Modifier un bouton depuis un thread worker peut corrompre l'affichage ou causer des plantages.",
+        "chapterId": 2
+    },
+    {
+        "id": 96,
+        "question": "Quelle est la différence entre `synchronized void m()` et `static synchronized void m()` ?",
+        "options": [
+            "Aucune, c'est juste une syntaxe.",
+            "La première verrouille l'instance (`this`), la seconde verrouille la classe (`Class object`).",
+            "La statique est plus rapide.",
+            "La statique empêche l'héritage."
+        ],
+        "answer": 1,
+        "explanation": "Ce sont deux verrous distincts. Un thread peut appeler la méthode d'instance et un autre la méthode statique en même temps sans se bloquer.",
+        "chapterId": 2
+    },
+    {
+        "id": 97,
+        "question": "Si un thread capture une exception non gérée (RuntimeException) :",
+        "options": [
+            "Le thread meurt, mais les autres threads continuent leur exécution.",
+            "Tout le processus Java (JVM) s'arrête immédiatement.",
+            "Le thread redémarre automatiquement.",
+            "L'exception est convertie en `InterruptedException`."
+        ],
+        "answer": 0,
+        "explanation": "Une exception non catchée tue le thread concerné. Si ce n'est pas le seul thread user, l'application survit - mais le thread est mort.",
+        "chapterId": 2
+    },
+    {
+        "id": 98,
+        "question": "Peut-on utiliser `PipedInputStream` sans le connecter à un `PipedOutputStream` ?",
+        "options": [
+            "Oui, il lira des 0.",
+            "Non, cela provoquera une exception ou un blocage.",
+            "Oui, il agira comme un ByteArrayInputStream.",
+            "Oui, mais seulement en écriture."
+        ],
+        "answer": 1,
+        "explanation": "Les Pipes fonctionnent par paire. Un tube doit avoir deux bouts pour fonctionner simultanément.",
+        "chapterId": 2
+    },
+    {
+        "id": 99,
+        "question": "À quoi correspond `synchronized` dans le monde théorique système POSIX ?",
+        "options": [
+            "Aux Sémaphores",
+            "Aux Variables de Condition",
+            "Aux Mutex (Mutual Exclusion)",
+            "Aux Signaux"
+        ],
+        "answer": 2,
+        "explanation": "Le texte fait explicitement le parallèle : synchronized = Mutex.",
+        "chapterId": 2
+    },
+    {
+        "id": 100,
+        "question": "Pourquoi `stop()` est-elle considérée comme dangereuse est dépréciée ?",
+        "options": [
+            "Elle est trop lente à s'exécuter.",
+            "Elle peut laisser les objets dans un état incohérent en relâchant brutalement les verrous.",
+            "Elle ne fonctionne pas sur Linux.",
+            "Elle empêche le Garbage Collector de passer."
+        ],
+        "answer": 1,
+        "explanation": "La méthode `stop()` tue sans prévenir, ce qui peut corrompre les données partagées laissées à moitié modifiées.",
+        "chapterId": 2
+    },
+    {
+        "id": 101,
+        "question": "Quel est le comportement du processus Java lorsqu'il ne reste que des threads Démons ?",
+        "options": [
+            "Il continue indéfiniment.",
+            "Il se termine (sort de la JVM).",
+            "Il attend qu'un nouveau thread User soit créé.",
+            "Il lance une exception."
+        ],
+        "answer": 1,
+        "explanation": "Les démons sont des threads de service (ex: GC). Si les User threads ont fini, les services n'ont plus de raison d'être.",
+        "chapterId": 2
+    },
+    {
+        "id": 102,
+        "question": "Comment doit-on utiliser `wait()` correctement pour éviter les réveils intempestifs (spurious wakeups) ?",
+        "options": [
+            "Dans un bloc `if` qui vérifie la condition.",
+            "Dans une boucle `while` qui revérifie la condition après le réveil.",
+            "Sans condition, le `notify` garantit que c'est bon.",
+            "Avec un timeout obligatoire."
+        ],
+        "answer": 1,
+        "explanation": "Le texte indique 'Toujours utiliser while, jamais if' pour se protéger des cas où le thread est réveillé sans que la condition soit vraie.",
+        "chapterId": 2
+    },
+    {
+        "id": 104,
+        "question": "Pour mettre à jour l'interface graphique Swing depuis un autre thread, quelle méthode faut-il appeler ?",
+        "options": [
+            "`SwingUtilities.updateComponent()`",
+            "`EventQueue.invokeLater(Runnable)`",
+            "`Thread.runOnUI()`",
+            "`Component.repaint()`"
+        ],
+        "answer": 1,
+        "explanation": "C'est la méthode canonique pour poster une tâche dans la file d'attente de l'EDT.",
+        "chapterId": 2
+    },
+    {
+        "id": 105,
+        "question": "À quoi correspondent conceptuellement les méthodes `wait()` / `notify()` en système POSIX ?",
+        "options": [
+            "Aux Mutex",
+            "Aux Variables de Condition",
+            "Aux Pipes",
+            "Aux Signaux"
+        ],
+        "answer": 1,
+        "explanation": "Le texte fait le parallèle : Synchronized=Mutex, Wait/Notify=Variables de Condition.",
+        "chapterId": 2
+    },
+    {
+        "id": 106,
+        "question": "Quelle classe de Timer est Thread-Safe et destinée à Swing ?",
+        "options": [
+            "`java.util.Timer`",
+            "`javax.swing.Timer`",
+            "`java.time.Timer`",
+            "`android.os.CountDownTimer`"
+        ],
+        "answer": 1,
+        "explanation": "Piège QCM : `javax.swing.Timer` exécute ses tâches sur l'EDT, ce qui le rend sûr pour manipuler l'interface.",
+        "chapterId": 2
+    },
+    {
+        "id": 107,
+        "question": "Quelle méthode permet de réveiller TOUS les threads en attente sur un objet ?",
+        "options": [
+            "`notify()`",
+            "`notifyAll()`",
+            "`wakeAll()`",
+            "`interruptAll()`"
+        ],
+        "answer": 1,
+        "explanation": "`notifyAll()` réveille tout le monde, ce qui est généralement plus sûr que `notify()` qui en choisit un arbitrairement.",
+        "chapterId": 2
+    },
+    {
+        "id": 108,
+        "question": "Est-ce qu'un thread qui a appelé `sleep()` perd ses verrous (moniteurs) ?",
+        "options": [
+            "Oui, toujours.",
+            "Non, jamais.",
+            "Seulement s'il dort plus de 1 seconde.",
+            "Cela dépend de l'OS."
+        ],
+        "answer": 1,
+        "explanation": "C'est la différence fondamentale avec `wait`. `sleep` garde les clés de la maison pendant qu'il dort.",
+        "chapterId": 2
+    },
+    {
+        "id": 109,
+        "question": "Les PipedInputStream/OutputStream sont conçus pour une communication :",
+        "options": [
+            "Bidirectionnelle simultanée (Full Duplex)",
+            "Unidirectionnelle (Half Duplex)",
+            "Sans fil",
+            "Entre machines distantes"
+        ],
+        "answer": 1,
+        "explanation": "Le texte précise 'Communication unidirectionnelle' et 'utilisés par paire'.",
+        "chapterId": 2
+    },
+    {
+        "id": 110,
+        "question": "Quelle méthode de Thread est native (implémentée via le système d'exploitation) ?",
+        "options": [
+            "`run`",
+            "`start` (via `start0`)",
+            "`getName`",
+            "`setPriority`"
+        ],
+        "answer": 1,
+        "explanation": "Le texte mentionne que certaines méthodes sont natives. La création de thread (`start`) nécessite un appel système lourd.",
+        "chapterId": 2
+    },
+    {
+        "id": 111,
+        "question": "Si j'appelle `wait(1000)`, le thread se réveille :",
+        "options": [
+            "Exactement après 1000ms, quoi qu'il arrive.",
+            "Au bout de 1000ms OU si on lui notifie (`notify`) avant.",
+            "Seulement si un autre thread appelle `notify`.",
+            "Jamais, c'est une boucle infinie."
+        ],
+        "answer": 1,
+        "explanation": "C'est une attente avec timeout. Elle prend fin soit par notification, soit par expiration du délai.",
+        "chapterId": 2
+    },
+    {
+        "id": 112,
+        "question": "Quel est le groupe de thread par défaut d'un nouveau thread ?",
+        "options": [
+            "System",
+            "Root",
+            "Le même groupe que le thread créateur (souvent 'main')",
+            "DaemonGroup"
+        ],
+        "answer": 2,
+        "explanation": "Le texte précise : 'Tout thread appartient à un groupe... Groupe par défaut : main' (ou celui du parent).",
+        "chapterId": 2
+    },
+    {
+        "id": 113,
+        "question": "Peut-on appeler `start()` deux fois sur la même instance de Thread ?",
+        "options": [
+            "Oui, cela redémarre le thread.",
+            "Non, cela lève une `IllegalThreadStateException`.",
+            "Oui, mais la deuxième fois est ignorée.",
+            "Non, cela plante la JVM."
+        ],
+        "answer": 1,
+        "explanation": "Un objet Thread a un cycle de vie unique. Une fois démarré, il ne peut être réutilisé.",
+        "chapterId": 2
+    },
+    {
+        "id": 114,
+        "question": "Pour envoyer des types primitifs (int, double) dans un Pipe, on encapsule souvent le flux dans :",
+        "options": [
+            "`ObjectOutputStream`",
+            "`DataOutputStream`",
+            "`BufferedOutputStream`",
+            "`PrintStream`"
+        ],
+        "answer": 1,
+        "explanation": "Le cours mentionne explicitement `DataOutputStream` pour cet usage.",
+        "chapterId": 2
+    }
+]

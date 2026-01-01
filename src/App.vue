@@ -1,10 +1,28 @@
 <script setup>
 import { ref, computed } from 'vue'
-import questionsData from './data/questions.json'
+import questionsChap1 from './data/questions_chap1.json'
+import questionsChap2 from './data/questions_chap2.json'
+import questionsChap3 from './data/questions_chap3.json'
+import questionsChap4 from './data/questions_chap4.json'
 import chaptersData from './data/chapters.json'
 import QuizCard from './components/QuizCard.vue'
 import ResultCard from './components/ResultCard.vue'
 import ChapterMenu from './components/ChapterMenu.vue'
+
+// Combine for cases needing all questions (like exams)
+const allQuestions = [
+  ...questionsChap1, 
+  ...questionsChap2, 
+  ...questionsChap3, 
+  ...questionsChap4
+]
+
+const questionsMap = {
+  1: questionsChap1,
+  2: questionsChap2,
+  3: questionsChap3,
+  4: questionsChap4
+}
 
 // --- State Management ---
 const currentView = ref('menu') // 'menu' or 'quiz'
@@ -36,11 +54,22 @@ const shuffleArray = (array) => {
 }
 
 const initQuiz = () => {
-  // Deep clone and shuffle questions
-  let validQuestions = questionsData
+  // Determine source questions
+  let validQuestions = []
+  
   if (activeChapter.value) {
-    validQuestions = questionsData.filter(q => q.chapterId === activeChapter.value.id)
+    // Specific chapter
+    if (questionsMap[activeChapter.value.id]) {
+      validQuestions = questionsMap[activeChapter.value.id]
+    } else if (activeChapter.value.id === 8 || activeChapter.value.id === 9) {
+      // Exams use all questions
+      validQuestions = allQuestions
+    }
+  } else {
+    validQuestions = allQuestions
   }
+
+  // Deep clone and shuffle questions
   const rawQuestions = JSON.parse(JSON.stringify(validQuestions))
   
   const shuffled = shuffleArray(rawQuestions).map(q => {

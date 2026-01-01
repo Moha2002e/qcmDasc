@@ -1,0 +1,392 @@
+[
+    {
+        "id": 44,
+        "question": "Quelle est la conséquence EXACTE de l'appel `Class.forName('com.mysql.cj.jdbc.Driver')` ?",
+        "options": [
+            "Il crée une instance du Driver et lui demande de se connecter au serveur MySQL.",
+            "Il charge la classe, exécute son bloc statique, ce qui enregistre le driver auprès du `DriverManager`.",
+            "Il retourne un objet `Connection` prêt à l'emploi.",
+            "Il vérifie si le serveur MySQL est accessible sur le réseau."
+        ],
+        "answer": 1,
+        "explanation": "Piège classique : `forName` ne connecte RIEN. Il charge juste du code en mémoire pour que Java 'connaisse' le driver.",
+        "chapterId": 3
+    },
+    {
+        "id": 45,
+        "question": "Quel est le comportement par défaut d'une `Connection` JDBC concernant les transactions (`autoCommit`) ?",
+        "options": [
+            "AutoCommit est FALSE par défaut (sécurité).",
+            "AutoCommit est TRUE par défaut (chaque requête est validée immédiatement).",
+            "Cela dépend du SGBD (Oracle vs MySQL).",
+            "Les transactions sont désactivées par défaut."
+        ],
+        "answer": 1,
+        "explanation": "Dangereux pour les applications réelles : par défaut, JDBC committe chaque ligne. Il faut `setAutoCommit(false)` pour faire une transaction groupée.",
+        "chapterId": 3
+    },
+    {
+        "id": 46,
+        "question": "Si j'exécute `stmt.execute(sql)` avec une requête `UPDATE`, que retourne la méthode ?",
+        "options": [
+            "Le nombre de lignes modifiées (int).",
+            "`true`.",
+            "`false`.",
+            "Un `ResultSet` vide."
+        ],
+        "answer": 2,
+        "explanation": "PIÈGE MAJEUR : `execute()` retourne `true` SI c'est un ResultSet (Select), et `false` sinon (Update/Insert...). Pour avoir le nombre de lignes, il faut appeler `getUpdateCount()` ensuite.",
+        "chapterId": 3
+    },
+    {
+        "id": 47,
+        "question": "Quelle méthode de `ResultSet` permet d'obtenir le nom de la 3ème colonne ?",
+        "options": [
+            "`rs.getColumnName(3)`",
+            "`rs.getMetaData().getColumnName(3)`",
+            "`rs.getMetaData().getColumnName(2)`",
+            "`rs.getColumn(3).getName()`"
+        ],
+        "answer": 1,
+        "explanation": "Les infos de structure (Noms, Types) sont dans les Méta-données, pas directement sur le `rs`. Et les indices commencent à 1.",
+        "chapterId": 3
+    },
+    {
+        "id": 48,
+        "question": "Pourquoi est-il CRITIQUE d'utiliser `PreparedStatement` au lieu de `Statement` pour une authentification par login/mot de passe ?",
+        "options": [
+            "Car `Statement` ne crypte pas le mot de passe sur le réseau.",
+            "Car `Statement` est vulnérable à l'injection SQL (ex: ' OR '1'='1').",
+            "Car `PreparedStatement` est le seul à supporter les Strings.",
+            "Car `Statement` est déprécié depuis Java 8."
+        ],
+        "answer": 1,
+        "explanation": "L'injection SQL permet de contourner l'authentification en modifiant la logique de la requête via des chaînes concaténées.",
+        "chapterId": 3
+    },
+    {
+        "id": 49,
+        "question": "Dans le modèle DAO présenté, que doit contenir la classe `Car` (Entity) pour représenter la relation avec `Engine` ?",
+        "options": [
+            "Un champ `int engineId` uniquement.",
+            "Un objet complet `Engine engine`.",
+            "Une String représentant le nom du moteur.",
+            "Rien, la relation est gérée uniquement en base."
+        ],
+        "answer": 1,
+        "explanation": "En POO, on mappe les relations par composition d'objets, pas par des Clés Étrangères (IDs) comme en relationnel.",
+        "chapterId": 3
+    },
+    {
+        "id": 50,
+        "question": "Si `rs.next()` vient de retourner `false`, quel est l'état du curseur ?",
+        "options": [
+            "Il est sur la dernière ligne valide.",
+            "Il est positionné 'AfterLast' (après la dernière ligne).",
+            "Il est revenu au début ('BeforeFirst').",
+            "Le ResultSet est fermé automatiquement."
+        ],
+        "answer": 1,
+        "explanation": "Le curseur est 'tombé' après la fin. Toute tentative de lecture (`getString`) lèvera une exception.",
+        "chapterId": 3
+    },
+    {
+        "id": 51,
+        "question": "Pour une requête `INSERT` qui génère un ID auto-incrémenté, comment le récupérer proprement ?",
+        "options": [
+            "On fait un `SELECT MAX(id)` juste après.",
+            "Impossible avec JDBC standard.",
+            "On utilise `Statement.RETURN_GENERATED_KEYS` à la création du statement, puis `getGeneratedKeys()`.",
+            "L'ID est retourné directement par `executeUpdate()`."
+        ],
+        "answer": 2,
+        "explanation": "Faire un SELECT MAX est risqué (concurrence). JDBC fournit un mécanisme standard pour récupérer la clé créée dans la même transaction.",
+        "chapterId": 3
+    },
+    {
+        "id": 52,
+        "question": "Quelle est la nature exacte de `java.sql.Connection` ?",
+        "options": [
+            "Une Classe abstraite.",
+            "Une Interface.",
+            "Une Classe finale.",
+            "Un Enum."
+        ],
+        "answer": 1,
+        "explanation": "Tout JDBC est basé sur des interfaces. C'est le Driver du constructeur (Oracle, MySQL) qui fournit l'implémentation concrète cachée.",
+        "chapterId": 3
+    },
+    {
+        "id": 53,
+        "question": "Dans un `SearchVM` (ViewModel de recherche), comment interpréter un champ `minPrice` qui vaut `null` ?",
+        "options": [
+            "On cherche les voitures dont le prix est 0.",
+            "On cherche les voitures dont le prix est NULL en base.",
+            "On ignore ce critère dans la clause WHERE (pas de filtre sur le prix).",
+            "Cela lève une NullPointerException à l'exécution."
+        ],
+        "answer": 2,
+        "explanation": "Principe des filtres dynamiques : Null = 'Peu importe', on n'ajoute pas la condition au SQL.",
+        "chapterId": 3
+    },
+    {
+        "id": 54,
+        "question": "Quelle exception JDBC est de type 'Checked Exception' et doit obligatoirement être gérée ?",
+        "options": [
+            "`DataAccessException`",
+            "`SQLException`",
+            "`JDBCException`",
+            "`DatabaseConnectionError`"
+        ],
+        "answer": 1,
+        "explanation": "C'est la plaie de JDBC historique : tout lance SQLException, qu'il faut catcher ou thrower.",
+        "chapterId": 3
+    },
+    {
+        "id": 55,
+        "question": "Que retourne `stmt.executeUpdate(\"DELETE FROM users\")` si la table contient 10 utilisateurs ?",
+        "options": [
+            "Un ResultSet vide.",
+            "Le nombre 10 (int).",
+            "True.",
+            "Null."
+        ],
+        "answer": 1,
+        "explanation": "Il retourne le 'Row Count', c'est-à-dire le nombre d'enregistrements affectés par la commande.",
+        "chapterId": 3
+    },
+    {
+        "id": 56,
+        "question": "Pourquoi utilise-t-on des classes Wrapper (`Integer`, `Double`) au lieu des primitifs (`int`, `double`) dans les Entités (DTO) ?",
+        "options": [
+            "Pour la performance.",
+            "Car les primitifs ne peuvent pas représenter la valeur SQL `NULL`.",
+            "Car JDBC ne supporte pas les primitifs.",
+            "Pour pouvoir utiliser `toString()`."
+        ],
+        "answer": 1,
+        "explanation": "En base de données, une colonne INT peut être NULL. En Java, `int i = null` est impossible. `Integer` résout ce problème.",
+        "chapterId": 3
+    },
+    {
+        "id": 57,
+        "question": "Quelle méthode permet de désactiver le mode qui valide chaque requête individuellement ?",
+        "options": [
+            "`con.setTransaction(false)`",
+            "`con.setAutoCommit(false)`",
+            "`con.setManualCommit(true)`",
+            "`con.beginTransaction()`"
+        ],
+        "answer": 1,
+        "explanation": "C'est la méthode standard pour démarrer une transaction 'manuelle' en JDBC.",
+        "chapterId": 3
+    },
+    {
+        "id": 58,
+        "question": "À quoi sert l'interface `ResultSetMetaData` ?",
+        "options": [
+            "À lire les données du résultat.",
+            "À connaître le nombre de colonnes, leurs noms et leurs types dynamiquement.",
+            "À modifier la structure de la table (ALTER TABLE).",
+            "À gérer les méta-données de la connexion."
+        ],
+        "answer": 1,
+        "explanation": "Essentiel pour faire des affichages génériques (ex: afficher n'importe quelle table dans une grille sans connaître ses colonnes à l'avance).",
+        "chapterId": 3
+    },
+    {
+        "id": 59,
+        "question": "Quelle est la particularité des indices de colonnes dans `ResultSet.getString(i)` ?",
+        "options": [
+            "Ils commencent à 0 (comme les tableaux Java).",
+            "Ils commencent à 1 (convention SQL).",
+            "On doit utiliser le nom de la colonne, l'index est interdit.",
+            "Ils sont négatifs en cas d'erreur."
+        ],
+        "answer": 1,
+        "explanation": "Piège mémoriel : JDBC suit la convention SQL (1-based), alors que tout le reste de Java est 0-based.",
+        "chapterId": 3
+    },
+    {
+        "id": 60,
+        "question": "Un DAO (Data Access Object) bien conçu doit :",
+        "options": [
+            "Contenir du code Swing pour afficher les erreurs.",
+            "Masquer totalement le SQL et l'API JDBC au reste de l'application.",
+            "Ouvrir une nouvelle connexion à chaque appel de méthode.",
+            "Être une interface sans implémentation."
+        ],
+        "answer": 1,
+        "explanation": "Séparation des couches : Le contrôleur appelle `dao.findAll()`, il ne doit pas savoir qu'il y a du SQL derrière.",
+        "chapterId": 3
+    },
+    {
+        "id": 61,
+        "question": "Si j'utilise `Statement` (non préparé), que se passe-t-il au niveau du SGBD ?",
+        "options": [
+            "La requête est mise en cache efficacement.",
+            "La requête doit être analysée, parsée et planifiée à chaque exécution.",
+            "Le SGBD refuse la requête.",
+            "C'est plus rapide que PreparedStatement."
+        ],
+        "answer": 1,
+        "explanation": "Performance : Sans bind variable, le SGBD voit chaque requête comme nouvelle ('...WHERE id=4', '...WHERE id=5'). Il recompilera le plan d'exécution à chaque fois.",
+        "chapterId": 3
+    },
+    {
+        "id": 62,
+        "question": "Quand faut-il fermer un `ResultSet` ?",
+        "options": [
+            "Jamais, le GC s'en occupe.",
+            "Avant de fermer le Statement qui l'a créé.",
+            "Après avoir fermé la Connection.",
+            "C'est automatique à la fin du `while`."
+        ],
+        "answer": 1,
+        "explanation": "L'ordre de fermeture est inverse de l'ouverture : ResultSet -> Statement -> Connection.",
+        "chapterId": 3
+    },
+    {
+        "id": 63,
+        "question": "Dans le pattern DAO, la méthode `save(Car c)` gère souvent deux cas. Lesquels ?",
+        "options": [
+            "Lecture et Écriture.",
+            "INSERT (si id null) et UPDATE (si id existant).",
+            "Suppression et Création.",
+            "Connexion et Déconnexion."
+        ],
+        "answer": 1,
+        "explanation": "C'est la logique standard de persistance : un objet sans ID est nouveau, un objet avec ID existe déjà.",
+        "chapterId": 3
+    },
+    {
+        "id": 64,
+        "question": "Quelle méthode permet de savoir si la dernière valeur lue (ex: `getInt`) était en fait NULL en base ?",
+        "options": [
+            "`rs.checkNull()`",
+            "`rs.wasNull()`",
+            "Cela lance une exception si c'était null.",
+            "`getInt` retourne -1."
+        ],
+        "answer": 1,
+        "explanation": "Mécanisme lourd de JDBC : `getInt` retourne 0 pour NULL. Il faut appeler `wasNull()` juste après pour savoir si c'était un 'vrai' 0 ou un NULL converti.",
+        "chapterId": 3
+    },
+    {
+        "id": 65,
+        "question": "Le chargement dynamique `Class.forName` est-il toujours OBLIGATOIRE en JDBC 4.0+ ?",
+        "options": [
+            "Oui, sinon ça ne marche pas.",
+            "Non, le mécanisme SPI (Service Provider Interface) charge automatiquement les drivers présents dans le classpath.",
+            "Seulement pour Oracle.",
+            "Oui, pour des raisons de sécurité."
+        ],
+        "answer": 1,
+        "explanation": "Le texte précise que c'est 'souvent optionnel' aujourd'hui mais toujours correct. En JDBC moderne, c'est automatique.",
+        "chapterId": 3
+    },
+    {
+        "id": 66,
+        "question": "Quelle est l'URL JDBC typique pour se connecter à MySQL ?",
+        "options": [
+            "`http://mysql.com:3306/db`",
+            "`jdbc:mysql://host:port/database`",
+            "`sql:mysql://host/db`",
+            "`mysql:jdbc://host/db`"
+        ],
+        "answer": 1,
+        "explanation": "Protocole (`jdbc`) + Sous-protocole (`mysql`) + adresse standard.",
+        "chapterId": 3
+    },
+    {
+        "id": 67,
+        "question": "Si je fais `con.rollback()` alors que `autoCommit` est à `true`, que se passe-t-il ?",
+        "options": [
+            "La dernière requête est annulée.",
+            "Une `SQLException` est levée.",
+            "Rien ne se passe.",
+            "La connexion se ferme."
+        ],
+        "answer": 1,
+        "explanation": "C'est un non-sens : il n'y a pas de transaction en cours à annuler puisque tout est déjà committé.",
+        "chapterId": 3
+    },
+    {
+        "id": 68,
+        "question": "Un `PreparedStatement` est-il compilé côté client (Java) ou côté serveur (SGBD) ?",
+        "options": [
+            "Côté Java (Bytecode).",
+            "Côté SGBD (Plan d'exécution).",
+            "Il n'est pas compilé.",
+            "Par le driver JDBC."
+        ],
+        "answer": 1,
+        "explanation": "C'est la base de données qui 'prépare' la requête optimisée, pas le programme Java.",
+        "chapterId": 3
+    },
+    {
+        "id": 69,
+        "question": "Pour récupérer une date SQL en Java moderne (Java 8+), quelle conversion est recommandée dans le texte ?",
+        "options": [
+            "Utiliser `java.util.Date` directement.",
+            "Convertir `java.sql.Date` en `LocalDate` via `toLocalDate()`.",
+            "Traiter la date comme une String.",
+            "Utiliser `Calendar`."
+        ],
+        "answer": 1,
+        "explanation": "L'API `java.time` (LocalDate) est bien meilleure. JDBC supporte la conversion depuis les vieux types `java.sql`.",
+        "chapterId": 3
+    },
+    {
+        "id": 70,
+        "question": "Quelle méthode permet d'exécuter un `SELECT` ?",
+        "options": [
+            "`executeUpdate()`",
+            "`executeQuery()`",
+            "`executeSelect()`",
+            "`executeSQL()`"
+        ],
+        "answer": 1,
+        "explanation": "Distinction fondamentale : Query=Question (Select), Update=Mise à jour (Changement d'état).",
+        "chapterId": 3
+    },
+    {
+        "id": 71,
+        "question": "Peut-on instancier `new Class()` pour charger un driver ?",
+        "options": [
+            "Oui.",
+            "Non, `Class` n'a pas de constructeur public.",
+            "Oui, mais c'est déprécié.",
+            "Seulement dans un bloc static."
+        ],
+        "answer": 1,
+        "explanation": "`Class` est une méta-classe du système. On obtient des instances via `forName` ou `.class`, mais on ne les crée pas avec `new`.",
+        "chapterId": 3
+    },
+    {
+        "id": 72,
+        "question": "Dans l'architecture proposée, si on supprime une `Car`, doit-on supprimer son `Engine` associé ?",
+        "options": [
+            "C'est automatique.",
+            "Cela dépend des règles métier et des contraintes de clé étrangère (Cascade).",
+            "Non, c'est interdit.",
+            "Oui, le DAO le fait toujours."
+        ],
+        "answer": 1,
+        "explanation": "Question de conception. Si l'Engine est partagé, non. Si c'est une composition forte, oui. JDBC ne le fait pas magiquement, c'est la base ou le DAO qui gère.",
+        "chapterId": 3
+    },
+    {
+        "id": 73,
+        "question": "Le mot clé `limit` dans une requête SQL MySQL sert à :",
+        "options": [
+            "Limiter le temps d'exécution.",
+            "Limiter le nombre de lignes retournées.",
+            "Limiter le nombre de connexions.",
+            "Limiter la taille mémoire."
+        ],
+        "answer": 1,
+        "explanation": "Bien que ce soit du SQL pur, c'est souvent utilisé avec JDBC pour la pagination.",
+        "chapterId": 3
+    }
+]
