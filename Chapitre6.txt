@@ -1,0 +1,122 @@
+PARTIE 1 : Le Protocole HTTP (Le Garçon de Café Amnésique) (Pages 1-30)
+L'Analogie : Le Restaurant
+Imagine que le Web est un immense restaurant.
+•	Toi (Le Client/Browser) : Tu es assis à une table (Firefox, Chrome).
+•	Le Serveur (Server) : C'est la cuisine qui détient la nourriture (les pages web, les images).
+•	HTTP (Le Protocole) : C'est le Garçon de Café qui fait les allers-retours.
+La Règle d'Or : "Stateless" (Sans État)
+C'est le concept le plus important du début du cours. Le garçon de café HTTP est amnésique.
+1.	Tu l'appelles : "Apporte-moi le menu (Page d'accueil)". Il court en cuisine, revient, te donne le menu, et POUF, il oublie instantanément qui tu es.
+2.	Tu le rappelles 2 secondes après : "Apporte-moi de l'eau". Il ne se dit pas "Ah, c'est le gars du menu". Pour lui, tu es un tout nouvel inconnu.
+•	En informatique : Le serveur ne garde aucune mémoire de la conversation précédente. Si on veut qu'il se souvienne (ex: panier d'achat), il faudra utiliser des astuces (Cookies) pour lui rafraîchir la mémoire à chaque fois.
+La Conversation (Requête / Réponse)
+Pour parler au garçon, il y a des règles strictes.
+1. La Requête (Ce que tu demandes) Tu ne peux pas juste crier. Tu dois utiliser des verbes précis (Méthodes HTTP) :
+•	GET : "Va me chercher ça." (Afficher une page, une image). C'est 90% du web.
+•	POST : "Tiens, prends ces infos et traite-les en cuisine." (Envoyer un formulaire d'inscription, poster un tweet).
+•	PUT : "Mets ça à cet endroit précis." (Mise à jour).
+•	DELETE : "Jette ça à la poubelle." (Supprimer une ressource).
+•	HEAD : "Dis-moi juste si tu as le plat, mais ne me l'apporte pas." (Pour vérifier si une page existe sans la télécharger).
+2. La Réponse (Ce qu'il te dit) Le garçon revient toujours avec un code sur son front (Code de Statut) pour dire comment ça s'est passé :
+•	200 OK : "Tiens, voilà ton plat." (Succès).
+•	404 Not Found : "Le chef ne trouve pas ce plat." (Page introuvable).
+•	500 Internal Server Error : "La cuisine est en feu !" (Le code du serveur a planté).
+•	403 Forbidden : "Tu n'as pas le droit de manger ça." (Interdit).
+•	301/302 Redirect : "On a déménagé, va au restaurant d'en face."
+L'Adresse (URL)
+Pour dire au garçon où aller, on utilise une URL (Uniform Resource Locator). http://www.google.com:80/images/logo.png
+•	http : Le langage (Garçon, on parle ta langue).
+•	www.google.com : L'adresse du restaurant (Le Serveur).
+•	:80 : Le numéro de la porte (Le Port). Par défaut, le Web c'est la porte 80 (ou 443 si c'est sécurisé HTTPS).
+•	/images/logo.png : L'étagère précise en cuisine.
+PARTIE 2 : HTML (Le Squelette) (Pages 31-60)
+Le garçon t'apporte un plat. Ce plat, c'est souvent une page HTML.
+L'Analogie : Les Boîtes Gigognes (Lego)
+Une page web n'est pas une image. C'est du texte structuré avec des Balises (Tags). Imagine des boîtes en carton les unes dans les autres.
+•	La grande boîte <HTML> contient tout.
+•	Dans la boîte <HEAD> (La Tête) : Ce sont les infos pour le navigateur (le titre de l'onglet, l'encodage). L'utilisateur ne voit pas ça directement.
+•	Dans la boîte <BODY> (Le Corps) : C'est tout ce qui s'affiche à l'écran.
+Les Balises Essentielles (Le vocabulaire)
+•	<h1>, <h2> ... : Les Titres (H = Heading). H1 est énorme, H6 est tout petit.
+•	<p> : Un Paragraphe de texte.
+•	<a> (Anchor) : L'élément le plus important du web. C'est le lien hypertexte. <a href="page2.html">Clique ici</a>. C'est le portail de téléportation.
+•	<img> : Une image. Attention, l'image n'est pas dans la page, c'est juste un lien qui dit au navigateur "Va chercher l'image là-bas et affiche-la ici".
+•	<table>, <tr> (ligne), <td> (cellule) : Les tableaux (comme Excel).
+•	<ul> / <ol> et <li> : Les listes (à puces ou numérotées).
+Les Formulaires (Parler au serveur)
+C'est quand l'utilisateur doit répondre (Login, Recherche). On utilise la balise <form>. Dedans, on met des <input> (zones de texte, boutons).
+•	Le piège : Quand on clique sur "Envoyer", le navigateur fabrique une requête HTTP (souvent POST) avec ce que tu as écrit et l'envoie au serveur.
+PARTIE 3 : CSS (Le Maquillage et la Déco) (Pages 61-80)
+L'Analogie : Le Peintre en Bâtiment
+HTML, c'est moche. C'est du texte noir sur fond blanc, tout aligné à gauche. C'est juste la structure (les murs). CSS (Cascading Style Sheets) est le décorateur. Il arrive et dit : "Tous les murs en bleu ! Ce titre en rouge ! Cette image à droite !"
+La Règle d'or : On ne mélange pas le fond (HTML) et la forme (CSS). Le CSS s'écrit dans un fichier à part ou dans une zone spéciale.
+Comment viser ? (Les Sélecteurs)
+Pour peindre, il faut dire au peintre quoi peindre.
+1.	Par balise : h1 { color: red; } -> "Peins TOUS les gros titres en rouge."
+2.	Par Classe (.) : C'est une équipe. class="important".
+o	CSS : .important { font-weight: bold; } -> "Tous les éléments de l'équipe 'important', mettez-vous en gras."
+3.	Par ID (#) : C'est le VIP, unique dans la page. id="monMenu".
+o	CSS : #monMenu { background: black; } -> "L'élément unique 'monMenu', mets-toi en noir."
+Le Modèle de Boîte (Box Model) - Très important
+En CSS, tout est un rectangle. Imagine que chaque mot ou image est dans un cadre. Ce cadre a 3 épaisseurs autour du contenu :
+1.	Padding (Rembourrage) : L'espace entre le texte et la bordure (à l'intérieur). C'est pour que le texte ne touche pas le bord.
+2.	Border (Bordure) : Le trait visible autour de la boîte.
+3.	Margin (Marge) : L'espace à l'extérieur de la bordure, pour repousser les voisins. (La distanciation sociale des éléments).
+PARTIE 4 : JavaScript (Le Magicien) (Pages 81-100)
+L'Analogie : La Marionnette
+HTML est un squelette immobile. CSS le maquille. Mais il reste immobile. JavaScript (JS) est le marionnettiste qui tire les ficelles pour faire bouger les choses sans recharger la page.
+•	Il peut faire apparaître une fenêtre.
+•	Il peut vérifier si tu as bien mis une adresse email valide.
+•	Il peut changer la couleur d'un bouton quand tu cliques.
+Le DOM (L'Arbre Généalogique)
+Pour que JS puisse modifier la page, le navigateur transforme le HTML en un arbre généalogique appelé DOM (Document Object Model).
+•	La page est l'ancêtre.
+•	Le <body> est son enfant.
+•	Le <h1> et le <p> sont les enfants du body.
+JS peut grimper dans cet arbre : document.getElementById("titre").style.color = "blue"; Traduction : "Hé le document, trouve l'enfant qui a l'ID 'titre', et change sa couleur en bleu."
+Les Événements (L'Oreille Absolue)
+JS passe son temps à écouter. Il attend qu'il se passe quelque chose.
+•	onClick : L'utilisateur a cliqué.
+•	onMouseOver : La souris passe dessus.
+•	onLoad : La page a fini de charger.
+Le code ressemble à : "SI (clic sur le bouton) ALORS (lance la fonction feu_artifice)".
+PARTIE 5 : API REST (La Langue des Robots) (Pages 101-112)
+L'Analogie : Le Distributeur Automatique
+Jusqu'ici, on parlait de sites web pour les humains (jolis, avec des couleurs). Mais parfois, deux programmes doivent se parler (ex: l'application Uber parle au serveur Google Maps). Ils s'en fichent des couleurs. Ils veulent juste les données brutes.
+Une API REST, c'est un serveur web qui ne renvoie pas du HTML (joli), mais des données brutes (texte).
+Le Format JSON (L'Esperanto des Machines)
+Comment le serveur envoie les données ? En JSON (JavaScript Object Notation). C'est juste du texte qui ressemble à ça :
+JSON
+{
+  "nom": "Wagner",
+  "prenom": "Jean-Marc",
+  "cours": "Réseaux"
+}
+C'est léger, facile à lire pour un humain et pour une machine.
+Les Règles REST
+Pour qu'une API soit "REST", elle doit respecter la logique du HTTP (vue en partie 1) de manière stricte :
+•	Si je veux lire des données -> Je DOIS utiliser GET.
+•	Si je veux créer une donnée -> Je DOIS utiliser POST.
+•	L'URL doit représenter un "objet" (une ressource).
+o	Bien : GET /etudiants/12 (Donne-moi l'étudiant n°12).
+o	Mal : GET /donneMoiLeTudiant?id=12 (C'est moins "propre" en REST pur).
+RÉSUMÉ FINAL POUR L'EXAMEN (La "Cheat Sheet")
+Si tu as un QCM ou du code à écrire, souviens-toi :
+1.	C'est quoi un Serveur Web ?
+o	Un logiciel qui écoute sur le port 80 et parle HTTP.
+o	Il est stateless (ne se souvient de rien).
+2.	Différence HTML / CSS / JS :
+o	HTML = Structure (Le Verbe).
+o	CSS = Style (L'Adjectif).
+o	JS = Comportement (L'Action).
+3.	Les Codes HTTP à connaître par cœur :
+o	200 (Tout va bien).
+o	404 (Introuvable).
+o	500 (Erreur Serveur).
+4.	Java dans tout ça ?
+o	Le PDF montre probablement comment créer un petit serveur web en Java en utilisant des ServerSocket (vu au ch.4) qui lisent du texte ("GET / HTTP/1.1") et répondent du texte.
+o	Ou comment Java peut faire des requêtes (être le client) pour appeler une API (récupérer la météo par exemple).
+5.	Le Piège Classique :
+o	JavaScript tourne chez le client (sur ton ordi).
+o	Le code Java (Serveur) tourne chez le serveur.
+o	Ils ne peuvent pas se parler directement, ils doivent s'envoyer des requêtes HTTP.

@@ -27,13 +27,13 @@
         "id": 5,
         "title": "Cryptographie et Java",
         "description": "Sécurité, Chiffrement, Clés publiques/privées.",
-        "status": "coming_soon"
+        "status": "active"
     },
     {
         "id": 6,
         "title": "Protocole HTTP et Prog. Serveur",
         "description": "Servlets, Requêtes, Réponses, Sessions.",
-        "status": "coming_soon"
+        "status": "active"
     },
     {
         "id": 7,

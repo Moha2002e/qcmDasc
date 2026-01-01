@@ -1,0 +1,392 @@
+[
+    {
+        "id": 184,
+        "question": "En Java, quelle classe permet de créer un serveur HTTP simple intégré (sans Tomcat/Jetty) ?",
+        "options": [
+            "`java.net.SimpleServer`",
+            "`com.sun.net.httpserver.HttpServer`",
+            "`javax.servlet.HttpServer`",
+            "`java.web.Server`"
+        ],
+        "answer": 1,
+        "explanation": "C'est la classe légère incluse dans le JDK (depuis Java 6) pour faire des petits serveurs web autonomes.",
+        "chapterId": 6
+    },
+    {
+        "id": 185,
+        "question": "L'objet `HttpExchange` passé au `HttpHandler` encapsule :",
+        "options": [
+            "Uniquement la requête du client.",
+            "La requête du client (InputStream, Headers) ET la réponse à envoyer (OutputStream).",
+            "Uniquement la réponse.",
+            "La session utilisateur."
+        ],
+        "answer": 1,
+        "explanation": "C'est l'objet pivot qui représente la transaction HTTP complète. On lit la demande dedans et on écrit la réponse dedans.",
+        "chapterId": 6
+    },
+    {
+        "id": 186,
+        "question": "Quelle méthode de `HttpServer` permet d'associer une URL (ex: '/api/users') à un code Java ?",
+        "options": [
+            "`server.addRoute()`",
+            "`server.createContext()`",
+            "`server.setHandler()`",
+            "`server.bind()`"
+        ],
+        "answer": 1,
+        "explanation": "`createContext(path, handler)` définit quel `HttpHandler` sera déclenché pour une URL donnée.",
+        "chapterId": 6
+    },
+    {
+        "id": 187,
+        "question": "Pour renvoyer une réponse au client avec `HttpExchange`, quelle méthode doit être appelée EN PREMIER ?",
+        "options": [
+            "`exchange.getResponseBody().write(...)`",
+            "`exchange.sendResponseHeaders(code, length)`",
+            "`exchange.close()`",
+            "`exchange.flush()`"
+        ],
+        "answer": 1,
+        "explanation": "Le protocole HTTP impose d'envoyer les en-têtes (Status 200, Content-Length) AVANT le corps du message.",
+        "chapterId": 6
+    },
+    {
+        "id": 188,
+        "question": "Une requête 'Cross-Origin' (CORS) est bloquée par défaut par le navigateur si :",
+        "options": [
+            "L'utilisateur n'est pas admin.",
+            "Le site A appelle une API sur le site B, qui n'est pas le même domaine/port, et que B n'a pas autorisé A.",
+            "Le serveur est éteint.",
+            "C'est une requête GET."
+        ],
+        "answer": 1,
+        "explanation": "Sécurité du navigateur (Same-Origin Policy). Le serveur doit explicitement dire 'J'accepte les appels venant de A' via des headers.",
+        "chapterId": 6
+    },
+    {
+        "id": 189,
+        "question": "Quel en-tête HTTP le serveur doit-il ajouter pour autoriser TOUT le monde à appeler son API (CORS) ?",
+        "options": [
+            "`Access-Control-Allow-Origin: *`",
+            "`Allow-All: true`",
+            "`CORS-Enabled: *`",
+            "`Origin: *`"
+        ],
+        "answer": 0,
+        "explanation": "C'est la clé de voûte du CORS. '*' signifie 'tout le monde'.",
+        "chapterId": 6
+    },
+    {
+        "id": 190,
+        "question": "Dans une architecture REST, quelle méthode HTTP est OBLIGATOIRE pour **créer** une nouvelle ressource ?",
+        "options": [
+            "GET",
+            "PUT",
+            "POST",
+            "DELETE"
+        ],
+        "answer": 2,
+        "explanation": "Convention REST stricte : POST pour créer, PUT pour remplacer/mettre à jour, GET pour lire.",
+        "chapterId": 6
+    },
+    {
+        "id": 191,
+        "question": "L'interface `HttpHandler` ne contient qu'une seule méthode à implémenter. Laquelle ?",
+        "options": [
+            "`void run()`",
+            "`void handle(HttpExchange exchange)`",
+            "`void serve(Request req, Response res)`",
+            "`void execute()`"
+        ],
+        "answer": 1,
+        "explanation": "C'est l'unique point d'entrée. Tout le traitement d'une requête se fait ici.",
+        "chapterId": 6
+    },
+    {
+        "id": 192,
+        "question": "Un code de statut HTTP 403 signifie :",
+        "options": [
+            "Page introuvable (Not Found)",
+            "Erreur interne du serveur (Internal Error)",
+            "Accès interdit (Forbidden)",
+            "Redirection"
+        ],
+        "answer": 2,
+        "explanation": "Le client est authentifié (ou pas), mais il n'a pas les droits nécessaires pour cette ressource.",
+        "chapterId": 6
+    },
+    {
+        "id": 193,
+        "question": "La classe `HttpContext` (retournée par `createContext`) permet de :",
+        "options": [
+            "Stocker des attributs partagés entre les requêtes d'un même contexte.",
+            "Lire les cookies.",
+            "Chiffrer la connexion.",
+            "Rien de spécial."
+        ],
+        "answer": 0,
+        "explanation": "Elle permet de configurer des filtres ou de passer des données globales à ce path spécifique (`getAttributes()`).",
+        "chapterId": 6
+    },
+    {
+        "id": 194,
+        "question": "Dans `exchange.sendResponseHeaders(200, length)`, que signifie le paramètre `length` s'il vaut 0 ?",
+        "options": [
+            "Pas de contenu.",
+            "Contenu de taille inconnue (Chunked Transfer Encoding).",
+            "Erreur.",
+            "Contenu infini."
+        ],
+        "answer": 1,
+        "explanation": "Piège de l'API Java : 0 = Chunked (streaming). -1 = Pas de corps. >0 = Taille fixe exacte.",
+        "chapterId": 6
+    },
+    {
+        "id": 195,
+        "question": "Quelle est la particularité d'une API REST dite 'Stateless' ?",
+        "options": [
+            "Le serveur ne stocke aucun état de session client entre deux requêtes.",
+            "Elle n'a pas de base de données.",
+            "Elle est en lecture seule.",
+            "Elle ne gère pas les erreurs."
+        ],
+        "answer": 0,
+        "explanation": "Chaque requête doit contenir toutes les infos nécessaires (token, ID...) pour être traitée, comme si c'était la première.",
+        "chapterId": 6
+    },
+    {
+        "id": 196,
+        "question": "Si mon serveur Java reçoit une requête, comment récupérer les paramètres GET (query string) ?",
+        "options": [
+            "`exchange.getRequestURI().getQuery()`",
+            "`exchange.getParams()`",
+            "`exchange.getQueryString()`",
+            "`exchange.getBody()`"
+        ],
+        "answer": 0,
+        "explanation": "`HttpExchange` donne accès à l'URI brute. Il faut parser soi-même la partie après le '?' (sauf si on utilise une lib tierce).",
+        "chapterId": 6
+    },
+    {
+        "id": 197,
+        "question": "Pour autoriser les requêtes CORS dites 'Preflight' (méthode OPTIONS), le serveur doit :",
+        "options": [
+            "Ne rien faire.",
+            "Répondre 200 OK avec les bons headers Access-Control sans corps de message.",
+            "Bloquer la requête.",
+            "Renvoyer une erreur 405."
+        ],
+        "answer": 1,
+        "explanation": "Le navigateur envoie d'abord OPTIONS pour demander la permission. Le serveur doit dire 'Oui je t'autorise' avant que le navigateur n'envoie la vraie requête (POST/PUT).",
+        "chapterId": 6
+    },
+    {
+        "id": 198,
+        "question": "Lequel de ces en-têtes indique au client que la réponse est du JSON ?",
+        "options": [
+            "`Content-Type: text/html`",
+            "`Content-Type: application/json`",
+            "`Accept: application/json`",
+            "`Body-Type: json`"
+        ],
+        "answer": 1,
+        "explanation": "Indispensable pour que le client (JS ou autre) sache comment parser la réponse.",
+        "chapterId": 6
+    },
+    {
+        "id": 199,
+        "question": "La méthode `server.start()` est-elle bloquante ?",
+        "options": [
+            "Oui, elle bloque le thread main indéfiniment.",
+            "Non, elle lance le serveur dans un thread d'arrière-plan (background) et rend la main.",
+            "Cela dépend de l'OS.",
+            "Oui, jusqu'au premier client."
+        ],
+        "answer": 1,
+        "explanation": "Contrairement à `ServerSocket.accept()`, `HttpServer.start()` démarre le moteur et revient immédiatement.",
+        "chapterId": 6
+    },
+    {
+        "id": 200,
+        "question": "Avec `HttpServer`, comment gère-t-on le multithreading des requêtes ?",
+        "options": [
+            "C'est automatique.",
+            "Il faut définir un `Executor` via `server.setExecutor(...)`.",
+            "Ce n'est pas possible, c'est mono-thread.",
+            "Il faut créer des threads dans le Handler."
+        ],
+        "answer": 1,
+        "explanation": "Par défaut, l'executor est souvent null (ou simple). Pour un vrai serveur concurrent, on lui passe un `Executors.newFixedThreadPool(10)`.",
+        "chapterId": 6
+    },
+    {
+        "id": 201,
+        "question": "Un code 500 envoyé par le serveur signifie :",
+        "options": [
+            "Le client a fait une erreur.",
+            "Le serveur a rencontré une exception non gérée lors du traitement.",
+            "Le serveur est éteint.",
+            "La base de données est vide."
+        ],
+        "answer": 1,
+        "explanation": "Erreur côté 'Cuisine'. Le code Java a planté (NullPointer, etc.).",
+        "chapterId": 6
+    },
+    {
+        "id": 202,
+        "question": "Quelle méthode HTTP est utilisée pour mettre à jour une ressource existante (REST) ?",
+        "options": [
+            "GET",
+            "POST",
+            "PUT",
+            "HEAD"
+        ],
+        "answer": 2,
+        "explanation": "PUT écrase la ressource cible avec le nouveau contenu fourni.",
+        "chapterId": 6
+    },
+    {
+        "id": 203,
+        "question": "Si `exchange.getRequestBody()` est un InputStream, comment lire le corps d'une requête POST ?",
+        "options": [
+            "Il est déjà lu dans une String.",
+            "On doit le lire octet par octet (ou via un Reader) comme un flux réseau classique.",
+            "On utilise `request.getParameter()`.",
+            "Le corps est interdit en POST."
+        ],
+        "answer": 1,
+        "explanation": "`HttpServer` est bas niveau. Il donne le flux brut. Il faut le lire et le décoder (ex: new String(bytes)).",
+        "chapterId": 6
+    },
+    {
+        "id": 204,
+        "question": "Quelle est la relation entre `HttpServer` et `ServerSocket` ?",
+        "options": [
+            "`HttpServer` utilise un `ServerSocket` en interne pour écouter le port TCP.",
+            "Ce sont deux technologies concurrentes.",
+            "`ServerSocket` est obsolète.",
+            "`HttpServer` est en UDP."
+        ],
+        "answer": 0,
+        "explanation": "HTTP est au-dessus de TCP. Le serveur HTTP encapsule toute la complexité de gestion des sockets TCP vues au chapitre 4.",
+        "chapterId": 6
+    },
+    {
+        "id": 205,
+        "question": "Pourquoi l'API `XMLHttpRequest` du navigateur est-elle hors-sujet ici (selon la consigne) ?",
+        "options": [
+            "Car c'est du C++.",
+            "Car c'est l'ancienne façon de faire des appels AJAX en Javascript côté client, et on se concentre sur le serveur Java.",
+            "Car elle ne supporte pas REST.",
+            "Car elle est payante."
+        ],
+        "answer": 1,
+        "explanation": "Le focus est sur le backend Java (`com.sun.net.httpserver`) et l'architecture REST, pas sur l'implémentation client legacy.",
+        "chapterId": 6
+    },
+    {
+        "id": 206,
+        "question": "Le header `Access-Control-Allow-Methods` sert à :",
+        "options": [
+            "Lister les méthodes Java autorisées.",
+            "Indiquer au navigateur quelles méthodes HTTP (GET, POST...) sont permises pour le CORS.",
+            "Accélérer le réseau.",
+            "Sécuriser le mot de passe."
+        ],
+        "answer": 1,
+        "explanation": "Pendant le Preflight, le serveur dit 'J'accepte que tu m'envoies du POST et du PUT'.",
+        "chapterId": 6
+    },
+    {
+        "id": 207,
+        "question": "Si j'envoie une réponse 405 Method Not Allowed, c'est généralement que :",
+        "options": [
+            "Le serveur a planté.",
+            "Le client a utilisé POST sur une URL qui n'accepte que GET.",
+            "Le fichier est introuvable.",
+            "Le client n'est pas connecté."
+        ],
+        "answer": 1,
+        "explanation": "L'URL existe, mais le verbe utilisé n'est pas supporté par le Handler.",
+        "chapterId": 6
+    },
+    {
+        "id": 208,
+        "question": "Que représente localhost:8080 ?",
+        "options": [
+            "Le serveur de Google.",
+            "Le serveur local sur le port 8080.",
+            "Une adresse invalide.",
+            "Un fichier."
+        ],
+        "answer": 1,
+        "explanation": "localhost est l'alias de 127.0.0.1 (la machine elle-même).",
+        "chapterId": 6
+    },
+    {
+        "id": 209,
+        "question": "Dans `exchange.sendResponseHeaders(code, length)`, si length vaut -1, cela indique :",
+        "options": [
+            "Une erreur fatale.",
+            "Qu'il n'y aura pas de corps de réponse (ex: pour un 204 No Content).",
+            "Que la taille est infinie.",
+            "Que le client doit deviner."
+        ],
+        "answer": 1,
+        "explanation": "Pas de body = pas de flux de sortie à écrire ensuite.",
+        "chapterId": 6
+    },
+    {
+        "id": 210,
+        "question": "Une API REST retourne souvent ses erreurs (404, 500) avec :",
+        "options": [
+            "Une page HTML d'erreur jolie.",
+            "Un JSON décrivant l'erreur (ex: `{\"error\": \"User not found\"}`).",
+            "Rien du tout.",
+            "Une alerte sonore."
+        ],
+        "answer": 1,
+        "explanation": "Comme les clients sont des robots/programmes, ils préfèrent un JSON structuré à une page HTML destinée aux humains.",
+        "chapterId": 6
+    },
+    {
+        "id": 211,
+        "question": "Le verbe HTTP `HEAD` est utile pour :",
+        "options": [
+            "Tout supprimer.",
+            "Récupérer uniquement les en-têtes (méta-données) sans télécharger le corps de la ressource.",
+            "Envoyer un en-tête.",
+            "Se connecter en admin."
+        ],
+        "answer": 1,
+        "explanation": "Optimisation : permet de vérifier la date de modification ou l'existence d'un fichier sans le télécharger.",
+        "chapterId": 6
+    },
+    {
+        "id": 212,
+        "question": "L'interface `HttpHandler` est fonctionnelle, on peut donc l'écrire en lambda expression :",
+        "options": [
+            "Non, impossible.",
+            "Oui : `server.createContext(\"/test\", exchange -> { ... });`",
+            "Seulement en Java 18.",
+            "Oui mais c'est déconseillé."
+        ],
+        "answer": 1,
+        "explanation": "Comme elle n'a qu'une méthode abstraite (`handle`), elle est candidate parfaite pour les lambdas Java 8+.",
+        "chapterId": 6
+    },
+    {
+        "id": 213,
+        "question": "Quelle classe Java permet de manipuler les en-têtes de requête et de réponse dans un `HttpExchange` ?",
+        "options": [
+            "`java.util.Map`",
+            "`com.sun.net.httpserver.Headers` (qui implémente `Map<String, List<String>>`)",
+            "`HttpHeaderManager`",
+            "`ArrayList`"
+        ],
+        "answer": 1,
+        "explanation": "`Headers` est une surcouche pratique d'une Map pour gérer les multiples valeurs par clé.",
+        "chapterId": 6
+    }
+]

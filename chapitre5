@@ -1,0 +1,139 @@
+Introduction : Pourquoi on se donne tant de mal ? (Pages 1-10)
+Avant de coder, il faut comprendre le but. En sécurité informatique, on cherche à protéger 4 piliers sacrés (le fameux C.I.A.N.). Imagine que tu envoies une lettre d'amour secrète en classe.
+1.	C - Confidentialité : Tu ne veux pas que le voisin de classe (l'espion) puisse lire la lettre.
+o	Solution : Tu écris dans une langue que seul ton destinataire comprend (Chiffrement).
+2.	I - Intégrité : Tu ne veux pas que le voisin gomme un mot pour changer "Je t'aime" en "Je te hais".
+o	Solution : Une technique pour prouver que la lettre n'a pas été touchée (Hachage).
+3.	A - Authentification : Ton destinataire doit être sûr que la lettre vient bien de TOI, et pas d'un plaisantin.
+o	Solution : Ta signature unique.
+4.	N - Non-répudiation : Si tu as écrit "Je te dois 10€", tu ne dois pas pouvoir dire le lendemain "Non, c'est pas moi qui ai écrit ça !".
+o	Solution : Une preuve légale (Signature numérique).
+La différence entre deux mots que tout le monde confond :
+•	Cryptographie : C'est l'art de créer des codes secrets (les gentils).
+•	Crypto-analyse : C'est l'art de casser les codes sans avoir la clé (les pirates ou les chercheurs).
+
+
+PARTIE 1 : La Cryptographie Symétrique (Le Secret Partagé) (Pages 11-30)
+L'Analogie : Le Coffre-Fort et la Clé Unique
+Imagine que tu as un coffre-fort. Tu as une seule clé en métal.
+1.	Tu mets ton message dans le coffre.
+2.	Tu fermes à clé (Chiffrement).
+3.	Tu envoies le coffre à ton ami Bob.
+4.	Pour l'ouvrir, Bob a besoin de la même clé que toi (Déchiffrement).
+C'est ça, la cryptographie symétrique. Une seule clé pour fermer et ouvrir.
+Le Problème (Le talon d'Achille)
+C'est le problème de la Distribution de la Clé.
+Si tu envoies la clé par la poste avec le coffre, le facteur (l'espion) peut copier la clé. Si tu ne donnes pas la clé, Bob ne peut pas ouvrir le coffre. Comment donner la clé à Bob sans que personne ne la voie ? C'est le grand dilemme historique.
+Les Algorithmes (Les types de serrures)
+Dans le PDF, on te présente plusieurs marques de serrures :
+•	DES : Une vieille serrure rouillée des années 70. La clé est trop petite (56 bits). Aujourd'hui, un ordinateur puissant teste toutes les clés possibles en quelques heures. À ne plus utiliser.
+•	3DES : On a pris la vieille serrure DES, et on en a mis 3 à la suite. C'est plus sûr, mais c'est très lent (il faut tourner 3 clés).
+•	AES (Le Roi) : C'est la serrure moderne standard (utilisée par les banques, l'armée, le HTTPS). Elle est mathématiquement très robuste et très rapide.
+Le Détail Technique : ECB vs CBC (Ou "Pourquoi ne pas peindre par numéros")
+C'est une partie cruciale du PDF. AES découpe ton message en petits blocs (comme des carreaux de carrelage).
+•	Mode ECB (Electronic Code Book) - Le Naïf : Tu chiffres chaque carreau indépendamment.
+o	Le défaut : Si tu chiffres une image de Mickey, tous les carreaux "bleus" du fond deviendront des carreaux "rouges" chiffrés. Mais à la fin... on reconnaît toujours la forme de Mickey ! Les motifs restent visibles. C'est dangereux.
+•	Mode CBC (Cipher Block Chaining) - Le Malin : Avant de chiffrer le carreau n°2, on le mélange avec le résultat du carreau n°1. C'est une chaîne.
+o	Résultat : L'image de Mickey devient de la neige télévisuelle (bruit aléatoire). Plus aucun motif.
+o	L'IV (Vecteur d'Initialisation) : Pour le tout premier carreau, on n'a pas de carreau précédent. On invente donc un bloc de données aléatoires appelé IV. Cet IV n'est pas secret, on l'envoie avec le message, mais il sert à démarrer le mélange.
+Comment on le fait en Java ?
+En Java, tout se fait avec la classe Cipher (le chiffreur).
+1.	On fabrique une clé (KeyGenerator).
+2.	On prépare le chiffreur (Cipher.getInstance("AES/CBC/PKCS5Padding")). Note le padding : c'est du rembourrage. Si ton message ne remplit pas parfaitement le dernier carton, on met du polystyrène (padding) pour que ça rentre.
+3.	On chiffre (cipher.doFinal()).
+PARTIE 2 : La Cryptographie Asymétrique (La Magie des Deux Clés) (Pages 31-50)
+L'Analogie : La Boîte aux Lettres Publique
+Le symétrique (une seule clé) posait problème pour l'échange. Voici la solution magique : l'Asymétrique.
+Imagine une boîte aux lettres dans la rue.
+•	Tout le monde peut glisser une lettre dedans (Clé Publique).
+•	Mais seul le facteur a la clé pour ouvrir la porte et récupérer le courrier (Clé Privée).
+La règle d'or : Ce que l'une des clés verrouille, seule l'autre peut le déverrouiller. Même la clé qui a verrouillé ne peut pas rouvrir !
+RSA : L'Algorithme Vedette
+C'est basé sur des maths complexes (les nombres premiers), mais retenons ceci :
+•	Alice génère deux clés : une Verte (Publique) et une Rouge (Privée).
+•	Elle donne la Verte à tout le monde (elle la met sur son site web).
+•	Elle garde la Rouge cachée sous son oreiller.
+Cas 1 : Confidentialité (Je veux parler à Alice)
+•	Je prends la clé Verte (Publique) d'Alice.
+•	Je chiffre mon message.
+•	J'envoie.
+•	Qui peut lire ? Seule la clé Rouge (Privée) peut ouvrir. Donc seule Alice peut lire. Gagné !
+Cas 2 : Le Chiffrement Hybride (Le meilleur des deux mondes)
+Le PDF insiste là-dessus. RSA (Asymétrique), c'est très lent. C'est comme transporter de l'eau avec une cuillère. AES (Symétrique), c'est un tuyau d'arrosage (rapide).
+Comment chiffrer un film HD ?
+1.	On crée une clé AES temporaire (clé jetable).
+2.	On chiffre le film avec AES (rapide).
+3.	On chiffre la petite clé AES avec la clé RSA Publique du destinataire.
+4.	On envoie [Film chiffré] + [Clé chiffrée].
+PARTIE 3 : Le Hachage (L'Empreinte Digitale) (Pages 51-60)
+L'Analogie : Le Blender (Mixeur)
+Le hachage n'est PAS du chiffrement. On ne peut pas revenir en arrière.
+Imagine que tu mets une vache dans un mixeur géant. Tu obtiens de la bouillie de viande.
+•	Peux-tu refaire la vache à partir de la bouillie ? Non (Irréversible).
+•	Si tu mets une autre vache exactement pareille, obtiens-tu la même bouillie ? Oui.
+•	Si tu mets une vache avec une seule tache différente, la bouillie sera-t-elle différente ? Oui, totalement (Effet avalanche).
+À quoi ça sert ? (Intégrité)
+Tu télécharges un fichier géant. Comment savoir s'il n'a pas été corrompu pendant le téléchargement (un 0 devenu un 1) ?
+Le site web te donne l'empreinte (le hachage) du fichier original.
+Tu passes ton fichier téléchargé dans le "mixeur" (algorithme de hachage).
+•	Si ta bouillie = la bouillie du site web -> Le fichier est parfait.
+•	Si c'est différent -> Le fichier est cassé ou piraté.
+Algorithmes :
+•	MD5 : Un vieux mixeur. Il arrive parfois que deux fichiers différents donnent la même bouillie (Collision). Dangereux.
+•	SHA-256 : Le standard actuel. Très sûr.
+En Java, c'est la classe MessageDigest.
+PARTIE 4 : La Signature Numérique (Le Sceau Royal) (Pages 61-75)
+L'Analogie : Le Sceau Magique
+Comment prouver que c'est bien Alice qui a écrit le document, et qu'il n'a pas été modifié ? On combine tout ce qu'on a vu.
+Pour Signer un document, Alice fait ceci :
+1.	Elle passe le document au mixeur (Hachage) -> Elle obtient l'empreinte.
+2.	Elle chiffre cette empreinte avec sa Clé Privée (Rouge).
+o	Attends, pourquoi la privée ? Parce qu'elle est la seule au monde à l'avoir ! Si on arrive à déchiffrer avec sa clé publique, c'est la preuve mathématique que ça vient de sa clé privée.
+3.	Ce petit bout de code chiffré est la Signature. Elle le colle à la fin du document.
+Pour Vérifier (Toi, le récepteur) :
+1.	Tu sépares le document et la signature.
+2.	Tu passes le document au mixeur -> Tu obtiens l'empreinte A.
+3.	Tu déchiffres la signature avec la Clé Publique (Verte) d'Alice -> Tu obtiens l'empreinte B.
+4.	Si A = B :
+o	Preuve que c'est Alice (seule sa clé privée a pu chiffrer ça).
+o	Preuve que le texte n'a pas changé (sinon l'empreinte A serait différente).
+En Java, on utilise la classe Signature. Elle fait le Hachage + le RSA en une seule commande (sign() et verify()).
+PARTIE 5 : Gestion des Clés et Certificats (Le Trousseau) (Pages 76-91)
+C'est la partie la plus "pratique" et souvent la plus obscure pour les étudiants.
+Où range-t-on les clés ? (Le KeyStore)
+Tu ne vas pas laisser tes clés traîner dans un fichier texte cle.txt sur ton bureau. Java utilise un KeyStore (un magasin de clés).
+C'est un fichier chiffré (souvent .jks ou .p12) protégé par un mot de passe. C'est un coffre-fort numérique.
+Il contient deux types de choses :
+1.	Tes clés privées : Pour signer ou déchiffrer.
+2.	Des Certificats : Ce sont les clés publiques de tes amis ou des sites web (Google, Amazon).
+C'est quoi un Certificat (X.509) ?
+Si je te donne une clé publique en disant "C'est la clé de la Banque !", comment sais-tu que je ne mens pas ?
+Un certificat, c'est une Carte d'Identité Numérique.
+Il contient :
+•	La clé publique.
+•	Le nom du propriétaire (La Banque).
+•	La date d'expiration.
+•	ET SURTOUT : La signature d'une "Autorité" (comme la Police d'Internet, ex: Verisign) qui dit "Je confirme, cette clé appartient bien à la Banque".
+L'outil keytool
+C'est un petit programme en ligne de commande (pas du code Java, mais une commande terminal) livré avec Java.
+Le PDF liste les commandes essentielles pour l'examen :
+•	genkey : "Fabrique-moi une paire de clés et mets-la dans le coffre".
+•	export : "Sors ma clé publique (certificat) pour que je puisse la donner à Bob".
+•	import : "Bob m'a donné son certificat, mets-le dans mon coffre".
+RÉSUMÉ FINAL POUR L'EXAMEN (La "Cheat Sheet" Mentale)
+Si tu dois coder ou répondre à un QCM, souviens-toi de ces associations :
+1.	Je veux aller vite et chiffrer gros :
+o	$\rightarrow$ Symétrique (AES).
+o	Classe Java : SecretKey, Cipher.
+2.	Je veux échanger une clé ou prouver mon identité :
+o	$\rightarrow$ Asymétrique (RSA).
+o	Classe Java : KeyPair, PublicKey, PrivateKey.
+3.	Je veux vérifier que le fichier n'est pas cassé :
+o	$\rightarrow$ Hachage (SHA-256).
+o	Classe Java : MessageDigest.
+4.	Je veux prouver "C'est moi" et "Pas touche au document" :
+o	$\rightarrow$ Signature.
+o	Classe Java : Signature (qui combine Hachage + Asymétrique).
+5.	Je veux stocker tout ça proprement :
+o	$\rightarrow$ KeyStore (.jks).
+o	Outil : keytool.
