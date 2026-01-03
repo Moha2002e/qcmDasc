@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { jsPDF } from 'jspdf'
+import FormattedText from './FormattedText.vue'
 
 const props = defineProps({
   score: Number,
@@ -136,7 +137,8 @@ const downloadPDF = () => {
 
       <div v-for="(item, index) in wrongAnswers" :key="index" class="review-item">
         <div class="review-question">
-          <strong>Question :</strong> {{ item.question.question }}
+          <strong>Question :</strong>
+          <FormattedText :text="item.question.question" />
         </div>
         
         <div class="review-options">

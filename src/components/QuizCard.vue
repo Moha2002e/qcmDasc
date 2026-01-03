@@ -1,4 +1,6 @@
 <script setup>
+import FormattedText from './FormattedText.vue'
+
 defineProps({
   question: Object,
   selectedAnswer: Number,
@@ -15,9 +17,12 @@ const handleSelect = (index) => {
 <template>
   <div class="quiz-card">
     <div class="header-section">
-      <h2 class="question-text">{{ question.question }}</h2>
+      <!-- Question Text with Markdown Support -->
+      <h2 class="question-title-wrapper">
+        <FormattedText :text="question.question" />
+      </h2>
       
-      <!-- Code Snippet Section -->
+      <!-- Legacy Code Snippet Section (keep for backward compatibility) -->
       <div v-if="question.code" class="code-block">
         <pre><code>{{ question.code }}</code></pre>
       </div>
@@ -72,7 +77,7 @@ const handleSelect = (index) => {
   }
 }
 
-.question-text {
+.question-title-wrapper {
   font-size: 1.4rem;
   margin-bottom: 1.5rem;
   font-weight: 600;
@@ -85,7 +90,7 @@ const handleSelect = (index) => {
 }
 
 @media (max-width: 600px) {
-  .question-text {
+  .question-title-wrapper {
     font-size: 1.1rem;
     margin-bottom: 1rem;
   }
