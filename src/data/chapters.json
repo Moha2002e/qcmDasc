@@ -45,12 +45,12 @@
         "id": 8,
         "title": "Examen Final ",
         "description": "Qcm sur tout les parties et testez vos connaissances",
-        "status": "coming_soon"
+        "status": "active"
     },
     {
         "id": 9,
         "title": "Examen Final version très difficile 😈😈 ",
         "description": "Qcm sur tout les parties en version très difficile",
-        "status": "coming_soon"
+        "status": "active"
     }
 ]

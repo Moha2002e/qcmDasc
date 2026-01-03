@@ -7,6 +7,7 @@ import questionsChap4 from './data/questions_chap4.json'
 import questionsChap5 from './data/questions_chap5.json'
 import questionsChap6 from './data/questions_chap6.json'
 import questionsChap7 from './data/questions_chap7.json'
+import questionsChap9 from './data/questions_chap9.json'
 import chaptersData from './data/chapters.json'
 import QuizCard from './components/QuizCard.vue'
 import ResultCard from './components/ResultCard.vue'
@@ -30,7 +31,8 @@ const questionsMap = {
   4: questionsChap4,
   5: questionsChap5,
   6: questionsChap6,
-  7: questionsChap7
+  7: questionsChap7,
+  9: questionsChap9
 }
 
 // --- State Management ---
@@ -70,9 +72,23 @@ const initQuiz = () => {
     // Specific chapter
     if (questionsMap[activeChapter.value.id]) {
       validQuestions = questionsMap[activeChapter.value.id]
-    } else if (activeChapter.value.id === 8 || activeChapter.value.id === 9) {
-      // Exams use all questions
-      validQuestions = allQuestions
+    } else if (activeChapter.value.id === 8) {
+      // Examen Final: 50 questions réparties équitablement (7/8 par chapitre)
+      validQuestions = []
+      const chapters = [1, 2, 3, 4, 5, 6, 7]
+      
+      chapters.forEach((chapId, index) => {
+        if (questionsMap[chapId]) {
+          // Copie et mélange des questions du chapitre
+          const pool = shuffleArray([...questionsMap[chapId]])
+          // 50 / 7 = 7 reste 1. Le premier chapitre donne 8 questions, les autres 7.
+          const count = 7 + ((index === 0) ? 1 : 0)
+          validQuestions.push(...pool.slice(0, count))
+        }
+      })
+    } else if (activeChapter.value.id === 9) {
+      // Examen difficile : Questions pièges exclusives du fichier chap9
+      validQuestions = questionsChap9
     }
   } else {
     validQuestions = allQuestions

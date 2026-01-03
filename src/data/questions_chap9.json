@@ -1,0 +1,392 @@
+[
+    {
+        "id": 901,
+        "question": "Chap 1 (C) : Code `connect(s, ...);`. Si le serveur n'est pas lancé, `connect` retourne -1. Quelle est la valeur EXACTE de `errno` ?",
+        "options": [
+            "`EHOSTUNREACH`",
+            "`ECONNREFUSED`",
+            "`ETIMEDOUT`",
+            "`ENETUNREACH`"
+        ],
+        "answer": 1,
+        "explanation": "Subtilité réseau : Si la machine existe mais que personne n'écoute sur le port, le noyau distant envoie un paquet RST (Reset), ce qui se traduit par 'Connection Refused' immédiat, pas un TimeOut.",
+        "chapterId": 9
+    },
+    {
+        "id": 902,
+        "question": "Chap 1 (C) : `recv(s, buf, len, 0)` retourne 0. Qu'est-ce que cela signifie ABSOLUMENT ?",
+        "options": [
+            "Qu'aucune donnée n'est disponible pour l'instant (il faut attendre).",
+            "Que la connexion a été fermée proprement par le pair (FIN reçu).",
+            "Que le buffer est vide.",
+            "C'est une erreur, il faut regarder errno."
+        ],
+        "answer": 1,
+        "explanation": "Piège : 0 n'est PAS 'rien reçu' (ça bloquerait ou retournerait -1/EAGAIN). 0 est le signal exclusif de EOF (End Of File) en TCP.",
+        "chapterId": 9
+    },
+    {
+        "id": 903,
+        "question": "Chap 1 (C) : Peut-on appeler `connect()` sur une socket UDP (`SOCK_DGRAM`) ?",
+        "options": [
+            "Non, UDP est sans connexion (Connectionless).",
+            "Oui, mais cela ne fait aucun échange réseau. Cela filtre juste les paquets entrants/sortants vers cette adresse spécifique.",
+            "Oui, cela lance un handshake UDP.",
+            "Cela provoque une erreur de compilation."
+        ],
+        "answer": 1,
+        "explanation": "Très peu connu : `connect` sur UDP fixe l'adresse de destination par défaut (permettant d'utiliser `send` au lieu de `sendto`) et rejette les paquets venant d'autres adresses.",
+        "chapterId": 9
+    },
+    {
+        "id": 904,
+        "question": "Chap 2 (Java Threads) : Si `t.join(0)` est appelé, combien de temps le thread courant attend-il ?",
+        "options": [
+            "0 milliseconde (retour immédiat).",
+            "Indéfiniment (toujours) jusqu'à ce que `t` se termine.",
+            "L'exécution est annulée.",
+            "Une exception est levée."
+        ],
+        "answer": 1,
+        "explanation": "Piège de l'API : En Java, `join(0)` ne signifie pas 'attendre 0ms', mais 'attendre pour toujours' (timeout de 0 = infini).",
+        "chapterId": 9
+    },
+    {
+        "id": 905,
+        "question": "Chap 2 (Java Threads) : Quelle instruction permet de sortir PROPREMENT d'un `while(true)` bloqué sur une entrée/sortie `InputStream.read()` ?",
+        "options": [
+            "`thread.interrupt()`",
+            "`thread.stop()`",
+            "Fermer le flux sous-jacent (`stream.close()`).",
+            "`thread.suspend()`"
+        ],
+        "answer": 2,
+        "explanation": "Piège vicieux : Les I/O classiques (java.io) ignorent les interruptions (`interrupt()` ne fait rien). Seule la fermeture du flux provoque une `IOException` qui débloque le thread.",
+        "chapterId": 9
+    },
+    {
+        "id": 906,
+        "question": "Chap 2 (Java Threads) : Synchroniser sur une String littérale `synchronized(\"lock\") { ... }` est :",
+        "options": [
+            "Une bonne pratique pour partager un verrou global.",
+            "Dangereux car les littéraux sont internés (Pool de String) et partagés par TOUTE la JVM (y compris d'autres librairies).",
+            "Impossible (ne compile pas).",
+            "Plus rapide qu'un `new Object()`."
+        ],
+        "answer": 1,
+        "explanation": "Grave erreur de sécurité : Un autre code, n'importe où dans l'application, utilisant la même chaîne \"lock\" bloquerait votre code.",
+        "chapterId": 9
+    },
+    {
+        "id": 907,
+        "question": "Chap 3 (JDBC) : `stmt.executeUpdate` retourne un `int`. Que représente-t-il exactement pour une requête `CREATE TABLE` ?",
+        "options": [
+            "1",
+            "0",
+            "-1",
+            "Le nombre de colonnes."
+        ],
+        "answer": 1,
+        "explanation": "Piège de la spec JDBC : Pour les instructions DDL (CREATE, DROP...), la méthode retourne 0 (rien n'a été modifié).",
+        "chapterId": 9
+    },
+    {
+        "id": 908,
+        "question": "Chap 3 (JDBC) : Si `con.setAutoCommit(false)` est actif, un appel à `stmt.executeQuery(\"SELECT...\")` démarre-t-il une transaction ?",
+        "options": [
+            "Non, seules les modifications (UPDATE) démarrent une transaction.",
+            "Oui, implicitement, si aucune n'est en cours.",
+            "Non, il faut faire `con.beginTransaction()`.",
+            "Cela dépend du driver."
+        ],
+        "answer": 1,
+        "explanation": "En SQL standard, une transaction commence à la première instruction SQL exécutée. Oui, même un SELECT peut nécessiter une vue cohérente (Snapshot Isolation) et donc une transaction.",
+        "chapterId": 9
+    },
+    {
+        "id": 909,
+        "question": "Chap 3 (JDBC) : `ResultSet.next()` retourne `false`. Où se trouve le curseur ?",
+        "options": [
+            "Sur la dernière ligne.",
+            "Après la dernière ligne (AfterLast).",
+            "Avant la première ligne.",
+            "Il est fermé."
+        ],
+        "answer": 1,
+        "explanation": "Le curseur finit sa course dans le vide, 'après' les données. Toute tentative de lecture (`getInt`) ici lèvera une exception.",
+        "chapterId": 9
+    },
+    {
+        "id": 910,
+        "question": "Chap 4 (Java Réseau) : `socket.setSoTimeout(100)` affecte :",
+        "options": [
+            "L'appel à `connect()`.",
+            "L'appel à `read()` (et `accept()` sur ServerSocket).",
+            "L'appel à `write()`.",
+            "La fermeture de la socket."
+        ],
+        "answer": 1,
+        "explanation": "`SO_TIMEOUT` ne concerne QUE la lecture (réception). L'écriture qui bloque (buffer plein) n'est pas interrompue par ce timeout.",
+        "chapterId": 9
+    },
+    {
+        "id": 911,
+        "question": "Chap 4 (Java Réseau) : Que se passe-t-il si j'écris dans un `OutputStream` d'une socket dont le pair a déjà fermé sa connexion (envoyé FIN) mais pas encore détruit la socket ?",
+        "options": [
+            "Rien, ça marche (Half-Close).",
+            "`IOException: Broken pipe` (ou Connection reset by peer) immédiate.",
+            "L'écriture réussit, mais si le pair répond par un RST, la PROCHAINE écriture échouera.",
+            "Java plante."
+        ],
+        "answer": 2,
+        "explanation": "Très subtil. Écrire vers quelqu'un qui a fermé son canal de lecture (mais peut-être pas d'écriture) déclenche un signal RST du TCP distant, qui provoque l'exception chez nous.",
+        "chapterId": 9
+    },
+    {
+        "id": 912,
+        "question": "Chap 4 (Java Réseau) : `InetAddress.getAllByName(\"google.com\")` retourne un tableau. Pourquoi ?",
+        "options": [
+            "Au cas où ça échoue.",
+            "Car un nom de domaine peut pointer vers plusieurs adresses IP (Round-Robin DNS pour la charge).",
+            "Pour avoir l'IPv4 et l'IPv6.",
+            "C'est une erreur de l'API."
+        ],
+        "answer": 1,
+        "explanation": "C'est la base de l'équilibrage de charge DNS. Un host n'est pas égal à une IP.",
+        "chapterId": 9
+    },
+    {
+        "id": 913,
+        "question": "Chap 5 (Crypto) : Le mode 'ECB' est dangereux car :",
+        "options": [
+            "Il est lent.",
+            "Il chiffre des blocs identiques de la même manière (le pingouin Linux reste visible).",
+            "La clé est envoyée en clair.",
+            "Il ne supporte que 64 bits."
+        ],
+        "answer": 1,
+        "explanation": "La faille structurelle de l'ECB : il ne masque pas les motifs (patterns) des données. 10 blocs de zéros donneront 10 blocs chiffrés identiques.",
+        "chapterId": 9
+    },
+    {
+        "id": 914,
+        "question": "Chap 5 (Crypto) : Quelle est la différence entre `MessageDigest` et `Mac` ?",
+        "options": [
+            "Aucune.",
+            "`MessageDigest` est un hachage simple (SHA-256). `Mac` est un hachage authentifié par une CLÉ secrète (HMAC).",
+            "`Mac` sert à chiffrer.",
+            "`MessageDigest` est réversible."
+        ],
+        "answer": 1,
+        "explanation": "Un hash prouve l'intégrité (pas d'erreur). Un HMAC prouve l'authenticité (ça vient de quelqu'un qui a la clé) ET l'intégrité.",
+        "chapterId": 9
+    },
+    {
+        "id": 915,
+        "question": "Chap 6 (HTTP) : Dans `HttpExchange`, peut-on lire le Request Body APRÈS avoir envoyé les Response Headers ?",
+        "options": [
+            "Oui, c'est fait pour (Streaming).",
+            "Non, c'est fortement déconseillé voire interdit, car envoyer la réponse signale souvent la fin du traitement pour le client.",
+            "Oui, mais seulement en HTTP 2.",
+            "Cela dépend du navigateur."
+        ],
+        "answer": 1,
+        "explanation": "Même si TCP est full-duplex, en HTTP/1.1 classique, si le serveur répond, le client peut cesser d'envoyer (Early Response). Il faut drainer l'entrée avant de fermer/répondre totalement.",
+        "chapterId": 9
+    },
+    {
+        "id": 916,
+        "question": "Chap 6 (HTTP) : Un `Filter` sur un `HttpContext` est exécuté :",
+        "options": [
+            "Avant le Handler uniquement.",
+            "Après le Handler uniquement.",
+            "Avant (pre-processing) ET après (post-processing) le Handler, grâce à `chain.doFilter()`.",
+            "Dans un thread séparé."
+        ],
+        "answer": 2,
+        "explanation": "Pattern Intercepteur (Chaîne de responsabilité). Le filtre encadre l'exécution.",
+        "chapterId": 9
+    },
+    {
+        "id": 917,
+        "question": "Chap 7 (Vue.js) : `watchEffect(() => console.log(count.value))` vs `watch(count, ...)` :",
+        "options": [
+            "C'est pareil.",
+            "`watchEffect` détecte automatiquement les dépendances et s'exécute IMMÉDIATEMENT une fois. `watch` est paresseux (lazy) et explicite.",
+            "`watchEffect` est déprécié.",
+            "`watch` est pour les API Options."
+        ],
+        "answer": 1,
+        "explanation": "Subtilité : `watchEffect` lance le code tout de suite pour 'apprendre' ce qu'il doit surveiller. `watch` attend que ça change.",
+        "chapterId": 9
+    },
+    {
+        "id": 918,
+        "question": "Chap 7 (Vue.js) : Pourquoi ne doit-on JAMAIS destructurer une `props` dans le script sans `toRefs` ? ex: `const { title } = props;`",
+        "options": [
+            "C'est interdit par JS.",
+            "Cela brise la réactivité : `title` devient une simple variable locale statique et ne se mettra pas à jour si le parent change la prop.",
+            "Cela consomme trop de mémoire.",
+            "C'est une erreur de syntaxe TS."
+        ],
+        "answer": 1,
+        "explanation": "Le piège N°1 des débutants en Composition API ! Props est un objet réactif, le destructurer extrait la valeur à l'instant T.",
+        "chapterId": 9
+    },
+    {
+        "id": 919,
+        "question": "Chap 1 (C) : `struct sockaddr_in` vs `struct sockaddr` dans `bind()`. Pourquoi câster ?",
+        "options": [
+            "Pour faire joli.",
+            "L'API des sockets (BSD) est générique (polymorphisme en C). `bind` attend `sockaddr` générique, mais on prépare une `sockaddr_in` spécifique IPv4. Elles ont la même taille (ou presque) et le même layout mémoire initial.",
+            "C'est une erreur du prof.",
+            "Pour changer le port."
+        ],
+        "answer": 1,
+        "explanation": "C'est l'ancêtre de l'héritage en C. Le pointeur est converti pour que le noyau lise les premiers octets (la famille d'adresse) correctement.",
+        "chapterId": 9
+    },
+    {
+        "id": 920,
+        "question": "Chap 2 (Threads) : `Thread.yield()` garantit-il de donner la main à un autre thread ?",
+        "options": [
+            "Oui, toujours.",
+            "Non, c'est une simple 'suggestion' (hint) au planificateur (Scheduler). Il peut l'ignorer totalement.",
+            "Oui, mais seulement aux threads de priorité supérieure.",
+            "Il arrête le thread."
+        ],
+        "answer": 1,
+        "explanation": "Ne jamais baser la logique de votre programme (correctness) sur `yield`. C'est imprédictible et dépendant de l'OS.",
+        "chapterId": 9
+    },
+    {
+        "id": 921,
+        "question": "Chap 3 (JDBC) : `PreparedStatement` protège des injections SQL. Mais est-il plus rapide ?",
+        "options": [
+            "Non, plus lent.",
+            "Oui, généralement. La base peut 'pré-compiler' le plan d'exécution de la requête et le réutiliser pour différentes valeurs de paramètres.",
+            "C'est pareil.",
+            "Seulement sur Oracle."
+        ],
+        "answer": 1,
+        "explanation": "Double avantage : Sécurité + Performance (Pre-compilation/Caching côté SGBD).",
+        "chapterId": 9
+    },
+    {
+        "id": 922,
+        "question": "Chap 4 (Réseau) : L'algorithme de Nagle (activé par défaut) sert à :",
+        "options": [
+            "Accélérer le réseau.",
+            "Réduire le nombre de petits paquets en les regroupant (buffering) avant envoi. Cela peut causer de la latence dans les jeux temps réel.",
+            "Crypter les données.",
+            "Vérifier les checksums."
+        ],
+        "answer": 1,
+        "explanation": "C'est pourquoi on utilise `socket.setTcpNoDelay(true)` dans les applis temps réel pour désactiver ce comportement (on veut envoyer 'tout de suite' même si c'est petit).",
+        "chapterId": 9
+    },
+    {
+        "id": 923,
+        "question": "Chap 5 (Crypto) : Quelle est la taille de clé REELLE utilisée par le DES (Data Encryption Standard) ?",
+        "options": [
+            "64 bits.",
+            "56 bits (8 bits de parité ignorés).",
+            "128 bits.",
+            "32 bits."
+        ],
+        "answer": 1,
+        "explanation": "Piège historique. La clé fait 64 bits en mémoire, mais seulement 56 servent à la crypto. C'est dérisoire aujourd'hui (cassable en quelques heures).",
+        "chapterId": 9
+    },
+    {
+        "id": 924,
+        "question": "Chap 6 (HTTP) : `Headers` implémente `Map<String, List<String>>`. Pourquoi une `List` ?",
+        "options": [
+            "Car un même Header HTTP (ex: `Set-Cookie`) peut apparaître PLUSIEURS fois dans la même réponse.",
+            "C'est une erreur Java.",
+            "Pour stocker l'historique.",
+            "Pour supporter le gras et l'italique."
+        ],
+        "answer": 0,
+        "explanation": "Spécificité HTTP. Une Map simple <String, String> écraserait les multiples cookies ou les headers répétés.",
+        "chapterId": 9
+    },
+    {
+        "id": 925,
+        "question": "Chap 7 (Vue) : Peut-on avoir plusieurs balises `<script>` dans un .vue ?",
+        "options": [
+            "Non, une seule.",
+            "Oui, on peut avoir `<script>` normal et `<script setup>` côte à côte. C'est rare mais utile (ex: pour exporter un nom de composant ou des options spécifiques).",
+            "Non, cela plante Vite.",
+            "Oui mais elles fusionnent."
+        ],
+        "answer": 1,
+        "explanation": "Cas avancé : `<script setup>` ne permet pas tout (ex: `inheritAttrs: false`). Un bloc `<script>` séparé peut gérer ces exceptions.",
+        "chapterId": 9
+    },
+    {
+        "id": 926,
+        "question": "Chap 1 (C) : `IPPROTO_TCP` se définit dans quel paramètre de `socket()` ?",
+        "options": [
+            "Le premier (domaine).",
+            "Le deuxième (type).",
+            "Le troisième (protocole).",
+            "Dans `setsockopt`."
+        ],
+        "answer": 2,
+        "explanation": "`socket(AF_INET, SOCK_STREAM, 0)` implique TCP par défaut. Mais on peut/doit explicitement mettre `IPPROTO_TCP` en 3ème argument pour être rigoureux.",
+        "chapterId": 9
+    },
+    {
+        "id": 927,
+        "question": "Chap 2 (Threads) : La méthode `Thread.run()` peut-elle être appelée plusieurs fois sur la même instance ?",
+        "options": [
+            "Non, `IllegalThreadStateException`.",
+            "Oui ! C'est une méthode normale. C'est `start()` qu'on ne peut appeler qu'une fois.",
+            "Non, le thread meurt après.",
+            "Oui, cela relance un nouveau thread."
+        ],
+        "answer": 1,
+        "explanation": "Piège sémantique majeur. Appeler `run()` manuellement est juste un appel de fonction. On peut le faire 1000 fois, mais ça ne fera pas de multithreading.",
+        "chapterId": 9
+    },
+    {
+        "id": 928,
+        "question": "Chap 3 (JDBC) : L'isolation de transaction `TRANSACTION_SERIALIZABLE` protège de :",
+        "options": [
+            "Dirty Reads uniquement.",
+            "Dirty Reads et Non-Repeatable Reads.",
+            "Dirty Reads, Non-Repeatable Reads, ET Phantom Reads.",
+            "Rien."
+        ],
+        "answer": 2,
+        "explanation": "C'est le niveau le plus élevé (et le plus lent). Il garantit que l'exécution parallèle donne le même résultat qu'une exécution en série.",
+        "chapterId": 9
+    },
+    {
+        "id": 929,
+        "question": "Chap 4 (Réseau) : `serverSocket.accept()` lance une `SocketTimeoutException`. La ServerSocket est-elle fermée ?",
+        "options": [
+            "Oui.",
+            "Non, elle est toujours valide et le serveur peut (et doit) rappeler `accept()` pour attendre le client suivant.",
+            "La socket client est fermée.",
+            "Il faut redémarrer l'appli."
+        ],
+        "answer": 1,
+        "explanation": "Le timeout sur accept sert juste à rendre la main au thread périodiquement (pour vérifier un flag d'arrêt par exemple).",
+        "chapterId": 9
+    },
+    {
+        "id": 930,
+        "question": "Chap 7 (Vue) : La directive `v-html` est dangereuse. Pourquoi ?",
+        "options": [
+            "Elle est lente.",
+            "Elle expose aux failles XSS (Cross-Site Scripting) si le contenu injecté vient d'un utilisateur malveillant (injection de balise <script>).",
+            "Elle ne marche pas sur mobile.",
+            "Elle supprime le CSS."
+        ],
+        "answer": 1,
+        "explanation": "Règle de sécu Web : Ne jamais injecter de HTML brut non assaini (sanitized) provenant de l'extérieur.",
+        "chapterId": 9
+    }
+]
