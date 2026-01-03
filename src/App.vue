@@ -6,6 +6,7 @@ import questionsChap3 from './data/questions_chap3.json'
 import questionsChap4 from './data/questions_chap4.json'
 import questionsChap5 from './data/questions_chap5.json'
 import questionsChap6 from './data/questions_chap6.json'
+import questionsChap7 from './data/questions_chap7.json'
 import chaptersData from './data/chapters.json'
 import QuizCard from './components/QuizCard.vue'
 import ResultCard from './components/ResultCard.vue'
@@ -18,7 +19,8 @@ const allQuestions = [
   ...questionsChap3, 
   ...questionsChap4,
   ...questionsChap5,
-  ...questionsChap6
+  ...questionsChap6,
+  ...questionsChap7
 ]
 
 const questionsMap = {
@@ -27,7 +29,8 @@ const questionsMap = {
   3: questionsChap3,
   4: questionsChap4,
   5: questionsChap5,
-  6: questionsChap6
+  6: questionsChap6,
+  7: questionsChap7
 }
 
 // --- State Management ---

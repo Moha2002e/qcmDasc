@@ -1,0 +1,439 @@
+Synthèse du Document : Développement Frontend avec Vue.js 3
+
+Résumé Exécutif
+
+Ce document propose une synthèse exhaustive du framework JavaScript Vue.js 3, en se basant sur une approche pédagogique qui va des concepts fondamentaux à la construction d'une application complète de type "Single Page Application" (SPA). Vue.js, créé en 2014 et dont la version 3 a été publiée en 2020, s'est imposé comme l'un des frameworks frontend les plus populaires aux côtés de React et Angular, notamment grâce à sa courbe d'apprentissage rapide et ses performances améliorées.
+
+Les points critiques à retenir sont les suivants :
+
+1. Architecture Basée sur les Composants : Le cœur de Vue.js est son système de composants. Chaque élément de l'interface utilisateur est un composant autonome et réutilisable, encapsulant sa propre structure (HTML), sa logique (JavaScript/TypeScript) et son style (CSS) au sein d'un unique fichier .vue. Cette modularité simplifie considérablement la maintenance et l'évolution des applications complexes.
+2. Réactivité et Data-Binding : Vue.js excelle dans la gestion de l'état grâce à son système de réactivité. Les données déclarées comme réactives (ref()) sont liées au DOM. Toute modification de ces données entraîne une mise à jour automatique de l'interface, et inversement (data-binding bidirectionnel avec v-model), ce qui élimine les manipulations manuelles fastidieuses du DOM.
+3. API Composition et TypeScript : La version 3 de Vue.js a introduit l'API Composition, une nouvelle manière d'organiser la logique des composants qui est plus flexible, réutilisable et particulièrement bien adaptée à TypeScript. L'intégration de TypeScript est présentée comme un "must" pour les projets d'envergure, apportant la sécurité du typage statique, une meilleure autocomplétion et une robustesse accrue du code.
+4. Écosystème et Mise en Œuvre Pratique : Le document détaille l'ensemble du processus de développement, de la mise en place de l'environnement (Node.js, Vite) à la construction d'une application "To Do List" multicomposants. Ce cas pratique illustre l'architecture MVVM, la communication inter-composants (via props et événements), l'accès aux données via le pattern DAO, les tests unitaires avec Vitest, et la consommation d'une API REST avec fetch().
+5. Navigation avec Vue Router : Pour les applications nécessitant plusieurs vues, Vue Router est la solution officielle. Il permet de gérer la navigation côté client de manière transparente, en associant des URLs à des composants spécifiques, sans jamais recharger la page entière, offrant ainsi une expérience utilisateur fluide et moderne.
+
+En conclusion, Vue.js 3, avec son API Composition, son support natif de TypeScript et son riche écosystème, se positionne comme un framework puissant, moderne et accessible pour la construction d'interfaces utilisateur interactives et performantes.
+
+
+--------------------------------------------------------------------------------
+
+
+1. Introduction à Vue.js 3
+
+1.1. Définition et Positionnement
+
+Vue.js est un framework JavaScript progressif créé en 2014, dédié à la construction d'interfaces utilisateur (frontend) et d'applications web interactives. Il fait partie des frameworks les plus populaires, aux côtés de React, Angular et Svelte.
+
+La version 3, publiée en 2020, a apporté des améliorations significatives, notamment :
+
+* Un moteur de rendu plus rapide.
+* L'API Composition, une nouvelle manière d'organiser le code.
+* Le support natif de TypeScript, un sur-ensemble de JavaScript qui ajoute le typage statique.
+
+Vue.js est principalement utilisé pour créer des Single Page Applications (SPA), des applications qui s'exécutent côté client et sont structurées autour de composants réutilisables.
+
+1.2. Avantages d'un Framework Web
+
+Alors que HTML, CSS et JavaScript de base permettent de créer des sites web, leur complexité augmente rapidement avec des applications dynamiques. Les frameworks comme Vue.js apportent des solutions structurées à ces défis.
+
+Problématique sans framework	Solution avec Vue.js
+Manipulations du DOM fastidieuses et complexes	Utilisation d'un DOM virtuel et de la liaison de données réactive
+Code "spaghetti" difficile à maintenir	Structure claire et modulaire basée sur des composants
+Absence de gestion d'état native	Système de réactivité et possibilité d'état centralisé
+Pas de système de routage intégré	Vue Router pour gérer facilement les routes de l'application
+Faible réutilisabilité du code	Composants autonomes, modulaires et réutilisables
+
+Parmi les frameworks existants, Vue.js est souvent cité comme celui ayant la courbe d'apprentissage la plus rapide.
+
+1.3. Concepts Fondamentaux
+
+* Composants : L'interface est découpée en composants autonomes (ex: barre de recherche, produit, bouton). Chaque composant est un fichier .vue contenant son HTML (<template>), sa logique (<script>) et son style (<style>).
+  * Exemple de décomposition d'une page : Une page e-commerce peut être divisée en composants SearchBar, SideBar, Product et Rating.
+* Réactivité : Les variables déclarées avec la fonction ref() sont réactives. Toute modification de leur valeur met automatiquement à jour l'interface graphique (DOM).
+* Data-Binding :
+  * One-way binding (v-bind ou :): La donnée va de la variable vers l'interface.
+  * Two-way binding (v-model): La liaison entre la variable et l'élément d'interface est bidirectionnelle.
+* Directives : Des attributs HTML spéciaux préfixés par v- qui appliquent un comportement dynamique au DOM. Exemples : v-if, v-for, v-model.
+* API Composition : La manière recommandée dans Vue 3 d'organiser la logique d'un composant, favorisant la réutilisabilité et la lisibilité, et s'intégrant parfaitement avec TypeScript. Elle coexiste avec l'ancienne API Option.
+* Écosystème : Des bibliothèques officielles comme Vue Router pour la gestion des "pages" (routage) et Pinia pour la gestion d'état partagé.
+
+2. Environnement et Structure de Projet
+
+2.1. Prérequis : Node.js
+
+Node.js est un environnement d'exécution JavaScript côté serveur. Dans le contexte de Vue.js, il est indispensable pour :
+
+* Gestion des dépendances : Utiliser npm (Node Package Manager) pour installer les outils et les librairies du projet.
+* Outils de développement : Installer et utiliser des outils comme Vite (recommandé) pour créer et gérer le projet.
+* Processus de build : Transpiler les fichiers .vue en JavaScript standard optimisé que les navigateurs peuvent comprendre.
+* Serveur de développement : Lancer un serveur local (npm run dev) qui recharge automatiquement la page lors des modifications.
+
+Pour vérifier l'installation, les commandes node -v et npm -v affichent les versions respectives.
+
+2.2. Création d'un Projet avec Vite
+
+La méthode recommandée pour créer un projet Vue 3 est d'utiliser Vite via la commande : # npm init vue@latest
+
+Cet outil interactif demande :
+
+1. Le nom du projet.
+2. Les fonctionnalités à inclure (TypeScript, Vue Router, Vitest pour les tests, etc.).
+
+Une fois l'arborescence du projet créée, les commandes suivantes finalisent l'initialisation :
+
+1. cd nom-du-projet
+2. npm install (installe les dépendances listées dans package.json)
+3. npm run dev (lance le serveur de développement, accessible par défaut à http://localhost:5173)
+
+2.3. Structure d'un Projet et d'un Composant
+
+* Point d'entrée (index.html et main.js) : Une SPA Vue n'a qu'un seul fichier HTML, index.html. L'application Vue est injectée dynamiquement dans un élément de ce fichier, typiquement <div id="app"></div>. Ce processus est géré par main.js (ou main.ts), qui importe le composant principal (App.vue) et le "monte" sur cet élément du DOM via createApp(App).mount('#app').
+* Transpilation vs. Compilation :
+  * Transpilation : Transformation d'un langage de haut niveau (Vue, TypeScript) en un autre langage de haut niveau (JavaScript).
+  * Compilation : Transformation d'un langage de haut niveau (Java, C++) en un langage de bas niveau (bytecode, assembleur).
+* Structure d'un Composant (.vue) : Un composant Vue est un fichier unique (SFC - Single File Component) qui contient trois balises principales :
+  * <script> : Contient la logique du composant (variables, fonctions, etc.).
+  * <template> : Contient la structure HTML du composant, enrichie de directives Vue.
+  * <style> : Contient le style CSS du composant. L'attribut scoped permet d'isoler le style à ce seul composant.
+
+3. Développement de Composants Vue.js
+
+3.1. Paramétrage via props
+
+Les composants peuvent recevoir des données de leur parent via les props. Ce sont des paramètres déclarés dans le composant enfant et auxquels le composant parent peut passer des valeurs. Les props sont "read-only" : elles ne doivent pas être modifiées par le composant enfant.
+
+Exemple :
+
+<!-- Parent (App.vue) -->
+<MyCounter2 initialValue="3" text="Wagner"/>
+
+<!-- Enfant (MyCounter2.vue) avec API Option -->
+<script>
+export default {
+  props: ['initialValue', 'text'],
+  // ...
+}
+</script>
+
+
+3.2. Itération et Liaison de Données Dynamique
+
+* v-for : Cette directive permet de générer une liste d'éléments ou de composants en itérant sur un tableau.
+* v-bind (ou :) : Cette directive est utilisée pour lier dynamiquement un attribut HTML ou une prop de composant à une variable JavaScript. C'est un data-binding unidirectionnel.
+
+Exemple :
+
+<MyCounter2
+  v-for="param in params"
+  :initialValue="param.initialValue"
+  :text="param.text"
+/>
+
+
+3.3. Interactivité et Logique Conditionnelle
+
+* v-model : Réalise un data-binding bidirectionnel, généralement sur des éléments de formulaire (<input>, <select>, <textarea>). La valeur de l'élément et la variable JavaScript sont synchronisées.
+* v-if / v-else : Ces directives permettent d'ajouter ou de retirer des éléments du DOM en fonction du résultat d'une condition booléenne.
+
+3.4. Communication par Événements
+
+Pour communiquer des informations du composant enfant vers le parent, l'enfant peut émettre des événements. Le parent "écoute" ces événements et y réagit en exécutant une méthode.
+
+1. Enfant : Déclare les événements qu'il peut émettre (emits) et utilise la fonction $emit('nom-evenement', donnees).
+2. Parent : Écoute l'événement sur l'instance du composant enfant avec la directive v-on (ou @) : @nom-evenement="methodeHandler".
+
+4. Concepts Avancés et Bonnes Pratiques
+
+4.1. API Option vs. API Composition
+
+Vue.js propose deux styles d'écriture pour la logique des composants :
+
+* API Option (historique) : La logique est organisée par "options" : data, methods, computed, mounted, etc. C'est une approche qui peut sembler naturelle pour les développeurs venant de la POO classique (usage de this).
+* API Composition (recommandée) : Introduite dans Vue 3, elle permet de regrouper la logique par fonctionnalité plutôt que par type d'option. Elle est utilisée avec <script setup> et repose sur l'importation de fonctions de l'API Vue (ref, computed, onMounted, etc.). Cette approche améliore la lisibilité, la réutilisabilité du code et s'intègre parfaitement avec TypeScript. Dans l'API Composition, les variables réactives créées avec ref doivent être accédées via .value dans la section <script>.
+
+4.2. Modèle MVVM (Model-View-ViewModel)
+
+L'architecture d'un composant Vue suit le pattern MVVM :
+
+* View (Vue) : La partie visible, définie dans la balise <template>.
+* Model (Modèle) : Les données de l'application (variables réactives, props).
+* ViewModel (Vue-Modèle) : Le pont entre la vue et le modèle, défini dans la balise <script>. Il gère la logique et la liaison de données.
+
+4.3. Cycle de Vie d'un Composant
+
+Chaque composant Vue passe par plusieurs étapes clés au cours de son existence. Des fonctions spécifiques, appelées "hooks de cycle de vie", permettent d'exécuter du code à ces moments précis.
+
+Étape	Hooks (API Composition)	Description
+Création	setup	Initialisation du composant, des props et des données réactives.
+Montage	onBeforeMount, onMounted	Le composant est inséré dans le DOM. onMounted est idéal pour les manipulations du DOM ou les appels API initiaux.
+Mise à jour	onBeforeUpdate, onUpdated	Le composant est re-rendu suite à un changement de données réactives.
+Démontage	onBeforeUnmount, onUnmounted	Le composant est retiré du DOM. Utile pour nettoyer des écouteurs d'événements ou des minuteurs.
+
+4.4. Intégration de TypeScript
+
+TypeScript est un sur-ensemble de JavaScript qui ajoute un système de typage statique. Son utilisation avec Vue.js est fortement recommandée pour les applications d'une certaine taille.
+
+Avantages :
+
+* Détection des erreurs à la transpilation, avant l'exécution.
+* Autocomplétion et introspection du code améliorées dans les IDE.
+* Maintenance facilitée et code plus robuste et lisible.
+
+Mise en œuvre dans Vue :
+
+* Utiliser la balise <script setup lang="ts">.
+* Typer les props avec defineProps<InterfaceProps>().
+* Typer les emits avec defineEmits<InterfaceEmits>().
+* Typer les variables réactives avec ref<Type>().
+
+5. Cas Pratique : Application "To Do List"
+
+Le document guide la construction d'une application de gestion de tâches ("To Do List") pour illustrer l'application concrète des concepts.
+
+5.1. Architecture du Projet
+
+Le projet est structuré pour séparer clairement les responsabilités, en suivant le pattern MVVM et les principes SOLID :
+
+* src/components/ : Contient les composants de l'interface (formulaire d'ajout, tableau d'affichage, etc.).
+* src/model/ : Contient la logique métier et l'accès aux données.
+  * entity/ : Définit les types et interfaces des données (ex: ToDo).
+  * dao/ : Contient les Data Access Objects (DAO), responsables de la persistance des données.
+* App.vue : Le composant principal qui agit comme chef d'orchestre, centralisant la logique et faisant communiquer les autres composants.
+
+5.2. Accès aux Données (Pattern DAO)
+
+Pour découpler l'application de la source de données, une interface ToDoAccessLayer est définie. Elle spécifie les méthodes que toute classe d'accès aux données doit implémenter (load, save, delete). Deux implémentations sont créées :
+
+1. ToDoDAO : Une version qui stocke les données en mémoire (dans un simple tableau).
+2. ToDoDAO_API : Une version qui communique avec une API REST.
+
+Le passage de l'une à l'autre se fait en modifiant une seule ligne dans App.vue, démontrant la flexibilité apportée par le respect du principe Ouvert/Fermé (SOLID).
+
+5.3. Tests Unitaires avec Vitest
+
+Pour garantir la fiabilité de la logique métier (la DAO), des tests unitaires sont mis en place avec Vitest. La structure des tests utilise :
+
+* describe() pour regrouper les tests liés à une même fonctionnalité.
+* beforeEach() pour initialiser un état propre avant chaque test.
+* it() pour définir un cas de test individuel.
+* expect() pour faire des assertions sur les résultats.
+
+5.4. Consommation d'une API REST
+
+Pour la seconde DAO, une API REST est simulée à l'aide de json-server, un outil qui crée une API REST complète à partir d'un simple fichier JSON.
+
+La communication avec cette API depuis le frontend se fait via la méthode fetch(), une API native des navigateurs modernes pour effectuer des requêtes HTTP de manière asynchrone. L'utilisation de async/await simplifie la gestion des Promise retournées par fetch().
+
+6. Navigation avec Vue Router
+
+Pour les applications qui nécessitent de naviguer entre plusieurs "pages" tout en restant une SPA, Vue Router est la solution officielle.
+
+6.1. Principes de Fonctionnement
+
+Vue Router mappe des URLs à des composants Vue, permettant de simuler une navigation multipage sans recharger le site.
+
+* Routes : On définit un ensemble de routes où chaque route associe un chemin d'URL (path) à un composant (component).
+* <router-link> : Ce composant est utilisé pour créer des liens de navigation. Il génère une balise <a> mais intercepte le clic pour changer l'URL et le composant affiché sans recharger la page.
+* <router-view> : Ce composant est un marqueur qui indique où le composant de la route active doit être rendu.
+
+6.2. Intégration dans le Projet
+
+Pour intégrer le routage dans l'application "To Do List" :
+
+1. Un nouveau projet est créé avec l'option "Vue Router" activée.
+2. La logique de l'application, initialement dans App.vue, est déplacée dans un composant de vue (ex: Home.vue), qui sera affiché pour la route /.
+3. App.vue est simplifié pour ne contenir que la structure de navigation globale (les liens <router-link>) et le point de rendu <router-view>.
+4. Le fichier router/index.ts configure les routes, liant par exemple le chemin / à Home.vue et /about à un nouveau composant About.vue.
+
+L'application donne ainsi l'impression de naviguer entre différentes pages, chacune avec sa propre URL, tout en bénéficiant de la performance et de la fluidité d'une SPA.
+Voici une fiche de révision optimisée pour un examen QCM, basée sur le contenu du fichier **"7_FrontEndVueJs3_V2.0.1.pdf"**.
+
+Pour un QCM, concentre-toi sur **le vocabulaire précis, la syntaxe exacte et les "pièges" classiques** (comme l'accès à `.value` ou la direction des données).
+
+### 1. Concepts de Base & Définitions
+
+* **Vue.js** : Framework JavaScript progressif pour créer des interfaces utilisateurs (Frontend).
+* **SPA (Single Page Application)** : Application web qui ne recharge pas la page entière lors de la navigation, mais modifie dynamiquement le DOM. Le point d'entrée est unique (`index.html`).
+* **MVVM (Model-View-ViewModel)** : Architecture respectée par Vue.
+* **Model** : Les données (Data/Props).
+* **View** : Le template HTML (ce qu'on voit).
+* **ViewModel** : Le script qui lie les deux via la réactivité.
+
+
+* **Composant (SFC)** : Fichier `.vue` contenant 3 parties :
+1. `<script>` : Logique (JS/TS).
+2. `<template>` : Rendu (HTML + Directives).
+3. `<style>` : Design (CSS).
+
+
+
+### 2. Syntaxe et Directives (Points Clés QCM)
+
+Les directives sont des attributs spéciaux commençant par `v-`.
+
+| Directive | Rôle | Raccourci (TRÈS IMPORTANT) |
+| --- | --- | --- |
+| **`v-bind`** | Lie une variable JS à un attribut HTML (unidirectionnel). | **`:`** (ex: `:src="image"`) |
+| **`v-on`** | Écoute un événement du DOM (clic, input...). | **`@`** (ex: `@click="func"`) |
+| **`v-model`** | **Bidirectionnel** (Two-way binding). Utilisé pour les formulaires (input, checkbox...). | *Aucun* |
+| **`v-if` / `v-else**` | Affiche ou masque un élément (l'élément est créé/détruit du DOM). | *Aucun* |
+| **`v-for`** | Boucle sur une liste. **Obligatoire** : Toujours utiliser `:key` pour l'unicité. | *Aucun* |
+
+> **Piège QCM** : `{{ variable }}` (Moustaches) sert à afficher du texte (interpolation), mais pour passer une variable à un attribut HTML (comme `src`, `href`, `disabled`), il **FAUT** utiliser `v-bind` (ou `:`).
+
+### 3. API Composition (Vue 3)
+
+C'est la méthode moderne recommandée par le cours (avec `<script setup>`).
+
+* **Réactivité (`ref`)** :
+* Pour rendre une variable réactive (qui met à jour l'écran quand elle change), on utilise `ref(valeur)`.
+* **Règle d'or** : Dans le `<script>`, on doit utiliser **`.value`** pour lire ou modifier la variable (ex: `count.value++`). Dans le `<template>`, on **N'utilise PAS** `.value`, Vue le fait automatiquement.
+
+
+* **Macros (ne s'importent pas)** :
+* `defineProps` : Pour déclarer les paramètres reçus.
+* `defineEmits` : Pour déclarer les événements émis.
+
+
+
+### 4. Communication entre Composants
+
+Le flux de données est **unidirectionnel** (One-Way Data Flow).
+
+1. **Parent vers Enfant (`Props`)** :
+* Le parent passe des données via des attributs.
+* L'enfant les reçoit via `defineProps`.
+* **Interdit** : L'enfant ne doit **jamais modifier** une prop directement (Read-only).
+
+
+2. **Enfant vers Parent (`Emits`)** :
+* L'enfant signale une action via `$emit` (ou `emit` dans le script).
+* Le parent écoute cet événement avec `@nom-event`.
+
+
+
+### 5. Cycle de Vie (Lifecycle Hooks)
+
+Ordre chronologique d'exécution :
+
+1. **Creation** (`setup`) : Le composant s'initialise.
+2. **Mounting** :
+* `onMounted` : Le composant est inséré dans le DOM (c'est là qu'on lance souvent les requêtes API initiales).
+
+
+3. **Updating** :
+* `onUpdated` : Une donnée réactive a changé et le DOM a été mis à jour.
+
+
+4. **Unmounting** :
+* `onUnmounted` : Le composant est détruit (ex: on a changé de page).
+
+
+
+### 6. TypeScript & Architecture
+
+* **TypeScript** : Ajoute le typage statique pour éviter les erreurs.
+* Les props se typent via une interface : `defineProps<MonInterface>()`.
+* Le code est **transpilé** (converti) en JavaScript pour être lu par le navigateur.
+
+
+* **DAO (Data Access Object)** :
+* Sert à **isoler** l'accès aux données (API ou mémoire).
+* Le composant ne sait pas d'où viennent les données, il appelle juste la DAO. Cela respecte les principes **SOLID**.
+
+
+* **API Fetch** :
+* `fetch()` retourne une **Promise**.
+* On utilise `async` / `await` pour attendre la réponse sans bloquer l'application.
+
+
+
+### 7. Outils
+
+* **Vite** : Outil de compilation ultra-rapide (remplace Webpack/Vue CLI).
+* **Node.js** : Environnement d'exécution JS (nécessaire pour utiliser npm et Vite).
+* **Volar** : L'extension VS Code recommandée pour Vue 3.
+Voici la liste complète et structurée des **fonctions et méthodes** abordées dans le fichier **"Introduction au framework web frontend Vue.js 3"**.
+
+Ce répertoire est classé par catégorie pour faciliter vos révisions.
+
+### 1. Fonctions de l'API Vue.js (Composition API)
+
+Ces fonctions sont importées depuis le package `'vue'`.
+
+* **`ref(valeur)`** : Crée une référence réactive pour une donnée primitive (nombre, string, booléen) ou un objet. On accède à sa valeur via `.value` dans le script.
+* **`computed(() => ...)`** : Crée une propriété calculée qui se met à jour automatiquement si ses dépendances changent (ex: calculer la taille d'une liste).
+* **Cycle de vie (Hooks)** :
+* **`onMounted(() => ...)`** : Exécute une fonction une fois que le composant est inséré dans le DOM (utilisé pour charger les données initiales).
+* **`onUnmounted(() => ...)`** : Exécute une fonction juste avant que le composant soit détruit.
+
+
+
+### 2. Macros de Compilation (Vue 3)
+
+Ces fonctions s'utilisent uniquement dans `<script setup>` et ne nécessitent pas d'importation.
+
+* **`defineProps(['nomProp'])`** ou **`defineProps<Interface>()`** : Définit les paramètres (props) qu'un composant attend de son parent.
+* **`defineEmits(['nomEvent'])`** ou **`defineEmits<Interface>()`** : Définit les événements que le composant peut envoyer à son parent. Retourne la fonction `emit`.
+
+### 3. Fonctions Globales de Vue
+
+Utilisées principalement dans le fichier `main.ts` pour initialiser l'application.
+
+* **`createApp(App)`** : Crée une nouvelle instance d'application Vue.
+* **`.mount('#selecteur')`** : "Monte" (attache) l'application Vue à un élément HTML du DOM (souvent la div `#app`).
+* **`.use(plugin)`** : Installe un plugin dans l'application (ex: `app.use(router)`).
+
+### 4. Fonctions JavaScript Natives (Utilisées dans le cours)
+
+Le cours utilise ces fonctions standards du langage JavaScript/TypeScript.
+
+* **Manipulation de Tableaux (Array)** :
+* **`.push(element)`** : Ajoute un élément à la fin d'un tableau.
+* **`.splice(index, nombre)`** : Retire un ou plusieurs éléments d'un tableau à un index donné (utilisé pour supprimer une tâche).
+* **`.findIndex(callback)`** : Trouve l'index d'un élément qui correspond à une condition.
+* **`.filter(callback)`** : Crée un nouveau tableau avec les éléments qui respectent une condition.
+
+
+* **Communication HTTP (API Fetch)** :
+* **`fetch(url, options)`** : Lance une requête HTTP asynchrone (GET, POST, PUT, DELETE). Retourne une `Promise`.
+* **`response.json()`** : Méthode asynchrone pour extraire le corps JSON d'une réponse HTTP.
+* **`JSON.stringify(objet)`** : Convertit un objet JavaScript en chaîne JSON (pour l'envoyer au serveur).
+
+
+* **Manipulation de Chaînes** :
+* **`.toLowerCase()`** : Convertit en minuscules (utilisé pour la recherche insensible à la casse).
+* **`.includes(sousChaine)`** : Vérifie si une chaîne contient une sous-chaîne.
+* **`.toString()`** : Convertit un nombre en chaîne de caractères.
+
+
+* **Interaction Utilisateur** :
+* **`alert(message)`** : Affiche une boîte de dialogue d'information.
+* **`confirm(message)`** : Affiche une boîte de dialogue avec OK/Annuler (retourne `true` ou `false`).
+
+
+
+### 5. Fonctions de Test (Vitest)
+
+Utilisées dans la partie sur les tests unitaires.
+
+* **`describe('nom', () => ...)`** : Regroupe plusieurs tests liés à un même sujet.
+* **`it('description', () => ...)`** : Définit un test unitaire individuel.
+* **`expect(valeur).toBe(resultat)`** : Vérifie (assertion) que la valeur testée correspond au résultat attendu.
+* **`beforeEach(() => ...)`** : Exécute du code avant chaque test (pour nettoyer ou initialiser les variables).
+
+### 6. Fonctions du Vue Router
+
+Utilisées pour la navigation entre les pages.
+
+* **`createRouter({ ... })`** : Crée l'instance du routeur.
+* **`createWebHistory()`** : Active le mode de navigation "HTML5 History" (URL propres sans `#`).
+
+### 7. Méthodes clés développées dans l'exemple "To Do List"
+
+Ce sont les fonctions créées spécifiquement dans le projet du cours (Pattern DAO).
+
+* **`load(criteres)`** : Charge les tâches (filtrées ou non) depuis la source de données.
+* **`save(tache)`** : Sauvegarde une tâche (création si ID null, modification sinon).
+* **`delete(id)`** : Supprime une tâche par son identifiant.
+* **`getList()`** : Récupère la liste locale des tâches chargées.

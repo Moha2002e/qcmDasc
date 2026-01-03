@@ -1,0 +1,652 @@
+[
+    {
+        "id": 224,
+        "question": "Quelle est la définition exacte d'une SPA (Single Page Application) selon le cours ?",
+        "options": [
+            "Une application qui ne contient qu'une seule ligne de code.",
+            "Une application web qui ne recharge jamais la page entière, mais modifie dynamiquement le DOM via JavaScript.",
+            "Une application qui n'a pas de serveur Backend.",
+            "Une page web statique HTML/CSS sans JavaScript."
+        ],
+        "answer": 1,
+        "explanation": "Le point clé est l'absence de rechargement complet (F5) lors de la navigation, offrant une fluidité 'native'.",
+        "chapterId": 7
+    },
+    {
+        "id": 225,
+        "question": "Analysez ce code dans un `<script setup>` :\n```javascript\nconst count = ref(0);\nfunction increment() {\n  count++;\n}\n```\nQue se passe-t-il lors de l'appel à `increment()` ?",
+        "options": [
+            "La variable `count` passe à 1.",
+            "Rien, car `count` n'est pas réactif.",
+            "Une erreur (ou un résultat inattendu) car on doit utiliser `count.value++`.",
+            "La vue se met à jour mais la variable reste à 0."
+        ],
+        "answer": 2,
+        "explanation": "PIÈGE CLASSIQUE : Dans le script, une `ref` est un objet. Il faut TOUJOURS accéder à sa valeur via `.value`. (Vue s'occupe du `.value` uniquement dans le template).",
+        "chapterId": 7
+    },
+    {
+        "id": 226,
+        "question": "Quelle est la différence fondamentale entre `v-bind` et `v-model` ?",
+        "options": [
+            "`v-bind` est bidirectionnel, `v-model` est unidirectionnel.",
+            "`v-bind` sert au style, `v-model` aux événements.",
+            "`v-bind` (ou `:`) pousse la donnée vers la vue (One-Way), `v-model` synchronise la vue et la donnée (Two-Way).",
+            "`v-model` est déprécié en Vue 3."
+        ],
+        "answer": 2,
+        "explanation": "`v-bind` : JS -> HTML. `v-model` : JS <-> HTML (indispensable pour les formulaires).",
+        "chapterId": 7
+    },
+    {
+        "id": 227,
+        "question": "Code Template :\n```html\n<img src=\"user.avatarUrl\" />\n```\nSi `user` est un objet réactif avec une propriété `avatarUrl`, pourquoi l'image ne s'affiche-t-elle pas ?",
+        "options": [
+            "L'image n'existe pas.",
+            "Il manque les moustaches `{{ }}`.",
+            "L'attribut `src` est statique ici. Il faut utiliser le binding dynamique `:src=\"user.avatarUrl\"`.",
+            "Il faut utiliser `v-img`."
+        ],
+        "answer": 2,
+        "explanation": "Piège HTML vs Vue : Sans le `:`, Vue ne touche pas à l'attribut. Le navigateur cherchera littéralement le fichier nommé 'user.avatarUrl'.",
+        "chapterId": 7
+    },
+    {
+        "id": 228,
+        "question": "Dans le pattern MVVM respecté par Vue, que représente le 'ViewModel' ?",
+        "options": [
+            "Le fichier HTML.",
+            "La base de données.",
+            "Le bloc `<script>` qui fait le pont (binding) entre l'état (Model) et le template (View).",
+            "Le navigateur."
+        ],
+        "answer": 2,
+        "explanation": "Vue.js est techniquement le ViewModel : il observe les données et met à jour la vue automatiquement.",
+        "chapterId": 7
+    },
+    {
+        "id": 229,
+        "question": "Pourquoi la directive `v-for` nécessite-t-elle OBLIGATOIREMENT une clé unique (`:key`) ?",
+        "options": [
+            "C'est une recommandation esthétique.",
+            "Pour que CSS puisse styliser les éléments.",
+            "Pour permettre à l'algorithme de DOM Virtuel d'identifier et de suivre chaque nœud de manière performante lors des mises à jour.",
+            "Sinon la boucle ne s'affiche pas du tout."
+        ],
+        "answer": 2,
+        "explanation": "Sans `:key`, Vue doit reconstruire toute la liste à chaque changement, ce qui tue les performances et peut causer des bugs d'état (focus perdu, etc.).",
+        "chapterId": 7
+    },
+    {
+        "id": 230,
+        "question": "Code Enfant :\n```javascript\nconst props = defineProps(['titre']);\nprops.titre = \"Nouveau Titre\";\n```\nQue se passe-t-il ?",
+        "options": [
+            "Le titre change dans le parent.",
+            "Le titre change dans l'enfant uniquement.",
+            "Vue lève un avertissement (Warn) car les props sont en lecture seule (Read-Only) pour l'enfant.",
+            "Tout fonctionne normalement."
+        ],
+        "answer": 2,
+        "explanation": "Flux de données unidirectionnel (One-Way Data Flow). L'enfant ne doit JAMAIS modifier ce que le parent lui donne. Il doit émettre un événement s'il veut un changement.",
+        "chapterId": 7
+    },
+    {
+        "id": 231,
+        "question": "Quelle macro permet de déclarer des événements personnalisés qu'un composant peut envoyer à son parent ?",
+        "options": [
+            "`defineEvents`",
+            "`defineEmits`",
+            "`createEvent`",
+            "`useEmits`"
+        ],
+        "answer": 1,
+        "explanation": "Spécifique à la `<script setup>` : `const emit = defineEmits(['update'])`.",
+        "chapterId": 7
+    },
+    {
+        "id": 232,
+        "question": "Dans le cycle de vie Vue 3 (Composition API), quel hook remplace `created` et s'exécute au tout début ?",
+        "options": [
+            "`onCreated`",
+            "`onInit`",
+            "`setup`",
+            "`beforeMount`"
+        ],
+        "answer": 2,
+        "explanation": "Le code à la racine du `<script setup>` EST le hook `setup`. Il s'exécute avant la création du composant.",
+        "chapterId": 7
+    },
+    {
+        "id": 233,
+        "question": "À quoi sert l'outil **Vite** mentionné dans le cours ?",
+        "options": [
+            "À nettoyer le code (Linter).",
+            "C'est un SGBD.",
+            "C'est un outil de compilation (bundler) et un serveur de développement ultra-rapide.",
+            "À tester l'interface."
+        ],
+        "answer": 2,
+        "explanation": "Il remplace Webpack. Il ne pré-bundle pas tout en dev (ES Modules natifs), d'où sa vitesse.",
+        "chapterId": 7
+    },
+    {
+        "id": 234,
+        "question": "Quelle est la différence entre **Transpilation** et **Compilation** selon le document ?",
+        "options": [
+            "C'est pareil.",
+            "La transpilation traduit un langage haut niveau vers un autre langage haut niveau (ex: TS vers JS), la compilation vers du bas niveau (Bytecode).",
+            "La transpilation est plus lente.",
+            "La compilation est pour le Web."
+        ],
+        "answer": 1,
+        "explanation": "Distinction technique importante : TypeScript n'est pas compilé en binaire, il est transpilé en JavaScript standard.",
+        "chapterId": 7
+    },
+    {
+        "id": 235,
+        "question": "Code :\n```html\n<button @click=\"count++\">Inc</button>\n```\nEst-ce valide dans le template ?",
+        "options": [
+            "Non, il faut une fonction.",
+            "Oui, les instructions JS simples sont autorisées dans les listeners d'événements.",
+            "Non, il faut `count.value++`.",
+            "Non, il manque `v-on:`."
+        ],
+        "answer": 1,
+        "explanation": "Dans le template, Vue 'unwrap' les refs. `count` (sans .value) est accessible, et des expressions simples sont tolérées.",
+        "chapterId": 7
+    },
+    {
+        "id": 236,
+        "question": "Quel est l'intérêt principal de l'**API Composition** par rapport à l'API Options historique ?",
+        "options": [
+            "Elle est plus facile pour les débutants.",
+            "Elle permet de regrouper la logique par fonctionnalité (feature) plutôt que par type d'option, facilitant la réutilisation.",
+            "Elle supprime le HTML.",
+            "Elle est obligatoire en Vue 3."
+        ],
+        "answer": 1,
+        "explanation": "Finit le code 'Jump' où une feature est dispersée entre `data`, `methods` et `mounted`. Tout est regroupé.",
+        "chapterId": 7
+    },
+    {
+        "id": 237,
+        "question": "Dans une architecture DAO (Data Access Object), que doit connaître le composant Vue (l'interface graphique) ?",
+        "options": [
+            "Les détails de l'appel API (URL, Headers).",
+            "La structure de la base de données SQL.",
+            "Uniquement l'interface du DAO (ex: `dao.load()`), sans savoir comment c'est implémenté derrière.",
+            "Le mot de passe de la base."
+        ],
+        "answer": 2,
+        "explanation": "Principe de séparation des responsabilités. L'UI affiche, le DAO cherche les données. On peut changer d'API sans toucher l'UI.",
+        "chapterId": 7
+    },
+    {
+        "id": 238,
+        "question": "Code :\n```javascript\nconst fullName = computed(() => firstName.value + ' ' + lastName.value);\n```\nQuand `fullName` est-il recalculé ?",
+        "options": [
+            "À chaque frame (60fps).",
+            "Uniquement quand `firstName` ou `lastName` change.",
+            "Jamais, c'est une constante.",
+            "Quand on clique dessus."
+        ],
+        "answer": 1,
+        "explanation": "C'est la puissance des `computed` : elles mettent en cache le résultat et ne recalculent que si leurs dépendances réactives changent.",
+        "chapterId": 7
+    },
+    {
+        "id": 239,
+        "question": "Que fait la méthode `response.json()` de l'API Fetch ?",
+        "options": [
+            "Elle parse le JSON de manière synchrone.",
+            "Elle retourne une Promise qui se résout avec le corps de la réponse parsé en objet JS.",
+            "Elle convertit un objet en String JSON.",
+            "Elle annule la requête."
+        ],
+        "answer": 1,
+        "explanation": "Attention, `json()` est asynchrone ! Il faut `await response.json()`.",
+        "chapterId": 7
+    },
+    {
+        "id": 240,
+        "question": "Dans le `Vue Router`, à quoi sert `<router-view>` ?",
+        "options": [
+            "À créer un lien vers une page.",
+            "À afficher un menu.",
+            "C'est l'espace réservé (placeholder) où le composant correspondant à l'URL actuelle sera affiché.",
+            "À déboguer les routes."
+        ],
+        "answer": 2,
+        "explanation": "C'est la 'télévision' qui change de programme. Le cadre reste fixe (App.vue), le contenu change.",
+        "chapterId": 7
+    },
+    {
+        "id": 241,
+        "question": "Si j'utilise `ref` pour un objet : `const user = ref({ name: 'Bob' })`. Comment changer le nom ?",
+        "options": [
+            "`user.name = 'Alice'`",
+            "`user.value.name = 'Alice'`",
+            "`user = { name: 'Alice' }`",
+            "`user.set('name', 'Alice')`"
+        ],
+        "answer": 1,
+        "explanation": "Toujours `.value` dans le script pour accéder à l'objet interne. Ensuite on accède aux propriétés normalement.",
+        "chapterId": 7
+    },
+    {
+        "id": 242,
+        "question": "Quel hook de cycle de vie est idéal pour lancer un appel API au chargement du composant ?",
+        "options": [
+            "`onUpdated`",
+            "`onUnmounted`",
+            "`onMounted`",
+            "`onRender`"
+        ],
+        "answer": 2,
+        "explanation": "Le DOM est prêt, le composant est actif. C'est le standard pour l'hydratation de données.",
+        "chapterId": 7
+    },
+    {
+        "id": 243,
+        "question": "TypeScript : À quoi sert l'interface dans `defineProps<MyProps>()` ?",
+        "options": [
+            "À rien, c'est de la doc.",
+            "À valider le typage des props à la compilation et offrir l'autocomplétion dans l'IDE.",
+            "À valider les données à l'exécution (Runtime checking strict).",
+            "À créer une classe CSS."
+        ],
+        "answer": 1,
+        "explanation": "TypeScript travaille à la 'Compilation' (Transpilation). Il empêche le développeur de passer une String si un Number est attendu.",
+        "chapterId": 7
+    },
+    {
+        "id": 244,
+        "question": "Qu'est-ce que le 'One-Way Binding' (ex: `v-bind`) ?",
+        "options": [
+            "La vue peut modifier la donnée.",
+            "La donnée met à jour la vue, mais la vue ne peut pas modifier directement la donnée.",
+            "C'est bidirectionnel.",
+            "Ça ne marche que pour le style."
+        ],
+        "answer": 1,
+        "explanation": "C'est le mode de liaison par défaut de Vue pour tout sauf les formulaires. Garantit la source unique de vérité.",
+        "chapterId": 7
+    },
+    {
+        "id": 245,
+        "question": "Code :\n```javascript\nawait fetch('http://api...');\nconsole.log('Fini');\n```\nDans quelle type de fonction ce code est-il valide ?",
+        "options": [
+            "N'importe quelle fonction.",
+            "Seulement une fonction marquée `async`.",
+            "Dans le template.",
+            "Dans le CSS."
+        ],
+        "answer": 1,
+        "explanation": "Le mot-clé `await` ne peut être utilisé que dans une fonction asynchrone (`async function` ou `<script setup>` qui est async par défaut au top-level).",
+        "chapterId": 7
+    },
+    {
+        "id": 246,
+        "question": "À quoi sert le fichier `main.ts` (ou `main.js`) ?",
+        "options": [
+            "C'est le composant principal.",
+            "C'est le point d'entrée qui crée l'application Vue, installe les plugins (Router) et monte l'app dans le DOM.",
+            "C'est le fichier de configuration de Vite.",
+            "C'est le serveur backend."
+        ],
+        "answer": 1,
+        "explanation": "`createApp(App).use(router).mount('#app')`. Tout part de là.",
+        "chapterId": 7
+    },
+    {
+        "id": 247,
+        "question": "Pourquoi Vue.js est-il qualifié de 'Progressif' ?",
+        "options": [
+            "Il est lent à charger.",
+            "On peut l'utiliser juste pour une petite partie d'une page existante, ou pour une SPA complète. Il s'adapte à l'échelle du projet.",
+            "Il change de version tous les mois.",
+            "Il nécessite un ordinateur puissant."
+        ],
+        "answer": 1,
+        "explanation": "Contrairement à Angular qui impose une structure lourde (\"All or Nothing\"), Vue peut être une simple balise script dans une page HTML classique.",
+        "chapterId": 7
+    },
+    {
+        "id": 248,
+        "question": "L'attribut `scoped` dans `<style scoped>` signifie :",
+        "options": [
+            "Le CSS est appliqué globalement.",
+            "Le CSS est optimisé.",
+            "Les règles CSS définies ici ne s'appliqueront qu'aux éléments de CE composant, sans fuiter ailleurs.",
+            "Le CSS supporte le SCSS."
+        ],
+        "answer": 2,
+        "explanation": "Vue ajoute des attributs uniques aux éléments HTML (data-v-xxxx) pour encapsuler le style.",
+        "chapterId": 7
+    },
+    {
+        "id": 249,
+        "question": "Code :\n```html\n<button @click=\"save\">OK</button>\n```\nSi le bouton est dans un formulaire, quel est le risque ?",
+        "options": [
+            "Le clic ne marche pas.",
+            "Le formulaire se soumet et la page se recharge (comportement par défaut du navigateur).",
+            "Le bouton disparaît.",
+            "La fonction save est appelée deux fois."
+        ],
+        "answer": 1,
+        "explanation": "C'est pourquoi on utilise souvent `@click.prevent=\"save\"` (modificateur d'événement) pour empêcher le rechargement par défaut.",
+        "chapterId": 7
+    },
+    {
+        "id": 250,
+        "question": "Qu'est-ce que `Pinia` (cité dans l'intro) ?",
+        "options": [
+            "Un fruit.",
+            "Le gestionnaire d'état officiel (State Management) recommandé pour Vue 3 (successeur de Vuex).",
+            "Un outil de test.",
+            "Un routeur."
+        ],
+        "answer": 1,
+        "explanation": "Sert à partager des données 'globales' entre des composants éloignés sans faire du 'Prop Drilling' infini.",
+        "chapterId": 7
+    },
+    {
+        "id": 251,
+        "question": "Pour afficher conditionnellement un élément qui doit être souvent basculé (toggle), quel est le plus performant entre `v-if` et `v-show` ? (Question piège 'culture Vue')",
+        "options": [
+            "`v-if` car il supprime le DOM.",
+            "`v-show` car il utilise juste CSS `display: none`, évitant de détruire/recréer le composant à chaque fois.",
+            "C'est identique.",
+            "`v-if` est toujours mieux."
+        ],
+        "answer": 1,
+        "explanation": "Bien que le cours se focalise sur `v-if`, c'est une nuance importante. `v-if` a un coût de toggle plus élevé.",
+        "chapterId": 7
+    },
+    {
+        "id": 252,
+        "question": "Lors du build pour la production (`npm run build`), que deviennent les fichiers `.vue` ?",
+        "options": [
+            "Ils restent tels quels.",
+            "Ils sont compilés en fichiers JavaScript (.js) et CSS standards optimisés.",
+            "Ils sont transformés en PHP.",
+            "Ils sont zippés."
+        ],
+        "answer": 1,
+        "explanation": "Le navigateur ne comprend pas les `.vue`. Le build process les transforme en code natif minifié.",
+        "chapterId": 7
+    },
+    {
+        "id": 253,
+        "question": "Si j'ai une liste de tâches vide `[]`, que fait `v-for=\"task in tasks\"` ?",
+        "options": [
+            "Il affiche une erreur.",
+            "Il n'affiche rien du tout (boucle vide), sans erreur.",
+            "Il affiche une ligne vide.",
+            "Il plante."
+        ],
+        "answer": 1,
+        "explanation": "Comportement standard et sûr des boucles Vue.",
+        "chapterId": 7
+    },
+    {
+        "id": 254,
+        "question": "Code Template :\n```html\n<div :class=\"{ active: isActive }\"></div>\n```\nQue signifie cette syntaxe ?",
+        "options": [
+            "La classe est toujours 'active'.",
+            "La classe CSS 'active' sera appliquée SEULEMENT si la variable `isActive` est `true`.",
+            "C'est une erreur de syntaxe.",
+            "La classe s'appelle 'isActive'."
+        ],
+        "answer": 1,
+        "explanation": "Binding de classe par objet : très puissant pour le style dynamique conditionnel.",
+        "chapterId": 7
+    },
+    {
+        "id": 255,
+        "question": "Comment importer `ref` dans un `<script setup>` ?",
+        "options": [
+            "`import { ref } from 'vue';`",
+            "`import ref from 'vue';`",
+            "C'est automatique, pas besoin d'import.",
+            "`const ref = require('vue');`"
+        ],
+        "answer": 0,
+        "explanation": "`ref` est une exportation nommée (Named Export) du package `vue`.",
+        "chapterId": 7
+    },
+    {
+        "id": 256,
+        "question": "Dans le cas pratique 'To Do List', pourquoi l'ID est-il géré par le DAO et non par l'interface ?",
+        "options": [
+            "Parce que l'interface ne sait pas compter.",
+            "Parce que c'est la responsabilité de la persistance (Base de données ou API) de générer un identifiant unique lors de l'insertion.",
+            "C'est un hasard.",
+            "Pour faire joli."
+        ],
+        "answer": 1,
+        "explanation": "Logique métier : L'ID est souvent une contrainte technique de stockage (Auto-incrément, UUID).",
+        "chapterId": 7
+    },
+    {
+        "id": 257,
+        "question": "Quelle directive permet d'écouter la touche 'Entrée' sur un input ?",
+        "options": [
+            "`@click=\"enter\"`",
+            "`@keyup.enter=\"myMethod\"`",
+            "`v-model.enter`",
+            "`@submit`"
+        ],
+        "answer": 1,
+        "explanation": "Vue offre des 'Key Modifiers' très pratiques pour les événements clavier.",
+        "chapterId": 7
+    },
+    {
+        "id": 258,
+        "question": "Qu'est-ce que `node_modules` ?",
+        "options": [
+            "Un fichier de configuration.",
+            "Le dossier gigantesque où `npm install` stocke toutes les librairies dépendantes.",
+            "Un module Vue.",
+            "Le dossier de build."
+        ],
+        "answer": 1,
+        "explanation": "Ne jamais commiter ce dossier ! Il se régénère via `package.json`.",
+        "chapterId": 7
+    },
+    {
+        "id": 259,
+        "question": "Code :\n```javascript\nconst list = ref([1, 2]);\nlist.value.push(3);\n```\nCela déclenche-t-il une mise à jour de la vue ?",
+        "options": [
+            "Non, car on modifie l'intérieur du tableau (mutation).",
+            "Oui, Vue 3 (via Proxy) détecte les mutations profondes des tableaux réactifs.",
+            "Seulement si on utilise `list.value = [...list.value, 3]`.",
+            "Non, `ref` ne marche pas avec les tableaux."
+        ],
+        "answer": 1,
+        "explanation": "Grande amélioration de Vue 3. Les mutations de tableaux (push, splice) sont réactives par défaut avec `ref`.",
+        "chapterId": 7
+    },
+    {
+        "id": 260,
+        "question": "À quoi sert `<router-link to=\"/about\">` par rapport à `<a href=\"/about\">` ?",
+        "options": [
+            "C'est pareil.",
+            "Le lien `<a>` recharge la page (perte du contexte JS), alors que `router-link` intercepte le clic et change l'URL via l'API History sans recharger.",
+            "`router-link` est plus joli.",
+            "`router-link` ouvre un nouvel onglet."
+        ],
+        "answer": 1,
+        "explanation": "Essentiel pour conserver l'état de la SPA (Single Page App).",
+        "chapterId": 7
+    },
+    {
+        "id": 261,
+        "question": "Le mot clé `scoped` dans `<style scoped>` empêche :",
+        "options": [
+            "Le CSS d'être lu par le navigateur.",
+            "Le CSS d'impacter les composants parents ou enfants (isolation).",
+            "L'utilisation de couleurs.",
+            "L'utilisation de classes."
+        ],
+        "answer": 1,
+        "explanation": "Cela permet d'avoir une classe `.title` dans deux composants différents sans conflit.",
+        "chapterId": 7
+    },
+    {
+        "id": 262,
+        "question": "Dans `npm run dev`, que fait `dev` ?",
+        "options": [
+            "C'est une commande magique.",
+            "C'est un alias défini dans la section `scripts` du fichier `package.json` (qui lance souvent `vite`).",
+            "C'est le nom du développeur.",
+            "C'est une erreur."
+        ],
+        "answer": 1,
+        "explanation": "C'est là qu'on définit les raccourcis de commandes du projet.",
+        "chapterId": 7
+    },
+    {
+        "id": 263,
+        "question": "Code :\n```javascript\nonUnmounted(() => { clearInterval(timer) });\n```\nPourquoi est-ce important ?",
+        "options": [
+            "Pour libérer la mémoire.",
+            "Pour éviter que le timer continue de tourner en fond (et potentiellement cause des erreurs ou ralentissements) après la destruction du composant.",
+            "Les deux sont vrais.",
+            "Ce n'est pas important."
+        ],
+        "answer": 2,
+        "explanation": "Gestion des fuites de mémoire (Memory Leaks). Si on détruit le composant, ses processus de fond doivent mourir avec lui.",
+        "chapterId": 7
+    },
+    {
+        "id": 264,
+        "question": "Quelle fonction permet de définir des props avec typage TypeScript strict (Interface) ?",
+        "options": [
+            "`defineProps(['a'])`",
+            "`defineProps<MyInterface>()`",
+            "`props<MyInterface>()`",
+            "`const props = new MyInterface()`"
+        ],
+        "answer": 1,
+        "explanation": "La syntaxe générique `<Type>` est la force de l'intégration TS/Vue.",
+        "chapterId": 7
+    },
+    {
+        "id": 265,
+        "question": "Si je veux passer un nombre `42` à une prop `age`, j'écris :",
+        "options": [
+            "`age=\"42\"`",
+            "`:age=\"42\"`",
+            "`v-bind:age=\"'42'\"`",
+            "`::age=\"42\"`"
+        ],
+        "answer": 1,
+        "explanation": "`age=\"42\"` passe la chaîne de caractères \"42\". `:age=\"42\"` évalue l'expression JS `42` (qui est un nombre).",
+        "chapterId": 7
+    },
+    {
+        "id": 266,
+        "question": "Qu'est-ce que `volar` ?",
+        "options": [
+            "Un oiseau.",
+            "L'extension VS Code recommandée pour avoir la coloration syntaxique et l'autocomplétion Vue 3 + TS.",
+            "Un framework CSS.",
+            "Le compilateur Vue."
+        ],
+        "answer": 1,
+        "explanation": "Indispensable pour developper confortablement.",
+        "chapterId": 7
+    },
+    {
+        "id": 267,
+        "question": "Code :\n```html\n<div v-if=\"Math.random() > 0.5\">A</div>\n<div v-else>B</div>\n```\nEst-ce valide ?",
+        "options": [
+            "Non.",
+            "Oui, `v-else` doit suivre immédiatement un élément avec `v-if`.",
+            "Non, on ne peut pas mettre de JS dans `v-if`.",
+            "Oui mais c'est déprécié."
+        ],
+        "answer": 1,
+        "explanation": "Le couple `v-if`/`v-else` fonctionne comme en programmation. Ils doivent être contigus dans le DOM.",
+        "chapterId": 7
+    },
+    {
+        "id": 268,
+        "question": "Pourquoi JSON Server est-il utilisé dans le TP ?",
+        "options": [
+            "Pour la production.",
+            "Pour simuler un Backend complet (API REST) en local à partir d'un simple fichier JSON, sans avoir à coder de serveur (Java/Node).",
+            "Pour faire du SQL.",
+            "Pour héberger le site."
+        ],
+        "answer": 1,
+        "explanation": "Outil de prototypage rapide très populaire chez les frontend devs.",
+        "chapterId": 7
+    },
+    {
+        "id": 269,
+        "question": "La méthode `splice` sur un tableau sert à :",
+        "options": [
+            "Ajouter à la fin.",
+            "Fusionner deux tableaux.",
+            "Retirer (ou ajouter) des éléments à n'importe quel index.",
+            "Trier le tableau."
+        ],
+        "answer": 2,
+        "explanation": "`array.splice(index, 1)` est la méthode standard pour supprimer l'élément à l'index donné.",
+        "chapterId": 7
+    },
+    {
+        "id": 270,
+        "question": "Dans l'architecture du TP, le dossier `dao` contient :",
+        "options": [
+            "Les images.",
+            "Le CSS.",
+            "Le code responsable de l'accès aux données (Data Access Object).",
+            "Les composants Vue."
+        ],
+        "answer": 2,
+        "explanation": "Organisation claire du code.",
+        "chapterId": 7
+    },
+    {
+        "id": 271,
+        "question": "Le data-binding `{{ }}` est aussi appelé :",
+        "options": [
+            "Interpolation de texte.",
+            "Injection SQL.",
+            "Event Loop.",
+            "Routing."
+        ],
+        "answer": 0,
+        "explanation": "Le moteur de template remplace `{{ var }}` par la valeur textuelle de `var`.",
+        "chapterId": 7
+    },
+    {
+        "id": 272,
+        "question": "Qu'est ce que le DOM Virtuel (Virtual DOM) ?",
+        "options": [
+            "Un casque VR.",
+            "Une copie légère du DOM en mémoire JS. Vue la modifie rapidement, compare avec l'ancienne version (Diffing), et ne touche au VRAI DOM que le minimum nécessaire.",
+            "C'est le DOM du navigateur.",
+            "Un plugin."
+        ],
+        "answer": 1,
+        "explanation": "C'est le secret de la performance de Vue/React. Toucher le vrai DOM est lent. Toucher le JS est rapide.",
+        "chapterId": 7
+    },
+    {
+        "id": 273,
+        "question": "Dans le setup `<script setup>`, a-t-on besoin de `this` ?",
+        "options": [
+            "Oui, toujours.",
+            "Non, `this` n'existe pas (ou n'est pas utilisé) dans l'API Composition. On utilise directement les variables et fonctions.",
+            "Parfois.",
+            "Seulement pour les props."
+        ],
+        "answer": 1,
+        "explanation": "C'est une rupture avec l'API Option (Vue 2). Simplifie la compréhension du scope JS.",
+        "chapterId": 7
+    }
+]
