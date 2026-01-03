@@ -137,3 +137,408 @@ o	Classe Java : Signature (qui combine Hachage + Asymétrique).
 5.	Je veux stocker tout ça proprement :
 o	$\rightarrow$ KeyStore (.jks).
 o	Outil : keytool.
+Voici une théorie complète sur la cryptographie en Java, structurée autour des interfaces et classes spécifiées, basée sur le contenu du document fourni.
+
+Le document présente l'architecture de sécurité de Java, divisée en **JCA** (Java Cryptography Architecture) pour les concepts de base et **JCE** (Java Cryptography Extension) pour les implémentations.
+
+### 1. Architecture et Fournisseurs (`Provider`)
+
+Java utilise une architecture ouverte où les implémentations des algorithmes ne sont pas figées dans le JDK, mais fournies par des tiers appelés **CSP (Cryptographic Service Providers)**.
+
+* 
+**Classe `Provider**` : Cette classe abstraite (héritant de `Properties`) représente un fournisseur d'algorithmes cryptographiques.
+
+
+* Le JDK contient des providers par défaut (ex: SUN), mais on peut en ajouter d'autres comme **Bouncy Castle** pour supporter plus d'algorithmes.
+
+
+* La classe `Security` gère ces providers via `Security.addProvider()` ou `Security.getProviders()`.
+
+
+* L'instanciation des objets cryptographiques se fait via des méthodes "factory" (ex: `getInstance()`) qui cherchent l'implémentation dans la liste des providers enregistrés.
+
+
+
+
+
+### 2. Gestion des Clés (`Key`, `SecretKey`, `PublicKey`, `PrivateKey`)
+
+La notion de clé est fondamentale : c'est un bloc d'informations permettant le chiffrement ou le déchiffrement.
+
+* **Interface `Key**` : Interface racine de toutes les clés dans le package `java.security`. Elle définit des méthodes comme `getAlgorithm()`, `getEncoded()` (retourne les bytes de la clé) et `getFormat()`.
+
+
+* **Interface `SecretKey**` : Utilisée pour la **cryptographie symétrique** (à clé secrète). Elle hérite de `Key` mais ne rajoute pas de méthodes ; elle sert de marqueur typologique pour les algorithmes comme DES ou AES. Une clé peut être créée manuellement à partir d'un tableau de bytes (mot de passe) via la classe `SecretKeySpec`.
+
+
+* **Interfaces `PublicKey` et `PrivateKey**` : Utilisées pour la **cryptographie asymétrique**.
+* 
+`PublicKey` est connue de tous et sert à chiffrer (pour la confidentialité) ou vérifier une signature.
+
+
+* 
+`PrivateKey` est secrète et sert à déchiffrer ou créer une signature.
+
+
+* Ces interfaces héritent également de `Key`.
+
+
+
+
+
+### 3. Génération de Clés (`KeyGenerator`, `KeyPairGenerator`, `KeyPair`)
+
+Java sépare la génération des clés symétriques et asymétriques.
+
+* **Classe `KeyGenerator**` : Génère des clés secrètes pour les algorithmes **symétriques** (ex: DES, AES).
+* On l'obtient via `KeyGenerator.getInstance("Algo", "Provider")`.
+
+
+* On l'initialise avec une source d'aléatoire (`SecureRandom`) ou une taille de clé via la méthode `init()`.
+
+
+* La méthode `generateKey()` retourne un objet `SecretKey`.
+
+
+
+
+* **Classe `KeyPairGenerator**` : Génère des paires de clés pour les algorithmes **asymétriques** (ex: RSA).
+* S'initialise avec la taille de la clé (ex: 1024 ou 2048 bits).
+
+
+* La méthode `generateKeyPair()` produit un objet `KeyPair`.
+
+
+
+
+* **Classe `KeyPair**` : Un simple conteneur (Java Bean) qui regroupe la clé publique et la clé privée générées ensemble. On y accède via `getPublic()` et `getPrivate()`.
+
+
+
+### 4. Le moteur de chiffrement (`Cipher`)
+
+La classe **`Cipher`** est le cœur des opérations de chiffrement (encryption) et déchiffrement (decryption).
+
+* **Instanciation** : Via `Cipher.getInstance("Algorithme/Mode/Padding", "Provider")`.
+* Exemple : `"DES/ECB/PKCS5Padding"` ou `"RSA/ECB/PKCS1Padding"`.
+
+
+* Les modes incluent ECB (blocs indépendants) ou CBC (chaînage de blocs avec vecteur d'initialisation IV).
+
+
+
+
+* **Initialisation** : Via la méthode `init(mode, key)`.
+* Le mode est soit `Cipher.ENCRYPT_MODE`, soit `Cipher.DECRYPT_MODE`.
+
+
+* Pour les modes comme CBC, un `IvParameterSpec` doit être passé en plus de la clé.
+
+
+
+
+* 
+**Exécution** : La méthode `doFinal(byte[] input)` effectue l'opération et retourne le résultat sous forme de tableau de bytes.
+
+
+
+### 5. Intégrité et Hachage (`MessageDigest`)
+
+Pour vérifier qu'un message n'a pas été modifié (intégrité), on utilise des fonctions de hachage irréversibles.
+
+* **Classe `MessageDigest**` : Représente un algorithme de hachage (ex: SHA-1, MD5).
+* On ajoute les données ("ingrédients") via `update(byte[])`.
+
+
+* La méthode `digest()` calcule et retourne l'empreinte (hash).
+
+
+* La méthode statique `MessageDigest.isEqual(digestA, digestB)` permet de comparer deux empreintes de manière sécurisée.
+
+
+
+
+
+### 6. Authentification (`Mac`, `Signature`)
+
+Java distingue l'authentification "légère" (symétrique) de l'authentification "lourde" (asymétrique).
+
+* **Classe `Mac` (Message Authentication Code)** : Assure l'intégrité et l'authenticité via une **clé secrète partagée**.
+* Utilise souvent le mécanisme HMAC (Hash-based MAC).
+
+
+* S'initialise avec une `SecretKey` via `init(key)`.
+
+
+* Comme pour le digest, on alimente avec `update()` et on finalise avec `doFinal()`. C'est une authentification légère car elle repose sur le secret partagé (symétrique).
+
+
+
+
+* 
+**Classe `Signature**` : Assure l'intégrité, l'authenticité et la **non-répudiation** via la **cryptographie asymétrique**.
+
+
+* **Signature (Émetteur)** : S'initialise avec la **`PrivateKey`** via `initSign()`. La méthode `sign()` génère la signature numérique.
+
+
+* **Vérification (Récepteur)** : S'initialise avec la **`PublicKey`** via `initVerify()`. La méthode `verify(signature)` retourne `true` si la signature correspond aux données et à la clé publique.
+
+
+
+
+
+### 7. Certificats et PKI (`Certificate`, `X509Certificate`)
+
+Pour garantir qu'une clé publique appartient bien à l'entité qu'elle prétend être, on utilise des certificats signés par une Autorité de Certification (CA).
+
+* **Classe `Certificate**` : Classe abstraite représentant un certificat. Elle permet de récupérer la clé publique contenue (`getPublicKey()`) et de vérifier la signature du certificat (`verify()`).
+
+
+* 
+**Classe `X509Certificate**` : Implémentation standard représentant la norme X.509. Elle donne accès à :
+
+
+* Les dates de validité (`getNotBefore()`, `getNotAfter()`).
+
+
+* L'émetteur (`getIssuerDN()`) et le propriétaire du certificat (`getSubjectDN()`).
+
+
+* Les algorithmes de signature utilisés.
+
+
+* La génération d'objets certificats se fait via `CertificateFactory.getInstance("X.509").generateCertificate(InputStream)`.
+
+
+
+
+
+### 8. Stockage sécurisé (`KeyStore`)
+
+Le **KeyStore** est un conteneur sécurisé (base de données cryptée) pour stocker des clés et des certificats.
+
+* **Structure** : Il contient deux types d'entrées identifiées par un **alias** :
+1. 
+**Key Entry** : Stocke une clé privée (protégée par mot de passe) et la chaîne de certificats associée (pour s'authentifier soi-même).
+
+
+2. 
+**Trusted Certificate Entry** : Stocke un certificat public d'un tiers de confiance (pour authentifier les autres).
+
+
+
+
+* **Utilisation** :
+* Chargement via `load(InputStream, password)`.
+
+
+* Récupération de clé privée via `getKey(alias, password)`.
+
+
+* Récupération de certificat via `getCertificate(alias)`.
+
+
+
+
+* 
+**Formats** : Le format par défaut de Java est **JKS** (Java KeyStore), mais d'autres standards comme **PKCS12** sont supportés.
+
+
+
+---
+
+### Résumé synthétique des interactions
+
+| Concept | Classe Java | Type de Clé | Opération Principale |
+| --- | --- | --- | --- |
+| **Symétrique** | `Cipher`, `SecretKey` | Secrète (unique) | Confidentialité (rapide) |
+| **Asymétrique** | `Cipher`, `KeyPair` | Publique / Privée | Confidentialité + Échange de clé |
+| **Hachage** | `MessageDigest` | Aucune | Intégrité (empreinte) |
+| **MAC** | `Mac` | Secrète | Intégrité + Authentification (légère) |
+| **Signature** | `Signature` | Privée (Signer) / Publique (Vérif) | Non-répudiation + Auth. (lourde) |
+| **Confiance** | `Certificate`, `KeyStore` | Publique (dans certif.) | Validation d'identité (PKI) |
+
+Souhaitez-vous un exemple de code combinant `KeyStore`, `Signature` et `Cipher` pour simuler une transaction sécurisée complète ?
+Voici des exemples de code Java illustrant concrètement les concepts théoriques abordés, basés sur les classes et interfaces décrites dans le document.
+
+### 1. Chiffrement Symétrique (Confidentialité)
+
+Ici, nous utilisons `KeyGenerator` pour créer une clé secrète (`SecretKey`), puis `Cipher` pour chiffrer et déchiffrer. C'est le même principe que l'algorithme DES ou AES.
+
+```java
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import java.security.SecureRandom;
+
+public class ExempleSymetrique {
+    public static void main(String[] args) throws Exception {
+        // 1. Génération de la clé secrète (ex: AES)
+        [cite_start]// On utilise KeyGenerator pour obtenir une clé symétrique [cite: 456]
+        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+        keyGen.init(256, new SecureRandom()); [cite_start]// Initialisation aléatoire [cite: 463]
+        SecretKey secretKey = keyGen.generateKey(); [cite_start]// Création de l'objet SecretKey [cite: 466]
+
+        // 2. Chiffrement
+        Cipher cipher = Cipher.getInstance("AES"); [cite_start]// Obtention de l'instance Cipher [cite: 474]
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey); [cite_start]// Mode ENCRYPT [cite: 486]
+        byte[] messageClair = "Bonjour Secret !".getBytes();
+        byte[] messageCrypte = cipher.doFinal(messageClair); [cite_start]// Exécution [cite: 491]
+
+        System.out.println("Message crypté (bytes) : " + new String(messageCrypte));
+
+        // 3. Déchiffrement
+        cipher.init(Cipher.DECRYPT_MODE, secretKey); [cite_start]// Mode DECRYPT [cite: 487]
+        byte[] messageDecrypte = cipher.doFinal(messageCrypte); // On retrouve le clair
+
+        System.out.println("Message décrypté : " + new String(messageDecrypte));
+    }
+}
+
+```
+
+### 2. Chiffrement Asymétrique (RSA)
+
+Nous utilisons `KeyPairGenerator` pour générer une paire de clés. Le message est chiffré avec la **clé publique** (`PublicKey`) et déchiffré avec la **clé privée** (`PrivateKey`).
+
+```java
+import java.security.*;
+import javax.crypto.Cipher;
+
+public class ExempleAsymetrique {
+    public static void main(String[] args) throws Exception {
+        // 1. Génération de la paire de clés (RSA)
+        KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA"); [cite_start]// [cite: 983]
+        keyPairGen.initialize(2048, new SecureRandom());
+        KeyPair pair = keyPairGen.generateKeyPair(); [cite_start]// Contient Publique + Privée [cite: 991]
+        
+        PublicKey publicKey = pair.getPublic();   [cite_start]// [cite: 993]
+        PrivateKey privateKey = pair.getPrivate(); [cite_start]// [cite: 994]
+
+        // 2. Chiffrement avec la Clé Publique
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey); [cite_start]// On chiffre avec la publique [cite: 1005]
+        byte[] input = "Donnée confidentielle".getBytes();
+        byte[] cipherText = cipher.doFinal(input);
+
+        // 3. Déchiffrement avec la Clé Privée
+        cipher.init(Cipher.DECRYPT_MODE, privateKey); [cite_start]// On déchiffre avec la privée [cite: 1008]
+        byte[] plainText = cipher.doFinal(cipherText);
+
+        System.out.println("Déchiffré : " + new String(plainText));
+    }
+}
+
+```
+
+### 3. Hachage et MAC (Intégrité et Authentification légère)
+
+L'exemple montre comment calculer une empreinte simple avec `MessageDigest` et une empreinte authentifiée avec `Mac` (HMAC).
+
+```java
+import java.security.MessageDigest;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+public class ExempleIntegrite {
+    public static void main(String[] args) throws Exception {
+        String data = "Message important";
+
+        // --- Message Digest (Hachage simple) ---
+        MessageDigest md = MessageDigest.getInstance("SHA-256"); [cite_start]// [cite: 1426]
+        md.update(data.getBytes()); [cite_start]// Ajout des ingrédients [cite: 1433]
+        byte[] digest = md.digest(); [cite_start]// Calcul du hash [cite: 1439]
+        System.out.println("Hash calculé (longueur) : " + digest.length);
+
+        // --- MAC (Hachage authentifié avec clé) ---
+        // Création manuelle d'une clé pour le MAC
+        byte[] keyBytes = "MaSuperCleSecrete".getBytes();
+        SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "HmacSHA256"); [cite_start]// [cite: 801]
+
+        Mac mac = Mac.getInstance("HmacSHA256"); [cite_start]// [cite: 1647]
+        mac.init(keySpec); [cite_start]// Initialisation avec la clé [cite: 1653]
+        mac.update(data.getBytes()); [cite_start]// Ajout des données [cite: 1656]
+        byte[] macResult = mac.doFinal(); [cite_start]// Résultat final [cite: 1663]
+        
+        System.out.println("HMAC calculé.");
+    }
+}
+
+```
+
+### 4. Signature Numérique (Authentification lourde)
+
+La signature utilise la clé privée pour signer et la clé publique pour vérifier. Cela garantit l'intégrité et la non-répudiation.
+
+```java
+import java.security.*;
+
+public class ExempleSignature {
+    public static void main(String[] args) throws Exception {
+        // Génération des clés pour l'exemple
+        KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+        kpg.initialize(2048);
+        KeyPair pair = kpg.generateKeyPair();
+
+        byte[] data = "Contrat signé".getBytes();
+
+        // 1. Création de la signature (Côté Émetteur)
+        [cite_start]// On utilise l'instance Signature avec un algo combiné (Hash + Asym) [cite: 1941]
+        Signature signEngine = Signature.getInstance("SHA256withRSA");
+        signEngine.initSign(pair.getPrivate()); [cite_start]// Init avec clé PRIVÉE [cite: 1942]
+        signEngine.update(data); [cite_start]// Ajout des données [cite: 1946]
+        byte[] signature = signEngine.sign(); [cite_start]// Génération des bytes de signature [cite: 1951]
+
+        System.out.println("Document signé.");
+
+        // 2. Vérification de la signature (Côté Récepteur)
+        Signature verifyEngine = Signature.getInstance("SHA256withRSA");
+        verifyEngine.initVerify(pair.getPublic()); [cite_start]// Init avec clé PUBLIQUE [cite: 1957]
+        verifyEngine.update(data); // On doit avoir les mêmes données
+        
+        boolean isCorrect = verifyEngine.verify(signature); [cite_start]// Vérification [cite: 1960]
+        System.out.println("Signature valide ? " + isCorrect);
+    }
+}
+
+```
+
+### 5. Utilisation du KeyStore
+
+Ce code montre comment charger un fichier `.jks` (le conteneur sécurisé) et récupérer une clé privée stockée à l'intérieur.
+
+```java
+import java.io.FileInputStream;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
+
+public class ExempleKeyStore {
+    public static void main(String[] args) throws Exception {
+        String keystoreFile = "mon_keystore.jks";
+        char[] password = "monPassword".toCharArray();
+        String alias = "monAlias";
+
+        // 1. Chargement du KeyStore
+        KeyStore ks = KeyStore.getInstance("JKS"); [cite_start]// Type standard Java [cite: 2636]
+        // En pratique, il faut gérer l'exception si le fichier n'existe pas
+        try (FileInputStream fis = new FileInputStream(keystoreFile)) {
+            ks.load(fis, password); [cite_start]// Chargement depuis le disque [cite: 2646]
+        }
+
+        // 2. Récupération d'une clé privée
+        // Il faut le mot de passe spécifique de la clé (souvent le même que le keystore)
+        PrivateKey key = (PrivateKey) ks.getKey(alias, password); [cite_start]// [cite: 2644]
+
+        // 3. Récupération du certificat associé (contenant la clé publique)
+        Certificate cert = ks.getCertificate(alias); [cite_start]// [cite: 2644]
+        
+        System.out.println("Clé récupérée : " + key.getAlgorithm());
+        System.out.println("Propriétaire du certificat : " + cert.toString());
+    }
+}
+
+```
+
+Ces exemples couvrent l'essentiel des interfaces JCA/JCE mentionnées dans votre document pour sécuriser une application Java.

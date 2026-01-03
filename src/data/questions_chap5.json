@@ -1,392 +1,522 @@
 [
     {
         "id": 154,
-        "question": "Quelle est la différence fondamentale entre `KeyGenerator` et `KeyPairGenerator` en Java ?",
+        "question": "Analysez ce code :\n```java\nKeyGenerator kg = KeyGenerator.getInstance(\"AES\");\nkg.init(256);\nSecretKey key = kg.generateKey();\n```\nQuelle exception risque d'être levée à l'exécution sur une installation Java standard (sans JCE Unlimited Strength) ?",
         "options": [
-            "Aucune, ce sont des synonymes.",
-            "`KeyGenerator` crée des clés symétriques (`SecretKey`), tandis que `KeyPairGenerator` crée des paires asymétriques (`KeyPair`).",
-            "`KeyGenerator` est déprécié.",
-            "`KeyPairGenerator` est utilisé pour les mots de passe uniquement."
+            "NoSuchAlgorithmException",
+            "InvalidKeyException",
+            "InvalidParameterException (taille 256 non supportée par défaut)",
+            "ProviderException"
         ],
-        "answer": 1,
-        "explanation": "Piège de vocabulaire : Generator = Symétrique (AES, DES). PairGenerator = Asymétrique (RSA, DSA).",
+        "answer": 2,
+        "explanation": "Par défaut, certaines distributions Java limitent AES à 128 bits. Pour 256 bits, il fallait historiquement installer les 'JCE Unlimited Strength Jurisdiction Policy Files', bien que ce soit moins le cas sur les versions récentes (Java 8u161+). C'est un piège classique.",
         "chapterId": 5
     },
     {
         "id": 155,
-        "question": "L'interface `SecretKey` hérite directement de :",
+        "question": "Quelle est la différence fondamentale dans l'usage de `KeyGenerator` et `KeyPairGenerator` ?",
         "options": [
-            "`java.security.Key`",
-            "`java.security.KeyPair`",
-            "`javax.crypto.Cipher`",
-            "`java.lang.Object`"
+            "Aucune différence.",
+            "`KeyGenerator` pour symétrique (AES), `KeyPairGenerator` pour asymétrique (RSA).",
+            "`KeyPairGenerator` est thread-safe, l'autre non.",
+            "`KeyGenerator` crée des certificats."
         ],
-        "answer": 0,
-        "explanation": "`Key` est l'interface racine. `SecretKey` (symétrique), `PublicKey` et `PrivateKey` (asymétriques) en héritent. `SecretKey` ne contient aucune méthode supplémentaire (interface marqueur).",
+        "answer": 1,
+        "explanation": "Memorisez: 'Pair' = Clé Publique + Privée = Asymétrique.",
         "chapterId": 5
     },
     {
         "id": 156,
-        "question": "Quelle méthode de la classe `Cipher` permet de finaliser le chiffrement (et d'appliquer le padding) ?",
+        "question": "Regardez ce bout de code :\n```java\nCipher c = Cipher.getInstance(\"AES/CBC/PKCS5Padding\");\nc.init(Cipher.ENCRYPT_MODE, secretKey);\nbyte[] c1 = c.update(msg1);\nbyte[] c2 = c.doFinal(msg2);\n```\nSi `msg1` fait 16 octets et `msg2` fait 10 octets (Bloc AES = 16 octets), que contient `c1` ?",
         "options": [
-            "`update()`",
-            "`doFinal()`",
-            "`enzip()`",
-            "`finish()`"
+            "Les 16 octets chiffrés de msg1.",
+            "Rien (null ou tableau vide).",
+            "Une exception est levée.",
+            "Les 26 octets chiffrés."
         ],
-        "answer": 1,
-        "explanation": "`update()` traite des morceaux intermédiaires. `doFinal()` traite le dernier bloc et ajoute le bourrage (padding) si nécessaire.",
+        "answer": 0,
+        "explanation": "AES a des blocs de 16 octets. `update` bufferise. Si on lui donne exactement un bloc (16 octets), il PEUT le chiffrer tout de suite, ou attendre. Généralement en CBC, il le sort. La subtilité est le padding qui viendra au `doFinal`.",
         "chapterId": 5
     },
     {
         "id": 157,
-        "question": "La classe `java.security.Provider` sert à :",
+        "question": "Dans l'architecture JCA, à quoi sert la classe `java.security.Provider` ?",
         "options": [
-            "Fournir l'accès internet.",
-            "Implémenter concrètement les algorithmes standards (ex: 'SUN', 'BouncyCastle').",
-            "Gérer les fournisseurs d'accès (ISP).",
-            "Stocker les clés."
+            "À fournir les accès réseaux.",
+            "À faire l'interface entre l'API Java et les implémentations crypto réelles.",
+            "À stocker les mots de passe.",
+            "C'est une classe dépréciée."
         ],
         "answer": 1,
-        "explanation": "L'architecture JCA (Java Cryptography Architecture) est basée sur des Providers qui fournissent les implémentations réelles des algos demandés via `getInstance()`.",
+        "explanation": "Les Providers (ex: SunJCE, BouncyCastle) contiennent le code réel. `Cipher.getInstance()` cherche dans les providers installés.",
         "chapterId": 5
     },
     {
         "id": 158,
-        "question": "Pour obtenir une instance de `Cipher` pour faire du AES en mode CBC avec padding PKCS5, j'appelle :",
+        "question": "Quel est le résultat de `key.getEncoded()` sur une `SecretKey` ?",
         "options": [
-            "`new Cipher(\"AES/CBC/PKCS5Padding\")`",
-            "`Cipher.getInstance(\"AES/CBC/PKCS5Padding\")`",
-            "`Cipher.create(\"AES\")`",
-            "`Provider.getCipher(\"AES\")`"
+            "Le hash de la clé.",
+            "Les octets bruts de la clé (Raw bytes).",
+            "Une chaîne encodée en Base64.",
+            "Un objet X509EncodedKeySpec."
         ],
         "answer": 1,
-        "explanation": "Le pattern Factory est omniprésent en crypto Java. On ne fait jamais de `new` sur les moteurs crypto.",
+        "explanation": "`getEncoded()` retourne `byte[]`. Pour l'afficher chiffré, il faudrait l'encoder soi-même en Base64.",
         "chapterId": 5
     },
     {
         "id": 159,
-        "question": "Quelle est la différence entre `MessageDigest` et `Mac` ?",
+        "question": "Analysez ce code :\n```java\nMessageDigest md = MessageDigest.getInstance(\"SHA-256\");\nmd.update(partie1);\nbyte[] hash = md.digest(partie2);\n```\nQue contient le tableau `hash` ?",
         "options": [
-            "`Mac` nécessite une clé secrète, `MessageDigest` non.",
-            "`MessageDigest` est réversible, `Mac` non.",
-            "`Mac` est asymétrique.",
-            "C'est la même chose."
+            "Le hash de `partie2` uniquement.",
+            "Le hash de `partie1` uniquement.",
+            "Le hash de la concaténation `partie1 + partie2`.",
+            "Une erreur car on ne peut pas mélanger update et digest."
         ],
-        "answer": 0,
-        "explanation": "`MessageDigest` = Hash simple (SHA-256). `Mac` (Message Authentication Code) = Hash + Clé Secrète (HMAC), permet l'intégrité ET l'authenticité.",
+        "answer": 2,
+        "explanation": "`update` accumule les données. `digest(bytes)` fait un dernier update puis calcule le hash final de TOUT ce qui a été accumulé.",
         "chapterId": 5
     },
     {
         "id": 160,
-        "question": "Dans un objet `KeyPair`, comment récupère-t-on la clé privée ?",
+        "question": "Quelle interface Java représente une clé asymétrique privée ?",
         "options": [
-            "`pair.getPrivate()`",
-            "`pair.getSecret()`",
-            "`pair.getKey()`",
-            "`pair.retrievePrivate()`"
+            "`java.security.PrivateKey`",
+            "`javax.crypto.SecretKey`",
+            "`java.security.KeyPair`",
+            "`java.security.KeyStore`"
         ],
         "answer": 0,
-        "explanation": "`KeyPair` est un simple conteneur (POJO) qui détient une `PublicKey` et une `PrivateKey`.",
+        "explanation": "Logique de nommage directe. Elle étend `Key`.",
         "chapterId": 5
     },
     {
         "id": 161,
-        "question": "La classe `Signature` s'initialise pour la VÉRIFICATION avec :",
-        "options": [
-            "`initSign(PrivateKey)`",
-            "`initVerify(PublicKey)`",
-            "`initVerify(PrivateKey)`",
-            "`initCheck(Certificate)`"
-        ],
-        "answer": 1,
-        "explanation": "Signature : Je signe avec mon secret (Private). Tout le monde vérifie avec mon public (Public).",
-        "chapterId": 5
-    },
-    {
-        "id": 162,
-        "question": "Un `X509Certificate` permet-il de récupérer la clé privée du titulaire ?",
-        "options": [
-            "Oui, via `getPrivateKey()`.",
-            "Non, jamais. Il contient uniquement la clé publique.",
-            "Oui, si on a le mot de passe root.",
-            "Oui, mais elle est chiffrée."
-        ],
-        "answer": 1,
-        "explanation": "Un certificat est public par nature (comme une carte de visite). Il certifie l'appartenance de la clé PUBLIQUE.",
-        "chapterId": 5
-    },
-    {
-        "id": 163,
-        "question": "Pour charger un `KeyStore` depuis un fichier, quelle méthode utiliser ?",
-        "options": [
-            "`ks.load(inputStream, password)`",
-            "`ks.open(file)`",
-            "`KeyStore.getInstance(file)`",
-            "`ks.read(password)`"
-        ],
-        "answer": 0,
-        "explanation": "La méthode `load` prend le flux de données et le mot de passe d'intégrité du KeyStore (char[]).",
-        "chapterId": 5
-    },
-    {
-        "id": 164,
-        "question": "Quelle exception est levée par `Cipher.doFinal()` si la clé fournie est mauvaise ou le texte corrompu ?",
-        "options": [
-            "`BadPaddingException`",
-            "`NullPointerException`",
-            "`CipherException`",
-            "`AlgorithmNotFoundException`"
-        ],
-        "answer": 0,
-        "explanation": "En mode bloc, un mauvais déchiffrement produit des données aléatoires à la fin, ce qui invalide le format du Padding. C'est l'indice n°1 d'une erreur de clé.",
-        "chapterId": 5
-    },
-    {
-        "id": 165,
-        "question": "Si j'utilise `KeyGenerator.getInstance(\"AES\")`, quelle taille de clé est générée par défaut (souvent) ?",
-        "options": [
-            "64 bits",
-            "128 bits",
-            "256 bits",
-            "2048 bits"
-        ],
-        "answer": 1,
-        "explanation": "128 bits est le défaut standard pour AES. 256 bits nécessite souvent les 'Unlimited Strength Jurisdiction Policy Files'.",
-        "chapterId": 5
-    },
-    {
-        "id": 166,
-        "question": "L'interface `Key` définit la méthode `getEncoded()`. Que retourne-t-elle ?",
-        "options": [
-            "Le nom de l'algo.",
-            "La clé sous sa forme binaire brute (byte[]).",
-            "Une chaîne Base64.",
-            "L'adresse mémoire."
-        ],
-        "answer": 1,
-        "explanation": "C'est la représentation 'primaire' de la clé, permettant de la sauvegarder ou de la transmettre.",
-        "chapterId": 5
-    },
-    {
-        "id": 167,
-        "question": "Quelle classe représente un certificat numérique standard sur Internet ?",
-        "options": [
-            "`java.security.Certificate`",
-            "`java.security.cert.X509Certificate`",
-            "`javax.net.ssl.SSLSession`",
-            "`java.crypto.Cert`"
-        ],
-        "answer": 1,
-        "explanation": "X.509 est la norme standard implémentée par la classe abstraite `X509Certificate`.",
-        "chapterId": 5
-    },
-    {
-        "id": 168,
-        "question": "Si je veux vérifier qu'un certificat n'est pas expiré, j'appelle :",
-        "options": [
-            "`cert.isValid()`",
-            "`cert.checkValidity()`",
-            "`cert.verifyDate()`",
-            "`cert.isExpired()`"
-        ],
-        "answer": 1,
-        "explanation": "Cette méthode lance une `CertificateExpiredException` ou `CertificateNotYetValidException` si la date actuelle n'est pas bonne.",
-        "chapterId": 5
-    },
-    {
-        "id": 169,
-        "question": "Le type `KeyStore.PrivateKeyEntry` contient :",
-        "options": [
-            "Juste la clé privée.",
-            "La clé privée et la chaîne de certificats correspondante (clé publique certifiée).",
-            "La clé privée et le mot de passe en clair.",
-            "Juste le certificat."
-        ],
-        "answer": 1,
-        "explanation": "Une clé privée ne se balade jamais seule dans un keystore, elle est toujours associée à sa contrepartie publique (certificat) pour prouver qui elle est.",
-        "chapterId": 5
-    },
-    {
-        "id": 170,
-        "question": "Quel algorithme de Signature est couramment utilisé ?",
-        "options": [
-            "\"SHA256withRSA\"",
-            "\"AESwithCBC\"",
-            "\"MD5only\"",
-            "\"RSA-ECB\""
-        ],
-        "answer": 0,
-        "explanation": "Signature = Hachage (SHA256) + Chiffrement Asymétrique (RSA). Le nom de l'algo concatène les deux.",
-        "chapterId": 5
-    },
-    {
-        "id": 171,
-        "question": "La méthode `update` de la classe `Mac` sert à :",
-        "options": [
-            "Remplacer la clé.",
-            "Fournir les données à authentifier (peut être appelée plusieurs fois).",
-            "Calculer le résultat final.",
-            "Mettre à jour l'algorithme."
-        ],
-        "answer": 1,
-        "explanation": "Comme pour MessageDigest, on peut 'nourrir' le Mac morceau par morceau avant de demander le résultat final.",
-        "chapterId": 5
-    },
-    {
-        "id": 172,
-        "question": "`CertificateFactory` sert à :",
-        "options": [
-            "Créer des certificats à partir de rien.",
-            "Générer des clés.",
-            "Parser des certificats depuis un flux d'entrée (ex: fichier .cer).",
-            "Signer des documents."
-        ],
-        "answer": 2,
-        "explanation": "Elle convertit des données brutes (souvent encodées en DER ou Base64) en objets Java `Certificate`.",
-        "chapterId": 5
-    },
-    {
-        "id": 173,
-        "question": "Que retourne `cipher.getOutputSize(inputLen)` ?",
-        "options": [
-            "La taille exacte des données déchiffrées.",
-            "Une estimation de la taille du buffer de sortie nécessaire (incluant padding).",
-            "La taille de la clé.",
-            "Le nombre de blocs."
-        ],
-        "answer": 1,
-        "explanation": "Très utile pour allouer le bon buffer avant d'appeler `doFinal`.",
-        "chapterId": 5
-    },
-    {
-        "id": 174,
-        "question": "Quelle classe permet de stocker des clés en mémoire de manière sécurisée avant de les utiliser ?",
-        "options": [
-            "`java.lang.StringBuffer`",
-            "`java.security.KeyStore`",
-            "`javax.security.auth.Subject`",
-            "`java.util.HashMap`"
-        ],
-        "answer": 1,
-        "explanation": "C'est l'API dédiée au stockage sécurisé (disque ou mémoire) des matériaux cryptographiques.",
-        "chapterId": 5
-    },
-    {
-        "id": 175,
-        "question": "L'interface `PublicKey` étend `Key`. Qu'ajoute-t-elle comme méthodes spécifiques ?",
-        "options": [
-            "Aucune (interface marqueur).",
-            "`getModulus()` et `getExponent()`.",
-            "`encrypt()`.",
-            "`verify()`."
-        ],
-        "answer": 0,
-        "explanation": "Tout comme SecretKey, c'est une interface marqueur qui sert au typage. Les méthodes mathématiques (modulus) sont dans des sous-interfaces spécifiques (ex: `RSAPublicKey`).",
-        "chapterId": 5
-    },
-    {
-        "id": 176,
-        "question": "Pour chiffrer en RSA (Asymétrique) avec `Cipher`, le mode (Block Mode) est-il obligatoire ?",
-        "options": [
-            "Oui, RSA est un chiffre par bloc.",
-            "Non, on utilise souvent \"RSA/ECB/PKCS1Padding\" ou juste \"RSA\".",
-            "Oui, il faut utiliser CBC.",
-            "RSA ne s'utilise pas avec `Cipher`."
-        ],
-        "answer": 1,
-        "explanation": "Bien que 'ECB' soit mentionné dans l'algo string, RSA ne fonctionne pas par bloc chainé comme AES. Il chiffre un seul bloc (la donnée clé ou hash).",
-        "chapterId": 5
-    },
-    {
-        "id": 177,
-        "question": "`SecureRandom` est souvent utilisé lors de l'initialisation de :",
-        "options": [
-            "`MessageDigest`",
-            "`KeyGenerator` et `Signature` (paramètre de sel/aléa).",
-            "`KeyStore`",
-            "`Certificate`"
-        ],
-        "answer": 1,
-        "explanation": "La génération de clés doit être imprédictible. On passe souvent un `SecureRandom` à `init()` pour garantir une source d'entropie forte.",
-        "chapterId": 5
-    },
-    {
-        "id": 178,
-        "question": "Si j'ai un objet `Mac` initialisé, la méthode `doFinal(bytes[])` retourne :",
-        "options": [
-            "Un `String` hexadécimal.",
-            "Un tableau d'octets (`byte[]`) représentant le tag d'authentification.",
-            "Un boolean.",
-            "L'objet Mac lui-même."
-        ],
-        "answer": 1,
-        "explanation": "Le résultat crypto brut est toujours du binaire (`byte[]`). A charge du développeur de l'encoder (Base64/Hex) pour l'affichage.",
-        "chapterId": 5
-    },
-    {
-        "id": 179,
-        "question": "Quelle méthode de `KeyStore` permet de lister tous les noms (alias) des entrées ?",
-        "options": [
-            "`aliases()`",
-            "`list()`",
-            "`getNames()`",
-            "`keys()`"
-        ],
-        "answer": 0,
-        "explanation": "Retourne une `Enumeration<String>` des alias présents.",
-        "chapterId": 5
-    },
-    {
-        "id": 180,
-        "question": "La classe `MessageDigest` méthode `digest()` :",
-        "options": [
-            "Réinitialise automatiquement le digest après calcul.",
-            "Ferme le flux.",
-            "Devient inutilisable.",
-            "Garde l'état précédent."
-        ],
-        "answer": 0,
-        "explanation": "Après un `digest()`, l'objet est reset et prêt à calculer le hash d'une nouvelle donnée.",
-        "chapterId": 5
-    },
-    {
-        "id": 181,
-        "question": "Un `Provider` crypto peut être ajouté dynamiquement au runtime via :",
-        "options": [
-            "`System.addProvider()`",
-            "`Security.addProvider()`",
-            "`Cipher.addProvider()`",
-            "`Provider.register()`"
-        ],
-        "answer": 1,
-        "explanation": "La classe `java.security.Security` gère la configuration globale des providers (ex: ajout de BouncyCastle).",
-        "chapterId": 5
-    },
-    {
-        "id": 182,
-        "question": "Quelle est la super-classe commune de `BadPaddingException`, `IllegalBlockSizeException`, etc. ?",
-        "options": [
-            "`Wait`",
-            "`GeneralSecurityException`",
-            "`RuntimeException`",
-            "`IOException`"
-        ],
-        "answer": 1,
-        "explanation": "C'est la mère de toutes les exceptions crypto (checked) en Java.",
-        "chapterId": 5
-    },
-    {
-        "id": 183,
-        "question": "Quel est le format d'encodage standard retourné par `getEncoded()` pour une clé Publique (`PublicKey`) ?",
+        "question": "Dans quel format standard la méthode `getEncoded()` retourne-t-elle habituellement une `PublicKey` ?",
         "options": [
             "RAW",
             "PKCS#8",
             "X.509 (SubjectPublicKeyInfo)",
-            "Base64"
+            "PKCS#12"
         ],
         "answer": 2,
-        "explanation": "Standard technique : Public = X.509, Private = PKCS#8.",
+        "explanation": "Piège mémoriel : Public = X.509, Privé = PKCS#8.",
+        "chapterId": 5
+    },
+    {
+        "id": 162,
+        "question": "Le code suivant lance une exception. Laquelle ?\n```java\nCipher c = Cipher.getInstance(\"AES/CBC/PKCS5Padding\");\nc.init(Cipher.DECRYPT_MODE, secretKey);\n// pas d'IV fourni ...\nbyte[] clair = c.doFinal(chiffre);\n```",
+        "options": [
+            "NoSuchAlgorithmException",
+            "InvalidKeyException",
+            "InvalidAlgorithmParameterException (IV manquant)",
+            "BadPaddingException"
+        ],
+        "answer": 2,
+        "explanation": "En mode DECRYPT_MODE avec CBC, il FAUT fournir l'IV utilisé au chiffrement (via `IvParameterSpec`), sinon le moteur ne peut pas démarrer la chaîne XOR.",
+        "chapterId": 5
+    },
+    {
+        "id": 163,
+        "question": "Quelle classe permet d'assurer l'intégrité ET l'authenticité d'un message via une clé secrète ?",
+        "options": [
+            "`MessageDigest`",
+            "`Mac` (HMAC)",
+            "`Signature`",
+            "`Cipher`"
+        ],
+        "answer": 1,
+        "explanation": "`MessageDigest` = Intégrité seule (n'importe qui peut le recalculer). `Mac` = Intégrité + Preuve d'origine (car nécessite la clé secrète).",
+        "chapterId": 5
+    },
+    {
+        "id": 164,
+        "question": "Dans le code suivant :\n```java\nSignature sig = Signature.getInstance(\"SHA256withRSA\");\nsig.initVerify(pubKey);\nsig.update(data);\nboolean ok = sig.verify(signatureBytes);\n```\nSi `ok` vaut `false`, cela signifie :",
+        "options": [
+            "Que la clé publique est invalide.",
+            "Que les données ont été altérées OU que la signature ne correspond pas à la clé privée associée.",
+            "Que le programme a planté.",
+            "Que l'algorithme n'est pas supporté."
+        ],
+        "answer": 1,
+        "explanation": "C'est le but de la signature : garantir que les données sont intactes et signées par le possesseur de la clé privée.",
+        "chapterId": 5
+    },
+    {
+        "id": 165,
+        "question": "Peut-on récupérer la clé privée à partir d'un objet `X509Certificate` standard ?",
+        "options": [
+            "Oui, avec `getPrivateKey()`.",
+            "Oui, si on est admin.",
+            "Non, jamais. Le certificat est public.",
+            "Oui, via le KeyStore associé."
+        ],
+        "answer": 2,
+        "explanation": "Un certificat contient l'identité et la clé PUBLIQUE. La clé privée est gardée secrète par le propriétaire.",
+        "chapterId": 5
+    },
+    {
+        "id": 166,
+        "question": "Pour charger un `KeyStore` (format PKCS12 ou JKS) depuis un fichier, quel argument est CRITIQUE pour vérifier son intégrité ?",
+        "options": [
+            "Le nom du fichier.",
+            "Le password du KeyStore (char[]).",
+            "Le provider.",
+            "La date de modification."
+        ],
+        "answer": 1,
+        "explanation": "`store.load(stream, password)`. Le mot de passe sert souvent à vérifier un hash d'intégrité du fichier pour s'assurer qu'il n'a pas été corrompu.",
+        "chapterId": 5
+    },
+    {
+        "id": 167,
+        "question": "Qu'est-ce qu'un `Salt` (sel) dans le contexte du chiffrement de mot de passe (PBE) ?",
+        "options": [
+            "Une donnée aléatoire ajoutée au mot de passe avant hachage pour empêcher les attaques par Rainbow Tables.",
+            "Un type de clé.",
+            "Un algorithme de padding.",
+            "Une erreur de codage."
+        ],
+        "answer": 0,
+        "explanation": "Le sel rend unique le hachage de deux mots de passe identiques.",
+        "chapterId": 5
+    },
+    {
+        "id": 168,
+        "question": "Code :\n```java\nSecureRandom sr = new SecureRandom();\nbyte[] iv = new byte[16];\nsr.nextBytes(iv);\nIvParameterSpec ivSpec = new IvParameterSpec(iv);\n```\nPourquoi utilise-t-on `SecureRandom` et pas `Random` ici ?",
+        "options": [
+            "C'est plus rapide.",
+            "`Random` est prédictible, ce qui rend l'IV devinable et affaiblit le chiffrement.",
+            "Seul `SecureRandom` génère des bytes.",
+            "C'est une obligation du compilateur."
+        ],
+        "answer": 1,
+        "explanation": "En crypto, l'aléatoire doit être cryptographiquement fort (imprédictible). `java.util.Random` est trop simple.",
+        "chapterId": 5
+    },
+    {
+        "id": 169,
+        "question": "Quelle exception générique (checked) est la parente de la plupart des erreurs crypto (BadPadding, NoSuchAlgo...) ?",
+        "options": [
+            "`RuntimeException`",
+            "`IOException`",
+            "`GeneralSecurityException`",
+            "`CryptoException`"
+        ],
+        "answer": 2,
+        "explanation": "`java.security.GeneralSecurityException` regroupe `NoSuchAlgorithmException`, `InvalidKeyException`, etc.",
+        "chapterId": 5
+    },
+    {
+        "id": 170,
+        "question": "`Mac.getInstance(\"HmacSHA256\")` attend quel type de clé avec `init()` ?",
+        "options": [
+            "`PublicKey`",
+            "`PrivateKey`",
+            "`SecretKey`",
+            "N'importe quelle clé."
+        ],
+        "answer": 2,
+        "explanation": "HMAC est un algorithme à clé symétrique (partagée).",
+        "chapterId": 5
+    },
+    {
+        "id": 171,
+        "question": "Si j'utilise RSA pour chiffrer une trame de 1 Mo, que se passe-t-il ?",
+        "options": [
+            "Ça marche très bien.",
+            "Ça fonctionnera mais ce sera très lent.",
+            "Une exception `IllegalBlockSizeException` (ou data too long) sera levée.",
+            "Le message sera tronqué."
+        ],
+        "answer": 2,
+        "explanation": "RSA ne peut chiffrer que des données plus petites que la taille de sa clé (moins le padding). Pour 1 Mo, on utilise une clé symétrique (AES) qu'on chiffre ensuite avec RSA (Enveloppe numérique).",
+        "chapterId": 5
+    },
+    {
+        "id": 172,
+        "question": "À quoi sert la méthode `Certificate.verify(PublicKey key)` ?",
+        "options": [
+            "À vérifier que le certificat appartient bien à cette clé publique.",
+            "À vérifier que le certificat a bien été SIGNÉ par l'autorité possédant cette clé publique (l'émetteur).",
+            "À vérifier la date du certificat.",
+            "À vérifier l'identité du porteur."
+        ],
+        "answer": 1,
+        "explanation": "On vérifie la signature de l'émetteur (CA) présente sur le certificat en utilisant la clé publique de cet émetteur.",
+        "chapterId": 5
+    },
+    {
+        "id": 173,
+        "question": "Dans `KeyStore`, un alias (nom d'entrée) est-il sensible à la casse ?",
+        "options": [
+            "Oui, \"monCert\" != \"moncert\".",
+            "Non, c'est insensible à la casse (implémentation dépendante souvent, mais par défaut en JKS oui/non variable). En fait, la spec dit :",
+            "En général Oui (Case Sensitive).",
+            "En général Non."
+        ],
+        "answer": 2,
+        "explanation": "Dans la plupart des implémentations (JKS, PKCS12), les alias sont Case Sensitive. C'est un piège fréquent.",
+        "chapterId": 5
+    },
+    {
+        "id": 174,
+        "question": "Quelle classe utilise-t-on pour transformer un mot de passe (String) en clé secrète pour AES ?",
+        "options": [
+            "`KeyGenerator`",
+            "`SecretKeyFactory` avec `PBEKeySpec`.",
+            "`KeyPairGenerator`",
+            "`Cipher`"
+        ],
+        "answer": 1,
+        "explanation": "Il faut dériver le mot de passe (PBKDF2 par exemple) via une Factory pour obtenir une clé binaire robuste.",
+        "chapterId": 5
+    },
+    {
+        "id": 175,
+        "question": "Code :\n```java\ncipher.init(Cipher.ENCRYPT_MODE, key);\nbyte[] out = cipher.doFinal(input);\n```\nSi le mode est `ECB`, le chiffrement est-il déterministe (même entrée = même sortie) ?",
+        "options": [
+            "Non, il y a toujours un aléatoire.",
+            "Oui, absolument (manque de diffusion).",
+            "Ça dépend du padding.",
+            "Ça dépend de la clé."
+        ],
+        "answer": 1,
+        "explanation": "C'est la faille de ECB (Electronic Code Book). Chaque bloc est chiffré indépendamment. Deux blocs identiques donnent deux chiffrés identiques. Dangereux pour les images ou textes répétitifs.",
+        "chapterId": 5
+    },
+    {
+        "id": 176,
+        "question": "Quel objet permet de parcourir les certificats d'une chaîne de certification (`CertPath`) ?",
+        "options": [
+            "`CertificateFactory`",
+            "`CertPathValidator`",
+            "`KeyManager`",
+            "`TrustManager`"
+        ],
+        "answer": 1,
+        "explanation": "Le validateur vérifie la chaîne complète jusqu'à la racine de confiance.",
+        "chapterId": 5
+    },
+    {
+        "id": 177,
+        "question": "`MessageDigest.isEqual(byte[] a, byte[] b)` est préférable à `Arrays.equals(a, b)` pour comparer des hashs. Pourquoi ?",
+        "options": [
+            "Elle est plus rapide.",
+            "Elle évite les attaques par canal auxiliaire (Timing Attacks) en prenant un temps constant.",
+            "Elle supporte le null.",
+            "Elle logge les erreurs."
+        ],
+        "answer": 1,
+        "explanation": "`Arrays.equals` s'arrête au premier octet différent. Un attaquant peut mesurer ce temps pour deviner le hash octet par octet. `isEqual` compare tout quoiqu'il arrive.",
+        "chapterId": 5
+    },
+    {
+        "id": 178,
+        "question": "Si je reçois une `BadPaddingException` lors du déchiffrement (`doFinal`), la cause la plus probable est :",
+        "options": [
+            "L'algo de padding est mauvais.",
+            "La clé utilisée pour déchiffrer n'est pas la bonne.",
+            "Le message est trop court.",
+            "La mémoire est pleine."
+        ],
+        "answer": 1,
+        "explanation": "Si la clé est fausse, le déchiffrement produit de la bouillie aléatoire. Le dernier bloc ne correspondra pas au format structurel du padding (PKCS5), d'où l'exception.",
+        "chapterId": 5
+    },
+    {
+        "id": 179,
+        "question": "Comment stocker une clé symétrique dans un KeyStore ?",
+        "options": [
+            "`setCertificateEntry`",
+            "`setKeyEntry` avec `KeyStore.SecretKeyEntry`.",
+            "`setKeyEntry` avec un mot de passe de protection.",
+            "On ne peut pas, KeyStore est pour RSA."
+        ],
+        "answer": 2,
+        "explanation": "`ks.setKeyEntry(alias, secretKey, password, null)`. Le password sert à chiffrer la clé dans le fichier.",
+        "chapterId": 5
+    },
+    {
+        "id": 180,
+        "question": "Dans le code : `Cipher c = Cipher.getInstance(\"AES\");`, que vaut le mode et le padding par défaut ?",
+        "options": [
+            "AES/CBC/PKCS5Padding",
+            "AES/ECB/PKCS5Padding (standard Java, bien que ce soit insécurisé).",
+            "AES/CTR/NoPadding",
+            "Rien, ça plante."
+        ],
+        "answer": 1,
+        "explanation": "Piège : par défaut, \"AES\" seul mappe souvent vers \"AES/ECB/PKCS5Padding\" dans le provider SunJCE, ce qui est un mauvais choix par défaut.",
+        "chapterId": 5
+    },
+    {
+        "id": 181,
+        "question": "Pourquoi utiliser `CipherInputStream` ?",
+        "options": [
+            "Pour chiffrer/déchiffrer des flux de données (fichiers, sockets) sans tout charger en mémoire RAM.",
+            "Pour chiffrer plus vite.",
+            "Pour gérer les clés.",
+            "Pour compresser."
+        ],
+        "answer": 0,
+        "explanation": "Il encapsule un `InputStream` et passe les données à travers un objet `Cipher` au vol.",
+        "chapterId": 5
+    },
+    {
+        "id": 182,
+        "question": "Quelle classe pour parser un certificat X.509 encodé en Base64 (PEM) ?",
+        "options": [
+            "`KeyParser`",
+            "`CertificateFactory`",
+            "`X509Factory`",
+            "`PEMParser`"
+        ],
+        "answer": 1,
+        "explanation": "`CertificateFactory.getInstance(\"X.509\").generateCertificate(inputStream)`.",
+        "chapterId": 5
+    },
+    {
+        "id": 183,
+        "question": "Le mot-clé `transient` peut-il affecter la sécurité d'un objet contenant une clé ?",
+        "options": [
+            "Non.",
+            "Oui, il empêche la sérialisation (écriture sur disque) de champs sensibles comme la clé.",
+            "Oui, il chiffre le champ.",
+            "Non, c'est pour l'interface graphique."
+        ],
+        "answer": 1,
+        "explanation": "Bonne pratique : ne pas sérialiser les clés secrètes par inadvertance.",
+        "chapterId": 5
+    },
+    {
+        "id": 184,
+        "question": "L'algorithme \"SHA1withRSA\" est-il recommandé aujourd'hui ?",
+        "options": [
+            "Oui, c'est le standard.",
+            "Non, SHA1 est cassé (collisions). Il faut utiliser SHA256withRSA au minimum.",
+            "Oui, pour les cartes à puce uniquement.",
+            "Non, RSA est cassé."
+        ],
+        "answer": 1,
+        "explanation": "SHA-1 est obsolète depuis des années. Les signatures générées ne sont plus considérées comme sûres.",
+        "chapterId": 5
+    },
+    {
+        "id": 185,
+        "question": "Code :\n```java\ncipher.init(Cipher.WRAP_MODE, pubKey);\nbyte[] wrapped = cipher.wrap(secretKey);\n```\nQue fait ce code ?",
+        "options": [
+            "Il chiffre la clé secrète avec la clé publique pour la transporter.",
+            "Il signe la clé.",
+            "Il compresse la clé.",
+            "Il génère une nouvelle clé."
+        ],
+        "answer": 0,
+        "explanation": "Le WRAP_MODE est un mode spécial du Cipher conçu pour chiffrer des clés (Key Wrapping) plutôt que des données brutes.",
+        "chapterId": 5
+    },
+    {
+        "id": 186,
+        "question": "Quelle méthode permet de valider si un certificat X509 est valide à la date d'aujourd'hui ?",
+        "options": [
+            "`checkValidity()`",
+            "`isValid()`",
+            "`verifyDate()`",
+            "`getNotAfter()`"
+        ],
+        "answer": 0,
+        "explanation": "`checkValidity()` (sans arguments) vérifie par rapport à la date système courante.",
+        "chapterId": 5
+    },
+    {
+        "id": 187,
+        "question": "Peut-on utiliser le même objet `Cipher` pour chiffrer puis déchiffrer ?",
+        "options": [
+            "Impossible.",
+            "Oui, en appelant `init` à nouveau avec le mode inverse (DECRYPT_MODE).",
+            "Oui, sans rien faire faire.",
+            "Seulement pour RSA."
+        ],
+        "answer": 1,
+        "explanation": "Les objets Cipher sont réutilisables, mais il faut les réinitialiser via `init` pour changer de mode ou de clé.",
+        "chapterId": 5
+    },
+    {
+        "id": 188,
+        "question": "Un `KeyStore` de type \"JKS\" est-il compatible avec d'autres langages (C++, Python) ?",
+        "options": [
+            "Oui, c'est un standard.",
+            "Non, JKS (Java KeyStore) est spécifique à Java. Il vaut mieux utiliser PKCS12 pour l'interopérabilité.",
+            "Oui, avec une librairie.",
+            "Non, JKS est crypté."
+        ],
+        "answer": 1,
+        "explanation": "PKCS#12 (.p12) est le standard industriel multi-plateforme. JKS est Java-only.",
+        "chapterId": 5
+    },
+    {
+        "id": 189,
+        "question": "À quoi correspond le paramètre `saltLen` dans PSS (Algorithme de signature RSA-PSS) ?",
+        "options": [
+            "La longueur de la clé.",
+            "La longueur du sel aléatoire injecté dans le padding de signature.",
+            "Le nombre de hachages.",
+            "La taille du buffer."
+        ],
+        "answer": 1,
+        "explanation": "RSA-PSS est un schéma de signature plus robuste que PKCS#1.5, incluant un sel aléatoire.",
+        "chapterId": 5
+    },
+    {
+        "id": 190,
+        "question": "Quelle assertion est VRAIE concernant `KeyPairGenerator.initialized(int keysize)` ?",
+        "options": [
+            "Plus la taille est grande, plus la génération est rapide.",
+            "La taille de clé RSA recommandée aujourd'hui est 1024.",
+            "La taille recommandée est au moins 2048, et la génération est coûteuse en CPU.",
+            "La taille n'a pas d'impact."
+        ],
+        "answer": 2,
+        "explanation": "Générer des nombres premiers pour RSA 2048 ou 4096 bits prend du temps. 1024 est considéré comme faible.",
+        "chapterId": 5
+    },
+    {
+        "id": 191,
+        "question": "Si j'appelle `MessageDigest.digest()` deux fois de suite sur le même objet sans remettre de données :",
+        "options": [
+            "Il retourne le même hash.",
+            "Il retourne le hash d'une chaîne vide (ou d'un contenu vide).",
+            "Il lève une exception.",
+            "Il retourne null."
+        ],
+        "answer": 1,
+        "explanation": "Après le premier `digest()`, le moteur est reset. Le second appel calcule donc le hash de \"rien\" (Empty String Hash).",
+        "chapterId": 5
+    },
+    {
+        "id": 192,
+        "question": "Code :\n```java\nc.init(Cipher.ENCRYPT_MODE, k, new IvParameterSpec(iv));\n```\nQuelle condition doit respecter `iv` pour la sécurité AES-CBC ?",
+        "options": [
+            "Il doit être secret.",
+            "Il doit être unique et imprédictible pour chaque message.",
+            "Il doit être constant.",
+            "Il doit être de la même taille que le message."
+        ],
+        "answer": 1,
+        "explanation": "L'IV n'a pas besoin d'être secret (on l'envoie en clair). Par contre, réutiliser le même IV avec la même clé compromet la sécurité (patterns visibles).",
+        "chapterId": 5
+    },
+    {
+        "id": 193,
+        "question": "Quel Provider Java est connu pour fournir beaucoup plus d'algorithmes que le JDK standard ?",
+        "options": [
+            "Bouncy Castle",
+            "Apache Commons",
+            "Log4j",
+            "Spring Security"
+        ],
+        "answer": 0,
+        "explanation": "Bouncy Castle est la référence Open Source pour les algos crypto non inclus dans le JDK (ex: certains algos Elliptic Curve, RIPEMD, etc.).",
         "chapterId": 5
     }
 ]
