@@ -14,15 +14,15 @@
     },
     {
         "id": 85,
-        "question": "Que se passe-t-il exactement si on exécute `monThread.run()` au lieu de `monThread.start()` ?",
+        "question": "Analysez ce code :\n```java\nThread t = new Thread(r);\nt.run();\n```\nQue se passe-t-il exactement ?",
         "options": [
             "Une `IllegalThreadStateException` est levée.",
-            "Le code de `run()` s'exécute, mais dans le thread courant (appelant), sans créer de nouveau thread.",
-            "Rien ne se passe, la méthode est ignorée.",
-            "Le thread démarre normalement."
+            "Le code de `run()` s'exécute, mais dans le thread courant (main), PAS dans un nouveau thread.",
+            "Rien ne se passe.",
+            "Le thread démarre normalement en parallèle."
         ],
         "answer": 1,
-        "explanation": "`run()` est une méthode normale. Seul `start()` demande à l'OS de créer un nouveau contexte d'exécution (pile, registres) pour le thread.",
+        "explanation": "Piège classique : `run()` est une méthode comme une autre. Seul `start()` appelle le système d'exploitation pour 'spawner' un vrai process léger.",
         "chapterId": 2
     },
     {
@@ -40,15 +40,15 @@
     },
     {
         "id": 87,
-        "question": "Quelle est la différence CRITIQUE entre `Thread.sleep(1000)` et `obj.wait(1000)` concernant les verrous ?",
+        "question": "Code :\n```java\nsynchronized(obj) {\n    Thread.sleep(1000);\n}\n```\nQue fait le verrou (monitor) sur `obj` pendant la pause ?",
         "options": [
-            "Aucune, les deux mettent en pause.",
-            "`sleep` relâche le verrou (moniteur), tandis que `wait` le garde.",
-            "`wait` relâche le verrou associé à l'objet, tandis que `sleep` garde tous les verrous acquis.",
-            "`sleep` est plus précis que `wait`."
+            "Il est relâché le temps de la pause, permettant aux autres d'accéder à `obj`.",
+            "Il est conservé par le thread dormant : personne ne peut prendre le verrou.",
+            "Il est détruit.",
+            "Le code ne compile pas."
         ],
-        "answer": 2,
-        "explanation": "C'est le piège le plus fréquent. `sleep` dort 'poings fermés' (garde les verrous), alors que `wait` lâche le verrou pour laisser les autres travailler.",
+        "answer": 1,
+        "explanation": "Différence cruciale avec `wait()` : `sleep()` garde ses verrous ('Il dort poings fermés'). Cela peut bloquer toute l'application.",
         "chapterId": 2
     },
     {
@@ -105,15 +105,15 @@
     },
     {
         "id": 92,
-        "question": "Analysez ce code : `t.start(); t.setDaemon(true);`",
+        "question": "Code :\n```java\nThread t = new Thread(task);\nt.start();\nt.setDaemon(true);\n```\nQuel est le résultat ?",
         "options": [
-            "Le thread devient un démon correctement.",
-            "Le thread s'arrête.",
-            "Une exception `IllegalThreadStateException` est levée dans le thread appelant.",
-            "Le thread est mis en pause."
+            "Le thread devient un démon.",
+            "Une exception `IllegalThreadStateException` est levée.",
+            "Rien, le setDaemon est ignoré.",
+            "Le thread s'arrête."
         ],
-        "answer": 2,
-        "explanation": "Le statut Daemon doit OBLIGATOIREMENT être défini *avant* le démarrage du thread (`start`).",
+        "answer": 1,
+        "explanation": "On ne peut pas changer la nature (User/Daemon) d'un thread une fois qu'il est vivant (`start()` appelé). Il faut le faire avant.",
         "chapterId": 2
     },
     {
@@ -387,6 +387,136 @@
         ],
         "answer": 1,
         "explanation": "Le cours mentionne explicitement `DataOutputStream` pour cet usage.",
+        "chapterId": 2
+    },
+    {
+        "id": 115,
+        "question": "Analysez ce code (Deadlock ?) :\n```java\nsynchronized(A) { synchronized(B) { ... } }\n// vs\nsynchronized(B) { synchronized(A) { ... } }\n```\nSi deux threads exécutent ces blocs en sens inverse, que risque-t-il d'arriver ?",
+        "options": [
+            "Rien, tout va bien.",
+            "Interblocage (Deadlock) : chacun attend la ressource tenue par l'autre.",
+            "Famine (Starvation).",
+            "Race Condition."
+        ],
+        "answer": 1,
+        "explanation": "C'est la définition classique du Deadlock (Étreinte fatale). Pour l'éviter, il faut toujours acquérir les verrous dans le même ordre.",
+        "chapterId": 2
+    },
+    {
+        "id": 116,
+        "question": "Code :\n```java\nObject lock = new Object();\nsynchronized(lock) {\n    lock = new Object();\n}\n```\nCe code est-il correct pour la synchronisation ?",
+        "options": [
+            "Oui.",
+            "Non, changer la référence de l'objet de verrouillage pendant le bloc est extrêmement dangereux et casse la synchronisation.",
+            "Oui, car synchronized bloque le nom de la variable.",
+            "Non, ça ne compile pas."
+        ],
+        "answer": 1,
+        "explanation": "Le verrou est posé sur l'INSTANCE. Si on change la variable `lock` pour pointer vers une nouvelle instance, les autres threads se synchroniseront sur le NOUVEL objet, entrant en collision.",
+        "chapterId": 2
+    },
+    {
+        "id": 117,
+        "question": "Quelle méthode permet d'attendre la fin d'un groupe de threads ?",
+        "options": [
+            "`group.join()`",
+            "Il n'y en a pas, il faut faire `join()` sur chaque thread manuellement.",
+            "`group.awaitTermination()`",
+            "`group.stop()`"
+        ],
+        "answer": 1,
+        "explanation": "`ThreadGroup` ne possède pas de méthode `joinAll`. C'est une limite de l'API historique.",
+        "chapterId": 2
+    },
+    {
+        "id": 118,
+        "question": "Code :\n```java\nprivate volatile boolean running = true;\n```\nÀ quoi sert le mot-clé `volatile` ici ?",
+        "options": [
+            "À empêcher la modification de la variable.",
+            "À garantir que toute modification par un thread est immédiatement visible par les autres (pas de cache CPU local).",
+            "À rendre la variable atomique (i++ sûr).",
+            "À crypter la variable."
+        ],
+        "answer": 1,
+        "explanation": "`volatile` garantit la visibilité (Memory Barrier), mais pas l'atomicité des opérations composées. Utile pour les flags d'état.",
+        "chapterId": 2
+    },
+    {
+        "id": 119,
+        "question": "Pourquoi `Stop` et `Suspend` sont-ils dépréciés ?",
+        "options": [
+            "Ils sont trop lents.",
+            "Ils sont 'Unsafe' : Suspend peut causer des Deadlocks (garde les verrous), Stop peut corrompre les données.",
+            "Ils ne marchent pas sur Mac.",
+            "Ils sont remplacés par `Kill`."
+        ],
+        "answer": 1,
+        "explanation": "Le thread tué ou suspendu ne peut pas nettoyer ses ressources ou relâcher ses verrous proprement.",
+        "chapterId": 2
+    },
+    {
+        "id": 120,
+        "question": "Code :\n```java\nwait(1000);\n```\nSi personne ne notify, le thread reprend la main après 1s. A-t-il récupéré le verrou ?",
+        "options": [
+            "Non, il continue sans verrou.",
+            "Oui, il DOIT se battre pour récupérer le verrou avant de sortir de la méthode `wait`.",
+            "Oui, il l'a automatiquement.",
+            "Cela dépend."
+        ],
+        "answer": 1,
+        "explanation": "Important : `wait` (même avec timeout) ne retourne JAMAIS tant qu'il n'a pas ré-acquis le moniteur. Il se remet dans la file d'attente des verrous.",
+        "chapterId": 2
+    },
+    {
+        "id": 121,
+        "question": "Code :\n```java\npublic synchronized void A() { B(); }\npublic synchronized void B() { ... }\n```\nUn thread peut-il appeler A() (qui appelle B) sans se bloquer lui-même ?",
+        "options": [
+            "Non, il y a deadlock (il a déjà le verrou).",
+            "Oui, car les verrous Java sont Réentrants.",
+            "Non, B est privé.",
+            "Oui, mais seulement si B n'est pas synchronized."
+        ],
+        "answer": 1,
+        "explanation": "Un thread qui possède déjà un verrou peut ré-entrer dans n'importe quel bloc protégé par ce MÊME verrou. C'est la réentrance.",
+        "chapterId": 2
+    },
+    {
+        "id": 122,
+        "question": "Dans le modèle Producteur/Consommateur, pourquoi utilise-t-on `BlockingQueue` souvent ?",
+        "options": [
+            "C'est plus rapide.",
+            "Elle gère elle-même toute la synchronisation (wait/notify) de manière Thread-Safe.",
+            "Elle permet de trier les éléments.",
+            "Elle est infinie."
+        ],
+        "answer": 1,
+        "explanation": "C'est la version 'Haut Niveau' qui évite d'écrire soi-même les blocs synchronized/wait/notify sujets aux erreurs.",
+        "chapterId": 2
+    },
+    {
+        "id": 123,
+        "question": "L'exception `InterruptedException` est une :",
+        "options": [
+            "RuntimeException (Unchecked).",
+            "Checked Exception (doit être gérée).",
+            "Error.",
+            "N'existe pas."
+        ],
+        "answer": 1,
+        "explanation": "Java force le développeur à gérer le cas où le thread se fait interrompre. On ne peut pas l'ignorer silencieusement.",
+        "chapterId": 2
+    },
+    {
+        "id": 124,
+        "question": "Code :\n```java\nThread.currentThread().join();\n```\nQue fait cette ligne ?",
+        "options": [
+            "Rien.",
+            "Le thread s'attend lui-même indéfiniment (Deadlock mono-thread).",
+            "Le thread s'arrête.",
+            "Le thread rejoint le groupe principal."
+        ],
+        "answer": 1,
+        "explanation": "Logique : 'J'attends que JE finisse'. Comme je suis en train d'attendre, je ne finirai jamais. Bloquage éternel.",
         "chapterId": 2
     }
 ]

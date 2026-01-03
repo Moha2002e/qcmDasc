@@ -1,15 +1,15 @@
 [
     {
         "id": 44,
-        "question": "Quelle est la conséquence EXACTE de l'appel `Class.forName('com.mysql.cj.jdbc.Driver')` ?",
+        "question": "Analysez ce code :\n```java\nClass.forName(\"com.mysql.cj.jdbc.Driver\");\n```\nQuelle est la conséquence EXACTE de cette ligne ?",
         "options": [
-            "Il crée une instance du Driver et lui demande de se connecter au serveur MySQL.",
-            "Il charge la classe, exécute son bloc statique, ce qui enregistre le driver auprès du `DriverManager`.",
-            "Il retourne un objet `Connection` prêt à l'emploi.",
-            "Il vérifie si le serveur MySQL est accessible sur le réseau."
+            "Elle crée une instance du Driver et la connecte à la DB.",
+            "Elle charge le bytecode de la classe Driver, ce qui déclenche son bloc `static { }` et l'enregistre auprès du `DriverManager`.",
+            "Elle retourne un objet `Connection` null.",
+            "Elle vérifie si le jar est présent et lance `FileNotFoundException` sinon."
         ],
         "answer": 1,
-        "explanation": "Piège classique : `forName` ne connecte RIEN. Il charge juste du code en mémoire pour que Java 'connaisse' le driver.",
+        "explanation": "Mécanisme d'introspection. Le driver JDBC moderne s'auto-enregistre dans son bloc statique lors du chargement de la classe.",
         "chapterId": 3
     },
     {
@@ -27,15 +27,15 @@
     },
     {
         "id": 46,
-        "question": "Si j'exécute `stmt.execute(sql)` avec une requête `UPDATE`, que retourne la méthode ?",
+        "question": "Code :\n```java\nboolean b = stmt.execute(\"UPDATE Employe SET salaire = salaire * 1.1\");\n```\nQue vaut `b` ?",
         "options": [
-            "Le nombre de lignes modifiées (int).",
-            "`true`.",
-            "`false`.",
-            "Un `ResultSet` vide."
+            "`true` car la requête a réussi.",
+            "`false` car la requête ne retourne pas de ResultSet.",
+            "Le nombre de lignes mises à jour (int casté en boolean).",
+            "`null`."
         ],
-        "answer": 2,
-        "explanation": "PIÈGE MAJEUR : `execute()` retourne `true` SI c'est un ResultSet (Select), et `false` sinon (Update/Insert...). Pour avoir le nombre de lignes, il faut appeler `getUpdateCount()` ensuite.",
+        "answer": 1,
+        "explanation": "PIÈGE MAJEUR : `execute()` retourne `true` SI le résultat est un ResultSet (SELECT), et `false` sinon (UPDATE/INSERT/DELETE). Pour savoir si ça a réussi, il faut vérifier qu'il n'y a pas d'exception.",
         "chapterId": 3
     },
     {
@@ -260,20 +260,20 @@
         "chapterId": 3
     },
     {
-        "id": 64,
-        "question": "Quelle méthode permet de savoir si la dernière valeur lue (ex: `getInt`) était en fait NULL en base ?",
+        "id": 61,
+        "question": "Code :\n```java\nint age = rs.getInt(\"age\");\n```\nSi la colonne age vaut NULL en base, que vaut la variable `age` ?",
         "options": [
-            "`rs.checkNull()`",
-            "`rs.wasNull()`",
-            "Cela lance une exception si c'était null.",
-            "`getInt` retourne -1."
+            "`null`",
+            "`0`",
+            "`-1`",
+            "Une exception est levée."
         ],
         "answer": 1,
-        "explanation": "Mécanisme lourd de JDBC : `getInt` retourne 0 pour NULL. Il faut appeler `wasNull()` juste après pour savoir si c'était un 'vrai' 0 ou un NULL converti.",
+        "explanation": "JDBC retourne 0 pour les types primitifs quand la valeur est NULL. Il faut appeler `rs.wasNull()` immédiatement après pour distinguer 0 et NULL.",
         "chapterId": 3
     },
     {
-        "id": 65,
+        "id": 62,
         "question": "Le chargement dynamique `Class.forName` est-il toujours OBLIGATOIRE en JDBC 4.0+ ?",
         "options": [
             "Oui, sinon ça ne marche pas.",
@@ -387,6 +387,136 @@
         ],
         "answer": 1,
         "explanation": "Bien que ce soit du SQL pur, c'est souvent utilisé avec JDBC pour la pagination.",
+        "chapterId": 3
+    },
+    {
+        "id": 74,
+        "question": "Code :\n```java\nPreparedStatement ps = con.prepareStatement(\n  \"SELECT * FROM users WHERE nom = ?\");\nps.setString(1, \"O'Brian\");\n```\nComment le SGBD reçoit-il cette requête ?",
+        "options": [
+            "Il reçoit `SELECT * FROM users WHERE nom = 'O''Brian'` (échappement automatique).",
+            "Il reçoit la requête compilée avec un placeholder, et le paramètre est envoyé séparément (protocole binaire).",
+            "Il reçoit `SELECT * FROM users WHERE nom = \"O'Brian\"`.",
+            "Il reçoit une erreur de syntaxe à cause de l'apostrophe."
+        ],
+        "answer": 1,
+        "explanation": "C'est la force des requêtes préparées : les données ne sont jamais interprétées comme du code SQL. L'injection SQL est impossible.",
+        "chapterId": 3
+    },
+    {
+        "id": 75,
+        "question": "Si `autoCommit` est à `false`, que se passe-t-il si je ferme la connexion (`con.close()`) sans faire `commit()` ?",
+        "options": [
+            "Le SGBD effectue un commit automatique.",
+            "Le SGBD effectue un rollback automatique (les changements sont perdus).",
+            "La connexion reste ouverte côté serveur.",
+            "Une exception est levée."
+        ],
+        "answer": 1,
+        "explanation": "Comportement standard : fermeture de session sans validation explicite => annulation de la transaction en cours.",
+        "chapterId": 3
+    },
+    {
+        "id": 76,
+        "question": "Code :\n```java\nResultSet rs = stmt.executeQuery(\"SELECT count(*) FROM table\");\nint count = rs.getInt(1);\n```\nCe code est-il correct ?",
+        "options": [
+            "Oui.",
+            "Non, il manque obligatoirement `rs.next()` avant de lire les données.",
+            "Non, l'index commence à 0.",
+            "Non, `getInt` ne marche pas sur un count."
+        ],
+        "answer": 1,
+        "explanation": "Le curseur est initialisé AVANT la première ligne. Même s'il n'y a qu'une seule ligne de résultat, il faut avancer dessus avec `next()`.",
+        "chapterId": 3
+    },
+    {
+        "id": 77,
+        "question": "Quelle méthode permet de récupérer le nom de la table d'origine de la 2ème colonne du résultat ?",
+        "options": [
+            "`rs.getMetaData().getTableName(2)`",
+            "`rs.getTableName(2)`",
+            "`rs.getColumn(2).getTable()`",
+            "Impossible en JDBC."
+        ],
+        "answer": 0,
+        "explanation": "Les métadonnées (`ResultSetMetaData`) contiennent toutes les infos structurelles (Table, Schema, Type, Nom, etc.).",
+        "chapterId": 3
+    },
+    {
+        "id": 78,
+        "question": "Pour gérer une transaction qui implique 3 updates, doit-on utiliser la même instance de `Connection` ?",
+        "options": [
+            "Non, on peut en utiliser plusieurs si elles pointent vers la même base.",
+            "Oui, la transaction est liée à la session (Connection).",
+            "Peu importe.",
+            "Oui, mais il faut 3 Statements différents."
+        ],
+        "answer": 1,
+        "explanation": "La transaction est un concept de session. Si on change de connexion, on est dans une autre transaction.",
+        "chapterId": 3
+    },
+    {
+        "id": 79,
+        "question": "Code :\n```java\nps.setDate(1, new java.util.Date());\n```\nCe code compile-t-il ?",
+        "options": [
+            "Oui.",
+            "Non, `PreparedStatement.setDate` attend un `java.sql.Date`, qui est une sous-classe de `java.util.Date`.",
+            "Non, il faut utiliser `Calandar`.",
+            "Oui mais il lance une exception."
+        ],
+        "answer": 1,
+        "explanation": "Confusion classique des types Date en Java. `java.sql.Date` ne contient que la partie JOUR (pas d'heure), et c'est ce que JDBC attend.",
+        "chapterId": 3
+    },
+    {
+        "id": 80,
+        "question": "Pourquoi l'utilisation de `SELECT *` est-elle déconseillée dans un DAO de production ?",
+        "options": [
+            "C'est plus lent.",
+            "Si la structure de la table change (ajout de colonne), le mapping des colonnes par index risque de casser ou de ramener des données inutiles.",
+            "C'est interdit par JDBC.",
+            "Ca ne marche pas avec PreparedStatement."
+        ],
+        "answer": 1,
+        "explanation": "Bonne pratique : toujours lister explicitement les colonnes (`SELECT id, nom, prenom...`).",
+        "chapterId": 3
+    },
+    {
+        "id": 81,
+        "question": "Code :\n```java\nstmt.executeUpdate(\"INSERT ...\", Statement.RETURN_GENERATED_KEYS);\nResultSet rs = stmt.getGeneratedKeys();\n```\nQue contient `rs` ?",
+        "options": [
+            "Toute la ligne insérée.",
+            "Une seule colonne contenant la valeur de l'ID auto-incrémenté généré par la base.",
+            "Rien.",
+            "Le nombre de lignes."
+        ],
+        "answer": 1,
+        "explanation": "C'est le mécanisme standard pour récupérer la PK (Primary Key) créée par la base (AUTO_INCREMENT) sans faire un `SELECT MAX(id)` risqué.",
+        "chapterId": 3
+    },
+    {
+        "id": 82,
+        "question": "Si une `SQLException` survient pendant une transaction (après 2 updates réussis), que doit-on faire dans le bloc `catch` ?",
+        "options": [
+            "Juste logger l'erreur.",
+            "Appeler `con.rollback()` pour annuler les 2 updates précédents et garder la base cohérente.",
+            "Fermer l'application.",
+            "Relancer la requête."
+        ],
+        "answer": 1,
+        "explanation": "Principe d'atomicité (ACID). Tout ou rien. En cas d'erreur partielle, on annule tout.",
+        "chapterId": 3
+    },
+    {
+        "id": 83,
+        "question": "L'interface `DataSource` (javax.sql) est préférée à `DriverManager` car :",
+        "options": [
+            "Elle est plus rapide à l'exécution.",
+            "Elle permet d'externaliser la configuration et de gérer un Pool de Connexions (CP) de manière transparente.",
+            "Elle ne lance pas d'exceptions.",
+            "Elle permet de changer de base sans changer le code."
+        ],
+        "answer": 1,
+        "explanation": "Dans le monde pro (JEE/Spring), on n'utilise jamais DriverManager en direct, mais une DataSource qui gère un pool (HikariCP, DBCP) pour réutiliser les connexions coûteuses.",
         "chapterId": 3
     }
 ]

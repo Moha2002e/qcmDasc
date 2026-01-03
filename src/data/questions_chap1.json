@@ -1,15 +1,15 @@
 [
     {
         "id": 1,
-        "question": "Selon la philosophie Unix décrite, quelle affirmation concernant le descripteur retourné par `socket()` est strictement fausse ?",
+        "question": "Analysez ce code :\n```c\nint s = socket(AF_INET, SOCK_STREAM, 0);\n```\nJuste après cette ligne, quelle affirmation est VRAIE ?",
         "options": [
-            "Il se comporte exactement comme un descripteur retourné par `open()`.",
-            "Il identifie un fichier au sens large ('tout est fichier').",
-            "Il possède une identité réseau (IP/Port) dès son allocation réussie.",
-            "Il nécessite d'être clos explicitement pour libérer les ressources."
+            "La socket est prête à recevoir des clients sur le port 80.",
+            "La socket est allouée mais 'anonyme' (ni IP, ni port).",
+            "La socket est connectée à localhost.",
+            "C'est une socket UDP."
         ],
-        "answer": 2,
-        "explanation": "Piège : La socket est 'anonyme' juste après `socket()`. Elle n'a ni IP ni port tant que `bind` (ou un bind implicite) n'a pas eu lieu.",
+        "answer": 1,
+        "explanation": "Piège : `socket()` crée la ressource système (le descripteur), mais ne lui donne aucune identité réseau. Il faut `bind()` pour ça.",
         "chapterId": 1
     },
     {
@@ -66,15 +66,15 @@
     },
     {
         "id": 6,
-        "question": "Quel est l'effet exact de `listen(sockfd, backlog)` sur l'exécution du programme ?",
+        "question": "Code :\n```c\nlisten(sockfd, 5);\n```\nQue se passe-t-il si un 6ème client tente de se connecter alors que personne n'a fait `accept()` ?",
         "options": [
-            "Il bloque le programme jusqu'à ce qu'un client se connecte.",
-            "Il retourne immédiatement après avoir changé l'état de la socket en 'passif'.",
-            "Il attend pendant 'backlog' secondes avant de retourner.",
-            "Il boucle tant que la file d'attente n'est pas pleine."
+            "Le serveur plante.",
+            "Le 6ème client est rejeté (ECONNREFUSED) ou mis en attente TCP (selon l'OS), car la file de backlog est pleine.",
+            "La fonction `listen` bloque.",
+            "Le backlog s'agrandit automatiquement."
         ],
         "answer": 1,
-        "explanation": "Piège fréquent : `listen` ne bloque PAS. C'est `accept` qui bloque. `listen` est une simple configuration d'état.",
+        "explanation": "Le paramètre `backlog` (ici 5) définit la taille de la file d'attente des connexions 'en attente d'acceptation'. Une fois pleine, les suivants sont refusés.",
         "chapterId": 1
     },
     {
@@ -105,15 +105,15 @@
     },
     {
         "id": 9,
-        "question": "Si `send(sockfd, buf, len, 0)` est appelé avec `flags = 0`, à quel appel système est-il strictement équivalent ?",
+        "question": "Code :\n```c\nsend(sockfd, buf, len, 0);\n```\nSi le flag est 0, quelle fonction système standard est strictement équivalente ?",
         "options": [
             "`write(sockfd, buf, len)`",
-            "`sendto(sockfd, buf, len, ...)`",
+            "`fprintf(sockfd, buf)`",
             "`put(sockfd, buf)`",
-            "`dispatch(sockfd, buf)`"
+            "`ioctl(sockfd, buf)`"
         ],
         "answer": 0,
-        "explanation": "Le texte insiste sur l'analogie : avec flags=0, la socket se comporte 'exactement' comme un fichier via `write`.",
+        "explanation": "Les sockets sont des fichiers (file descriptors). Sans flags spécifiques, `send` se comporte exactement comme `write`.",
         "chapterId": 1
     },
     {
@@ -387,6 +387,136 @@
         ],
         "answer": 3,
         "explanation": "Bien que peu détaillée, le texte mentionne que les demandes sont 'validées par l'application via accept()', ce qui finalise l'entrée.",
+        "chapterId": 1
+    },
+    {
+        "id": 31,
+        "question": "Code :\n```c\nstruct sockaddr_in addr;\naddr.sin_port = htons(8080);\n```\nPourquoi utiliser `htons` ?",
+        "options": [
+            "Pour convertir l'entier 8080 (Format Hôte) en format Réseau (Big Endian).",
+            "Pour crypter le port.",
+            "Pour vérifier si le port est libre.",
+            "C'est une fonction d'affichage."
+        ],
+        "answer": 0,
+        "explanation": "Les réseaux (IP) utilisent le Big Endian. Les PC (x86) utilisent le Little Endian. `htons` (Host To Network Short) fait la conversion indispensable.",
+        "chapterId": 1
+    },
+    {
+        "id": 32,
+        "question": "Dans le code serveur :\n```c\nint newsock = accept(listening_socket, ...);\nif (fork() == 0) {\n   close(listening_socket);\n   // traitement client\n}\n```\nPourquoi le processus fils ferme-t-il `listening_socket` ?",
+        "options": [
+            "Car il n'en a pas besoin : son rôle est de traiter le client courant (via `newsock`), pas d'accepter les autres.",
+            "Pour arrêter le serveur.",
+            "C'est une erreur, il ne devrait pas.",
+            "Pour libérer de la mémoire RAM."
+        ],
+        "answer": 0,
+        "explanation": "Bonne pratique Unix : le fils hérite de tous les descripteurs. Il doit fermer ceux qui ne lui servent pas pour éviter les fuites ou les conflits.",
+        "chapterId": 1
+    },
+    {
+        "id": 33,
+        "question": "Si `malloc` échoue, `errno` est positionné. Mais si `socket()` retourne -1, où est le code d'erreur ?",
+        "options": [
+            "Dans la variable globale `errno` également.",
+            "Dans le code de retour directement.",
+            "Il n'y en a pas.",
+            "Dans stderr."
+        ],
+        "answer": 0,
+        "explanation": "Standard C/Unix : les appels système retournent -1 en cas d'échec et placent la cause exacte dans `errno`.",
+        "chapterId": 1
+    },
+    {
+        "id": 34,
+        "question": "Code :\n```c\nchar buf[100];\nrecv(s, buf, 100, 0);\n```\nCe code est-il sûr pour afficher la chaîne lue avec `printf(\"%s\", buf)` ?",
+        "options": [
+            "Oui, absolument.",
+            "Non, car TCP ne garantit pas que les données reçues se terminent par '\\0' (null terminator).",
+            "Non, car `buf` est trop petit.",
+            "Oui, `recv` ajoute toujours un \\0."
+        ],
+        "answer": 1,
+        "explanation": "Piège classique C ! `recv` remplit des octets bruts. Si l'émetteur n'a pas envoyé le \\0, `printf` va lire la mémoire après le buffer et crasher (SegFault).",
+        "chapterId": 1
+    },
+    {
+        "id": 35,
+        "question": "Quelle fonction permet de convertir \"192.168.1.1\" (String) en structure binaire `in_addr` ?",
+        "options": [
+            "`inet_pton()` ou `inet_addr()`",
+            "`htons()`",
+            "`gethostname()`",
+            "`atoi()`"
+        ],
+        "answer": 0,
+        "explanation": "`inet_pton` (Pointer to Network) est la version moderne pour transformer une IP texte en bits réseaux.",
+        "chapterId": 1
+    },
+    {
+        "id": 36,
+        "question": "Un serveur UDP doit-il utiliser `listen()` et `accept()` ?",
+        "options": [
+            "Oui, comme en TCP.",
+            "Non, UDP est sans connexion. On utilise directement `recvfrom()`.",
+            "Seulement `listen()`.",
+            "Seulement `accept()`."
+        ],
+        "answer": 1,
+        "explanation": "En UDP, pas de handshake. Le serveur attend juste des paquets arrivant sur le port ('Lettre dans la boîte aux lettres').",
+        "chapterId": 1
+    },
+    {
+        "id": 37,
+        "question": "Code :\n```c\nint opt = 1;\nsetsockopt(s, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));\n```\nÀ quoi sert cette ligne souvent vue dans les serveurs ?",
+        "options": [
+            "À augmenter la vitesse.",
+            "À redémarrer le serveur immédiatement sans attendre le timeout du port (TIME_WAIT) après un crash.",
+            "À sécuriser la connexion.",
+            "À accepter plusieurs clients."
+        ],
+        "answer": 1,
+        "explanation": "Sans `SO_REUSEADDR`, si le serveur est tué, le port reste bloqué par l'OS quelques minutes. Cette option permet de le reprendre de suite.",
+        "chapterId": 1
+    },
+    {
+        "id": 38,
+        "question": "Dans `struct sockaddr_in`, le champ `sin_family` doit être initialisé à :",
+        "options": [
+            "AF_INET",
+            "SOCK_STREAM",
+            "IP_PROTO",
+            "Le port"
+        ],
+        "answer": 0,
+        "explanation": "C'est la 'carte d'identité' de la structure, disant 'Je contiens une adresse IPv4'.",
+        "chapterId": 1
+    },
+    {
+        "id": 39,
+        "question": "Si `connect()` retourne -1 avec `errno = EINPROGRESS`, cela signifie :",
+        "options": [
+            "Une erreur fatale.",
+            "Que la socket est non-bloquante et que la connexion est en cours d'établissement en arrière-plan.",
+            "Que le câble est débranché.",
+            "Que le serveur est éteint."
+        ],
+        "answer": 1,
+        "explanation": "Concept avancé : Sur une socket non-bloquante, `connect` ne peut pas attendre le handshake, donc il rend la main immédiatement en disant 'C'est en cours'.",
+        "chapterId": 1
+    },
+    {
+        "id": 40,
+        "question": "La fonction `getaddrinfo` est préférée à `gethostbyname` car :",
+        "options": [
+            "Elle est compatible IPv4 et IPv6 de manière transparente.",
+            "Elle est plus rapide.",
+            "Elle est plus facile à écrire.",
+            "`gethostbyname` ne marche pas sous Linux."
+        ],
+        "answer": 0,
+        "explanation": "C'est la norme POSIX moderne. Elle gère seule la complexité des deux protocoles IP.",
         "chapterId": 1
     }
 ]

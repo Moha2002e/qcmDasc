@@ -1,12 +1,12 @@
 [
     {
         "id": 124,
-        "question": "Quelle est la nature exacte de l'appel `serverSocket.accept()` ?",
+        "question": "Analysez ce code :\n```java\nServerSocket ss = new ServerSocket(8080);\nSocket client = ss.accept(); // Ligne A\nSystem.out.println(\"Connecté\");\n```\nQue se passe-t-il à la ligne A ?",
         "options": [
-            "Il est non-bloquant et retourne null si personne n'est là.",
-            "Il est bloquant : il suspend le thread jusqu'à l'arrivée d'une connexion entrante.",
-            "Il est asynchrone (retourne un Future).",
-            "Il crée un nouveau thread automatiquement."
+            "Le programme continue immédiatement et `client` est null si personne n'est là.",
+            "Le thread courant est suspendu (bloqué) indéfiniment jusqu'à ce qu'un client se connecte.",
+            "Une exception est levée si aucun client n'est présent.",
+            "Un nouveau thread est créé pour gérer la connexion."
         ],
         "answer": 1,
         "explanation": "Fondamental : `accept()` gèle l'exécution. C'est pourquoi on ne doit JAMAIS le mettre dans l'EDT Swing.",
@@ -92,15 +92,15 @@
     },
     {
         "id": 131,
-        "question": "Si je communique en TCP avec un programme C, comment savoir que le message est fini (problème du flux continu) ?",
+        "question": "Code C (Reception) :\n```c\nread(sock, buf, 100);\n```\nSi l'émetteur a fait deux envois de 50 octets (`send(..., 50)` puis `send(..., 50)`), combien d'octets `read` va-t-il recevoir en une seule fois ?",
         "options": [
-            "C'est impossible.",
-            "On utilise soit un délimiteur (ex: '\\n' ou '$'), soit un en-tête de taille (Header fixe).",
-            "TCP gère ça tout seul avec des paquets.",
-            "On attend le timeout."
+            "Obligatoirement 50 (le premier paquet).",
+            "Obligatoirement 100.",
+            "Soit 50, soit 100, soit moins (ex: 10). C'est imprédictible (Stream).",
+            "Cela dépend de la vitesse du CPU."
         ],
-        "answer": 1,
-        "explanation": "TCP est un 'tuyau'. Si j'envoie 'AB' puis 'CD', l'autre peut recevoir 'ABCD', 'A' puis 'BCD', etc. Il faut structurer le flux applicativement.",
+        "answer": 2,
+        "explanation": "TCP est un flux (Stream). Il n'a pas la notion de 'message'. Il peut recoller des morceaux ou les couper. Il faut gérer ça applicativement (boucle de lecture).",
         "chapterId": 4
     },
     {
@@ -144,12 +144,12 @@
     },
     {
         "id": 135,
-        "question": "Si j'utilise `BufferedWriter`, que se passe-t-il si j'oublie d'appeler `flush()` à la fin de mon envoi ?",
+        "question": "Code :\n```java\nBufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));\nbw.write(\"Hello\");\n// bw.flush() manquant\n```\nQue se passe-t-il sur le réseau ?",
         "options": [
-            "Tout va bien, c'est automatique.",
-            "Les données restent dans le tampon mémoire local et ne partent jamais sur le réseau.",
-            "Une exception est levée.",
-            "Les données sont envoyées au prochain `write`."
+            "\"Hello\" est envoyé immédiatement.",
+            "Rien n'est envoyé. \"Hello\" reste bloqué dans la mémoire tampon (RAM) de l'expéditeur.",
+            "La socket est fermée.",
+            "Une exception est levée."
         ],
         "answer": 1,
         "explanation": "Piège classique du débutant réseau. Le tampon attend d'être plein. Sans flush explicite, le paquet ne part pas.",
@@ -387,6 +387,136 @@
         ],
         "answer": 0,
         "explanation": "`getInetAddress` donne l'adresse du pair (distant). `getLocalAddress` donne la nôtre.",
+        "chapterId": 4
+    },
+    {
+        "id": 154,
+        "question": "Code :\n```java\ndis.readInt();\n```\nSi le flux contient les octets `00 00 00 01` (Hexa), que lit Java ?",
+        "options": [
+            "L'entier 1.",
+            "L'entier 16777216 (Little Endian).",
+            "Une erreur.",
+            "Le caractère '1'."
+        ],
+        "answer": 0,
+        "explanation": "`DataInputStream` utilise le format Big Endian (Standard Réseau), donc `00 00 00 01` est bien `1`.",
+        "chapterId": 4
+    },
+    {
+        "id": 155,
+        "question": "Pourquoi la ligne suivante est-elle dangereuse dans le thread principal (UI) d'Android ou Swing ?\n```java\nInetAddress.getByName(\"google.com\");\n```",
+        "options": [
+            "Elle consomme trop de cPU.",
+            "Elle effectue une requête DNS qui peut prendre plusieurs secondes (bloquante).",
+            "Elle est dépréciée.",
+            "Google bloque ces requêtes."
+        ],
+        "answer": 1,
+        "explanation": "Le DNS est une opération réseau (UDP/TCP 53). Elle est soumise aux latences et timeouts, donc interdite dans l'EDT.",
+        "chapterId": 4
+    },
+    {
+        "id": 156,
+        "question": "Code :\n```java\nObjectInputStream ois = new ObjectInputStream(socket.getInputStream());\n```\nA quel moment précis cette ligne rend-elle la main (retourne) ?",
+        "options": [
+            "Immédiatement (non-bloquant).",
+            "Seulement après avoir reçu l'en-tête de sérialisation (Header) envoyé par l'autre côté (donc l'autre doit avoir fait `new ObjectOutputStream`).",
+            "Après avoir lu tout l'objet.",
+            "Jamais."
+        ],
+        "answer": 1,
+        "explanation": "Subtilité majeure : le constructeur de OIS lit le réseau (bloquant !) pour vérifier le `STREAM_MAGIC` envoyé par le constructeur de OOS.",
+        "chapterId": 4
+    },
+    {
+        "id": 157,
+        "question": "Dans une architecture 'Worker Pool', si `queue.take()` est appelé par un worker alors que la file est vide :",
+        "options": [
+            "Il retourne null.",
+            "Il lance une exception.",
+            "Il bloque le thread worker jusqu'à ce qu'une socket soit déposée (consommation bloquante).",
+            "Il arrête le thread."
+        ],
+        "answer": 2,
+        "explanation": "C'est le principe du Producteur (Serveur) / Consommateur (Worker). Les ouvriers dorment quand il n'y a pas de travail.",
+        "chapterId": 4
+    },
+    {
+        "id": 158,
+        "question": "Code :\n```java\nsocket.setSoTimeout(1000);\nInputStream in = socket.getInputStream();\nint data = in.read();\n```\nSi aucune donnée n'arrive après 1 seconde, que se passe-t-il ?",
+        "options": [
+            "`data` vaut -1.",
+            "`SocketTimeoutException` est levée.",
+            "`data` vaut 0.",
+            "La socket se ferme."
+        ],
+        "answer": 1,
+        "explanation": "Le timeout permet de ne pas rester bloqué à l'infini sur un `read` silencieux.",
+        "chapterId": 4
+    },
+    {
+        "id": 159,
+        "question": "La méthode `socket.shutdownOutput()` envoie au destinataire :",
+        "options": [
+            "Un signal TCP FIN (Fin de flux).",
+            "Un signal RST (Reset).",
+            "Une exception.",
+            "Rien."
+        ],
+        "answer": 0,
+        "explanation": "L'autre côté recevra -1 (EOF) lors de son `read()`, mais pourra continuer à écrire (Half-Closed Connection).",
+        "chapterId": 4
+    },
+    {
+        "id": 160,
+        "question": "Code Serveur :\n```java\nwhile(true) {\n  Socket s = ss.accept();\n  new Thread(new ClientHandler(s)).run(); // ATTENTION\n}\n```\nQuel est le problème GRAVE de ce code ?",
+        "options": [
+            "Il n'y a pas de problème.",
+            "Le `run()` est appelé directement, donc le code s'exécute séquentiellement dans le thread principal, bloquant le serveur pour tous les autres clients.",
+            "Il faut utiliser `exec()`.",
+            "La socket n'est pas fermée."
+        ],
+        "answer": 1,
+        "explanation": "Erreur de débutant : appeler `run()` ne démarre pas de thread. C'est un appel de méthode classique. Le serveur devient mono-client.",
+        "chapterId": 4
+    },
+    {
+        "id": 161,
+        "question": "Pour un serveur de Chat (Bavardage), pourquoi préférer un Thread par client (ou NIO) plutôt qu'un traitement séquentiel ?",
+        "options": [
+            "Pour que le serveur puisse écouter tous les clients en même temps.",
+            "C'est plus simple à coder.",
+            "Java l'oblige.",
+            "Pour économiser la RAM."
+        ],
+        "answer": 0,
+        "explanation": "Si on traite séquentiellement, Bob ne peut pas envoyer de message tant qu'Alice n'a pas fini de parler. Le multithread permet la simultanéité.",
+        "chapterId": 4
+    },
+    {
+        "id": 162,
+        "question": "La classe `InetAddress` gère-t-elle le cache DNS ?",
+        "options": [
+            "Non, chaque appel fait une requête réseau.",
+            "Oui, Java met en cache les résolutions DNS (parfois indéfiniment par défaut selon la config JVM) pour la performance.",
+            "Seulement pour IPv6.",
+            "Oui, mais seulement 1 seconde."
+        ],
+        "answer": 1,
+        "explanation": "Le cache DNS de Java (TTL) est un piège connu en production lors de changements d'IP (bascule DNS).",
+        "chapterId": 4
+    },
+    {
+        "id": 163,
+        "question": "Code :\n```java\nserverSocket.bind(new InetSocketAddress(\"127.0.0.1\", 8080));\n```\nCe serveur sera-t-il accessible depuis une autre machine du réseau ?",
+        "options": [
+            "Oui.",
+            "Non, il n'écoute que sur l'interface de boucle locale (localhost).",
+            "Oui, le port 8080 est public.",
+            "Cela dépend du pare-feu."
+        ],
+        "answer": 1,
+        "explanation": "Pour être accessible de l'extérieur, il faut binder sur `0.0.0.0` (toutes interfaces) ou l'IP réelle de la carte réseau.",
         "chapterId": 4
     }
 ]

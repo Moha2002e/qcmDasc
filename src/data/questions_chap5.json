@@ -1,15 +1,15 @@
 [
     {
         "id": 154,
-        "question": "Analysez ce code :\n```java\nKeyGenerator kg = KeyGenerator.getInstance(\"AES\");\nkg.init(256);\nSecretKey key = kg.generateKey();\n```\nQuelle exception risque d'être levée à l'exécution sur une installation Java standard (sans JCE Unlimited Strength) ?",
+        "question": "Analysez ce code :\n```java\nKeyGenerator kg = KeyGenerator.getInstance(\"AES\");\nkg.init(256);\nSecretKey key = kg.generateKey();\n```\nDans un environnement standard, pourquoi ce code pourrait-il poser problème historiquement ?",
         "options": [
-            "NoSuchAlgorithmException",
-            "InvalidKeyException",
-            "InvalidParameterException (taille 256 non supportée par défaut)",
-            "ProviderException"
+            "L'algorithme AES n'existe pas.",
+            "Certaines législations (et donc le JDK par défaut) limitaient la taille des clés symétriques à 128 bits.",
+            "KeyGenerator ne gère pas les tailles de clés.",
+            "Il faut obligatoirement un Provider externe."
         ],
-        "answer": 2,
-        "explanation": "Par défaut, certaines distributions Java limitent AES à 128 bits. Pour 256 bits, il fallait historiquement installer les 'JCE Unlimited Strength Jurisdiction Policy Files', bien que ce soit moins le cas sur les versions récentes (Java 8u161+). C'est un piège classique.",
+        "answer": 1,
+        "explanation": "Bien que moins vrai sur les JDK récents, l'export de cryptographie forte (256 bits) était restreint par les lois américaines, nécessitant des fichiers de police spécifiques.",
         "chapterId": 5
     },
     {
@@ -27,15 +27,15 @@
     },
     {
         "id": 156,
-        "question": "Regardez ce bout de code :\n```java\nCipher c = Cipher.getInstance(\"AES/CBC/PKCS5Padding\");\nc.init(Cipher.ENCRYPT_MODE, secretKey);\nbyte[] c1 = c.update(msg1);\nbyte[] c2 = c.doFinal(msg2);\n```\nSi `msg1` fait 16 octets et `msg2` fait 10 octets (Bloc AES = 16 octets), que contient `c1` ?",
+        "question": "Regardez ce bout de code :\n```java\nc.init(Cipher.ENCRYPT_MODE, secretKey);\nbyte[] c1 = c.update(msg1);\nbyte[] c2 = c.doFinal(msg2);\n```\nQuelle est la différence principale entre `update` et `doFinal` ?",
         "options": [
-            "Les 16 octets chiffrés de msg1.",
-            "Rien (null ou tableau vide).",
-            "Une exception est levée.",
-            "Les 26 octets chiffrés."
+            "`update` traite les données intermédiaires (mémoire tampon), `doFinal` termine l'opération (padding).",
+            "`update` chiffre, `doFinal` déchiffre.",
+            "`update` est pour AES, `doFinal` pour RSA.",
+            "C'est pareil."
         ],
         "answer": 0,
-        "explanation": "AES a des blocs de 16 octets. `update` bufferise. Si on lui donne exactement un bloc (16 octets), il PEUT le chiffrer tout de suite, ou attendre. Généralement en CBC, il le sort. La subtilité est le padding qui viendra au `doFinal`.",
+        "explanation": "`update` permet de chiffrer un flux en continu morceau par morceau. `doFinal` signale qu'il n'y a plus de données et qu'il faut appliquer le bourrage (Padding) final.",
         "chapterId": 5
     },
     {
@@ -105,15 +105,15 @@
     },
     {
         "id": 162,
-        "question": "Le code suivant lance une exception. Laquelle ?\n```java\nCipher c = Cipher.getInstance(\"AES/CBC/PKCS5Padding\");\nc.init(Cipher.DECRYPT_MODE, secretKey);\n// pas d'IV fourni ...\nbyte[] clair = c.doFinal(chiffre);\n```",
+        "question": "Le code suivant échoue à l'exécution. Pourquoi ?\n```java\nCipher c = Cipher.getInstance(\"AES/CBC/PKCS5Padding\");\nc.init(Cipher.DECRYPT_MODE, secretKey);\n// pas d'IV fourni ...\nbyte[] clair = c.doFinal(chiffre);\n```",
         "options": [
-            "NoSuchAlgorithmException",
-            "InvalidKeyException",
-            "InvalidAlgorithmParameterException (IV manquant)",
-            "BadPaddingException"
+            "La clé est invalide.",
+            "L'algorithme n'existe pas.",
+            "En mode CBC, un Vecteur d'Initialisation (IV) est obligatoire pour déchiffrer.",
+            "Le padding est incorrect."
         ],
         "answer": 2,
-        "explanation": "En mode DECRYPT_MODE avec CBC, il FAUT fournir l'IV utilisé au chiffrement (via `IvParameterSpec`), sinon le moteur ne peut pas démarrer la chaîne XOR.",
+        "explanation": "Le mode CBC (Chainage de blocs) a besoin de l'état précédent pour commencer. Pour le premier bloc, cet état est l'IV. Sans lui, impossible de déchiffrer.",
         "chapterId": 5
     },
     {
@@ -183,15 +183,15 @@
     },
     {
         "id": 168,
-        "question": "Code :\n```java\nSecureRandom sr = new SecureRandom();\nbyte[] iv = new byte[16];\nsr.nextBytes(iv);\nIvParameterSpec ivSpec = new IvParameterSpec(iv);\n```\nPourquoi utilise-t-on `SecureRandom` et pas `Random` ici ?",
+        "question": "Code :\n```java\nKeyGenerator keyGen = KeyGenerator.getInstance(\"AES\");\nkeyGen.init(256, new SecureRandom());\n```\nPourquoi utilise-t-on `SecureRandom` ici ?",
         "options": [
-            "C'est plus rapide.",
-            "`Random` est prédictible, ce qui rend l'IV devinable et affaiblit le chiffrement.",
-            "Seul `SecureRandom` génère des bytes.",
-            "C'est une obligation du compilateur."
+            "Pour que la clé générée soit réellement aléatoire et imprédictible.",
+            "C'est juste une convention de nommage.",
+            "Pour accélérer la génération.",
+            "Car `Random` est déprécié."
         ],
-        "answer": 1,
-        "explanation": "En crypto, l'aléatoire doit être cryptographiquement fort (imprédictible). `java.util.Random` est trop simple.",
+        "answer": 0,
+        "explanation": "En sécurité, un générateur pseudo-aléatoire classique (comme `java.util.Random`) est prédictible si on connaît sa graine. `SecureRandom` utilise l'entropie du système pour garantir l'aléatoire.",
         "chapterId": 5
     },
     {
@@ -222,15 +222,15 @@
     },
     {
         "id": 171,
-        "question": "Si j'utilise RSA pour chiffrer une trame de 1 Mo, que se passe-t-il ?",
+        "question": "Pourquoi préfère-t-on souvent une approche hybride (AES + RSA) pour chiffrer des gros fichiers ?",
         "options": [
-            "Ça marche très bien.",
-            "Ça fonctionnera mais ce sera très lent.",
-            "Une exception `IllegalBlockSizeException` (ou data too long) sera levée.",
-            "Le message sera tronqué."
+            "RSA est limité en taille de données et est beaucoup plus lent que AES.",
+            "AES ne fonctionne pas sur les gros fichiers.",
+            "RSA n'est pas sécurisé pour les fichiers.",
+            "C'est obligatoire en Java."
         ],
-        "answer": 2,
-        "explanation": "RSA ne peut chiffrer que des données plus petites que la taille de sa clé (moins le padding). Pour 1 Mo, on utilise une clé symétrique (AES) qu'on chiffre ensuite avec RSA (Enveloppe numérique).",
+        "answer": 0,
+        "explanation": "RSA (Asymétrique) est très coûteux en calcul et limité par la taille de la clé. AES (Symétrique) est très rapide. On chiffre le fichier en AES, et la clé AES en RSA.",
         "chapterId": 5
     },
     {
@@ -339,15 +339,15 @@
     },
     {
         "id": 180,
-        "question": "Dans le code : `Cipher c = Cipher.getInstance(\"AES\");`, que vaut le mode et le padding par défaut ?",
+        "question": "Dans le code : `Cipher.getInstance(\"AES/CBC/PKCS5Padding\")`, que signifie \"CBC\" ?",
         "options": [
-            "AES/CBC/PKCS5Padding",
-            "AES/ECB/PKCS5Padding (standard Java, bien que ce soit insécurisé).",
-            "AES/CTR/NoPadding",
-            "Rien, ça plante."
+            "Cipher Block Chaining : Les blocs sont chaînés pour diffuser l'information.",
+            "Code Book Cipher : Chaque bloc est indépendant.",
+            "Cryptage Basique Complet.",
+            "Control Block Check."
         ],
-        "answer": 1,
-        "explanation": "Piège : par défaut, \"AES\" seul mappe souvent vers \"AES/ECB/PKCS5Padding\" dans le provider SunJCE, ce qui est un mauvais choix par défaut.",
+        "answer": 0,
+        "explanation": "C'est le mode de fonctionnement. Contrairement à ECB, CBC mélange le bloc précédent avec le suivant, rendant l'analyse plus difficile.",
         "chapterId": 5
     },
     {
@@ -404,15 +404,15 @@
     },
     {
         "id": 185,
-        "question": "Code :\n```java\ncipher.init(Cipher.WRAP_MODE, pubKey);\nbyte[] wrapped = cipher.wrap(secretKey);\n```\nQue fait ce code ?",
+        "question": "L'interface `Key` définit la méthode `getEncoded()`. Que retourne-t-elle ?",
         "options": [
-            "Il chiffre la clé secrète avec la clé publique pour la transporter.",
-            "Il signe la clé.",
-            "Il compresse la clé.",
-            "Il génère une nouvelle clé."
+            "Le nom de l'algorithme.",
+            "La clé sous sa forme binaire brute (byte[]).",
+            "Une chaîne Base64.",
+            "L'adresse mémoire de l'objet."
         ],
-        "answer": 0,
-        "explanation": "Le WRAP_MODE est un mode spécial du Cipher conçu pour chiffrer des clés (Key Wrapping) plutôt que des données brutes.",
+        "answer": 1,
+        "explanation": "C'est la représentation 'primaire' de la clé, permettant de la sauvegarder ou de la transmettre.",
         "chapterId": 5
     },
     {
@@ -456,15 +456,15 @@
     },
     {
         "id": 189,
-        "question": "À quoi correspond le paramètre `saltLen` dans PSS (Algorithme de signature RSA-PSS) ?",
+        "question": "Quel est l'avantage du mode CBC par rapport au mode ECB ?",
         "options": [
-            "La longueur de la clé.",
-            "La longueur du sel aléatoire injecté dans le padding de signature.",
-            "Le nombre de hachages.",
-            "La taille du buffer."
+            "Il masque les motifs répétitifs dans les données (comme le fond d'une image).",
+            "Il est plus rapide.",
+            "Il n'a pas besoin d'IV.",
+            "Il est par défaut en Java."
         ],
-        "answer": 1,
-        "explanation": "RSA-PSS est un schéma de signature plus robuste que PKCS#1.5, incluant un sel aléatoire.",
+        "answer": 0,
+        "explanation": "ECB (Electronic Code Book) chiffre chaque bloc identique de la même manière. CBC introduit de l'aléatoire via le chaînage, ce qui sécurise mieux les données structurées.",
         "chapterId": 5
     },
     {

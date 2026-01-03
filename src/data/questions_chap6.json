@@ -27,28 +27,28 @@
     },
     {
         "id": 186,
-        "question": "Quelle méthode de `HttpServer` permet d'associer une URL (ex: '/api/users') à un code Java ?",
+        "question": "Code :\n```java\nserver.createContext(\"/api\", new MyHandler());\n```\nCette route matche-t-elle l'URL `/api/users/1` ?",
         "options": [
-            "`server.addRoute()`",
-            "`server.createContext()`",
-            "`server.setHandler()`",
-            "`server.bind()`"
+            "Non, uniquement `/api` exact.",
+            "Oui, `createContext` matche le début du chemin (préfixe).",
+            "Non, il faut utiliser des wildcards `/api/*`.",
+            "Oui mais seulement si `MyHandler` le prévoit."
         ],
         "answer": 1,
-        "explanation": "`createContext(path, handler)` définit quel `HttpHandler` sera déclenché pour une URL donnée.",
+        "explanation": "Dans `HttpServer`, les contextes sont des préfixes. `/api` capture tout ce qui commence par `/api`.",
         "chapterId": 6
     },
     {
         "id": 187,
-        "question": "Pour renvoyer une réponse au client avec `HttpExchange`, quelle méthode doit être appelée EN PREMIER ?",
+        "question": "Code :\n```java\nString response = \"OK\";\nexchange.getResponseBody().write(response.getBytes());\nexchange.sendResponseHeaders(200, response.length());\n```\nQuel est le problème ?",
         "options": [
-            "`exchange.getResponseBody().write(...)`",
-            "`exchange.sendResponseHeaders(code, length)`",
-            "`exchange.close()`",
-            "`exchange.flush()`"
+            "Aucun.",
+            "L'ordre est inversé. Il faut envoyer les en-têtes (`sendResponseHeaders`) AVANT d'écrire le corps (`write`).",
+            "Le code 200 est invalide.",
+            "Il faut utiliser `writeUTF`."
         ],
         "answer": 1,
-        "explanation": "Le protocole HTTP impose d'envoyer les en-têtes (Status 200, Content-Length) AVANT le corps du message.",
+        "explanation": "Protocole HTTP : Headers d'abord, Body ensuite. Si on écrit le body avant, le serveur ne sait pas quelle taille (Content-Length) envoyer dans le header.",
         "chapterId": 6
     },
     {
@@ -196,15 +196,15 @@
     },
     {
         "id": 199,
-        "question": "La méthode `server.start()` est-elle bloquante ?",
+        "question": "Code :\n```java\nserver.start();\nSystem.out.println(\"Serveur lancé\");\n```\nLa ligne 'Serveur lancé' s'affiche-t-elle ?",
         "options": [
-            "Oui, elle bloque le thread main indéfiniment.",
-            "Non, elle lance le serveur dans un thread d'arrière-plan (background) et rend la main.",
+            "Non, `start()` bloque indéfiniment.",
+            "Oui, `start()` lance le serveur dans un thread séparé et rend la main immédiatement.",
             "Cela dépend de l'OS.",
-            "Oui, jusqu'au premier client."
+            "Seulement après la première connexion."
         ],
         "answer": 1,
-        "explanation": "Contrairement à `ServerSocket.accept()`, `HttpServer.start()` démarre le moteur et revient immédiatement.",
+        "explanation": "Heureusement ! Sinon on ne pourrait rien faire d'autre après le démarrage du serveur.",
         "chapterId": 6
     },
     {
@@ -387,6 +387,136 @@
         ],
         "answer": 1,
         "explanation": "`Headers` est une surcouche pratique d'une Map pour gérer les multiples valeurs par clé.",
+        "chapterId": 6
+    },
+    {
+        "id": 214,
+        "question": "Code Handler :\n```java\nInputStream is = exchange.getRequestBody();\n// lecture...\nis.close(); // Ligne X\n```\nFaut-il fermer le flux d'entrée à la ligne X ?",
+        "options": [
+            "Oui, c'est une bonne pratique pour libérer les ressources.",
+            "Non, c'est géré par le serveur.",
+            "C'est interdit.",
+            "Cela ferme le serveur."
+        ],
+        "answer": 0,
+        "explanation": "Oui, il est recommandé de fermer les flux qu'on ouvre ou récupère pour éviter les fuites de descripteurs.",
+        "chapterId": 6
+    },
+    {
+        "id": 215,
+        "question": "Comment renvoyer une erreur '405 Method Not Allowed' si le client fait un POST au lieu d'un GET ?",
+        "options": [
+            "`throw new MethodNotAllowedException();`",
+            "`exchange.sendResponseHeaders(405, -1);`",
+            "`return false;`",
+            "`exchange.stop();`"
+        ],
+        "answer": 1,
+        "explanation": "On envoie explicitement le code 405. Le `-1` indique qu'il n'y a pas de corps de réponse (juste le header erreur).",
+        "chapterId": 6
+    },
+    {
+        "id": 216,
+        "question": "Code :\n```java\nHeaders h = exchange.getResponseHeaders();\nh.add(\"Content-Type\", \"application/json\");\n```\nÀ quel moment ces headers sont-ils réellement envoyés ?",
+        "options": [
+            "Immédiatement lors du `add`.",
+            "Lors de l'appel à `exchange.sendResponseHeaders(...)`.",
+            "À la fin de la méthode `handle`.",
+            "Jamais."
+        ],
+        "answer": 1,
+        "explanation": "`sendResponseHeaders` committe la réponse. Tout ce qui est ajouté aux headers APRES cet appel sera ignoré ou provoquera une erreur.",
+        "chapterId": 6
+    },
+    {
+        "id": 217,
+        "question": "Quelle est la structure JSON correcte pour une liste d'étudiants ?",
+        "options": [
+            "`\"étudiants\": [ \"Marc\", \"Jean\" ]` (sans les accolades)",
+            "`[ { \"nom\": \"Marc\" }, { \"nom\": \"Jean\" } ]`",
+            "`{ \"Marc\", \"Jean\" }`",
+            "`(Mark, Jean)`"
+        ],
+        "answer": 1,
+        "explanation": "En JSON, une liste est entre `[]` et les objets entre `{}`.",
+        "chapterId": 6
+    },
+    {
+        "id": 218,
+        "question": "Si `exchange.getRequestMethod()` renvoie \"post\" (minuscule), est-ce normal ?",
+        "options": [
+            "Oui.",
+            "Non, la méthode est toujours en MAJUSCULES (\"POST\").",
+            "Cela dépend du navigateur.",
+            "C'est configurable."
+        ],
+        "answer": 1,
+        "explanation": "Le standard HTTP et l'implémentation Java garantissent les verbes en majuscules.",
+        "chapterId": 6
+    },
+    {
+        "id": 219,
+        "question": "Code :\n```java\nbyte[] response = \"Hé\".getBytes(\"UTF-8\");\nexchange.sendResponseHeaders(200, response.length);\n```\nPourquoi préciser le charset UTF-8 est crucial ici ?",
+        "options": [
+            "Pour faire joli.",
+            "Car \"Hé\" contient 2 caractères mais pèse 3 octets en UTF-8. `String.length()` (2) serait faux, il faut `byte[].length` (3).",
+            "Java est en ASCII par défaut.",
+            "Sinon ça compile pas."
+        ],
+        "answer": 1,
+        "explanation": "Source d'erreurs fréquentes : Content-Length attend un nombre d'OCTETS, pas de caractères. Avec les accents, ça diffère.",
+        "chapterId": 6
+    },
+    {
+        "id": 220,
+        "question": "L'API `HttpServer` gère-t-elle HTTPS (TLS) ?",
+        "options": [
+            "Non, jamais.",
+            "Oui, via la classe `HttpsServer` et un `SSLContext`.",
+            "Oui, c'est automatique par défaut.",
+            "Seulement avec un proxy."
+        ],
+        "answer": 1,
+        "explanation": "Oui, une sous-classe existe pour gérer les certificats et la sécurité `HttpsServer`.",
+        "chapterId": 6
+    },
+    {
+        "id": 221,
+        "question": "Dans une API REST, l'URL `/etudiants/12/notes` représente logiquement :",
+        "options": [
+            "L'étudiant 12.",
+            "La note 12.",
+            "La liste des notes de l'étudiant 12.",
+            "Une erreur."
+        ],
+        "answer": 2,
+        "explanation": "Structure hiérarchique des ressources REST : Collection -> Item -> Sous-Collection.",
+        "chapterId": 6
+    },
+    {
+        "id": 222,
+        "question": "Si j'oublie de fermer le `OutputStream` de la réponse (`exchange.getResponseBody().close()`) :",
+        "options": [
+            "Rien de grave.",
+            "Le client (navigateur) risque d'attendre la fin de la réponse indéfiniment (chargement infini).",
+            "Le serveur crash.",
+            "La réponse est annulée."
+        ],
+        "answer": 1,
+        "explanation": "La fermeture du flux signale la fin de la transmission (surtout en mode Chunked encoding).",
+        "chapterId": 6
+    },
+    {
+        "id": 223,
+        "question": "Code :\n```java\nserver.setExecutor(Executors.newFixedThreadPool(10));\n```\nCela signifie :",
+        "options": [
+            "Le serveur ne peut traiter que 10 requêtes au total puis s'arrête.",
+            "Le serveur traite jusqu'à 10 requêtes EN PARALLÈLE. Les suivantes attendent qu'un thread se libère.",
+            "Chaque requête prend 10 secondes.",
+            "Il y a 10 serveurs."
+        ],
+        "answer": 1,
+        "explanation": "Gestion classique de la concurrence par Pool de Threads (Vue au chapitre 4, appliquée au serveur Web ici).",
         "chapterId": 6
     }
 ]
