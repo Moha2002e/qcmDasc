@@ -1,7 +1,7 @@
 [
     {
         "id": 1001,
-        "question": "En analysant la requête HTTP suivante :\n```\nPOST /index.html HTTP/1.1\nHost: 192.168.159.131:8080\nContent-length: 55\n\n[{\"name\":\"wagner\",\"age\":50},...]\n```\nCela correspond à :",
+        "question": "Voici une portion de l'échange de données entre un client et un serveur HTTP :\n```http\nPOST /index.html HTTP/1.1\nAccept: */*\nHost: 192.168.159.131:8080\nContent-length: 55\n\n[{\"name\":\"wagner\",\"age\":50},{\"name\":\"dupont\",\"age\":38}]\n```\nCela correspond à",
         "options": [
             "Une requête HTTP dont le verbe permet d'obtenir la page index.html du serveur",
             "Une réponse HTTP contenant une donnée au format JSON",
@@ -14,25 +14,25 @@
     },
     {
         "id": 1002,
-        "question": "Une communication TCP établie entre 2 programmes écrits en C peut être vue et manipulée comme :",
+        "question": "Une communication TCP établie entre 2 programmes écrits en C peut être vue et manipulée comme",
         "options": [
             "une file de messages",
-            "un tube de communication bidirectionnel ayant 1 entrée et 1 sortie de chaque côté...",
-            "deux tubes de communication dont les entrées et sorties sont gérées par une unique socket dont disposent chacun les 2 intervenants",
+            "un tube de communication bidirectionnel ayant 1 entrée et 1 sortie de chaque côté du tube toutes deux représentées par une socket d'écoute et l'autre par une socket de service dont disposent chacun les 2 intervenants de la communication",
+            "deux tubes de communication dont les entrées et sorties sont gérées par une unique socket dont disposent chacun les 2 intervenants de la communication",
             "une mémoire partagée"
         ],
         "answer": 2,
-        "explanation": "Le modèle socket TCP fourni une abstraction de flux d'octets bidirectionnel (Full Duplex) géré par un descripteur de fichier (socket) unique par côté.",
+        "explanation": "Le modèle socket TCP fournie une abstraction de flux d'octets bidirectionnel, géré par un descripteur de fichier (socket) unique pour chaque intervenant, agissant comme deux tubes (flux entrant/sortant).",
         "chapterId": 10
     },
     {
         "id": 1003,
-        "question": "Un message digest est créé grâce à :",
+        "question": "Un message digest est créé grâce à",
         "options": [
             "une clé privée et assure l'authenticité des données transmises",
-            "une fonction de hashage et assure l'authenticité des données transmises",
-            "un algorithme de cryptage symétrique et assure la confidentialité",
-            "une fonction de hashage et se manipule à l'aide d'une paire de clés privée/publique"
+            "une fonction de hachage et assure l'authenticité des données transmises",
+            "un algorithme de cryptage symétrique et assure la confidentialité des données transmises",
+            "une fonction de hachage et se manipule à l'aide d'une paire de clés privée/publique"
         ],
         "answer": 1,
         "explanation": "Le Message Digest est le résultat d'un hachage (MD5, SHA). Bien que 'authenticité' prête à débat (normalement intégrité), c'est la seule option décrivant la CRÉATION par hachage sans clés asymétriques.",
@@ -40,12 +40,12 @@
     },
     {
         "id": 1004,
-        "question": "En Java, pour instancier un objet Cipher pour crypter des données, il faut appeler :",
+        "question": "En Java, pour instancier un objet Cipher pour crypter des données, il faut appeler",
         "options": [
-            "une méthode factory (`getInstance`) en lui passant en paramètres l'algorithme de cryptage, le mode et le padding",
-            "une méthode factory en lui passant l'algorithme et la paire de clés",
+            "une méthode factory en lui passant en paramètres l'algorithme de cryptage, le mode de chiffrement (par blocs chainés ou non) et le type de padding",
+            "une méthode factory en lui passant en paramètre l'algorithme de cryptage et la paire de clés privée/publique",
             "une méthode factory en lui précisant uniquement le provider",
-            "le constructeur de la classe"
+            "le constructeur de la classe que je souhaite réellement instancier"
         ],
         "answer": 0,
         "explanation": "Exemple standard : `Cipher.getInstance(\"AES/CBC/PKCS5Padding\")`.",
@@ -53,64 +53,64 @@
     },
     {
         "id": 1005,
-        "question": "Le code Java suivant :\n```java\nCipher c = Cipher.getInstance(\"Rijndael/CBC/...\");\nbyte[] iv = new byte[16];\nsr.nextBytes(iv);\nc.init(Cipher.ENCRYPT_MODE, cle, new IvParameterSpec(iv));\n```\npermet :",
+        "question": "Le morceau de code Java suivant\n```java\nCipher chiffrement = Cipher.getInstance(\"Rijndael/CBC/PKCS5Padding\", \"BC\");\nbyte[] vecteurInit = new byte[16];\nSecureRandom sr = new SecureRandom();\nsr.nextBytes(vecteurInit);\nchiffrement.init(Cipher.ENCRYPT_MODE, cle, new IvParameterSpec(vecteurInit));\n```\npermet",
         "options": [
-            "de crypter la clé de session...",
-            "d'instancier un objet capable de décrypter (asymétrique)...",
+            "de crypter la clé de session appelée cle en utilisant un cryptage asymétrique",
+            "d'instancier et configurer un objet qui sera capable de décrypter asymétriquement des données",
             "d'instancier et configurer une clé de cryptage symétrique de manière aléatoire",
             "d'instancier et configurer un objet qui sera capable de crypter symétriquement des données"
         ],
         "answer": 3,
-        "explanation": "Le code configure un Cipher en mode ENCRYPT avec un IV aléatoire pour un algorithme symétrique (Rijndael/AES).",
+        "explanation": "Le code initialise un objet Cipher en mode ENCRYPT avec un algorithme symétrique (Rijndael) et un vecteur d'initialisation (IV) aléatoire.",
         "chapterId": 10
     },
     {
         "id": 1006,
         "question": "On souhaite mettre des threads programmés en Java en attente sur la réalisation d'un événement.",
         "options": [
-            "C'est impossible car la notion de variable de condition n'existe pas en Java",
-            "Cela peut uniquement se faire à l'aide de la méthode join()",
+            "C'est impossible car la notion de variable de condition (des threads Posix) n'est pas disponible en Java",
+            "Cela peut uniquement se faire à l'aide de la méthode join() de la classe Thread",
             "Pour cela, on peut utiliser la méthode wait() d'un objet appelée au sein d'une méthode synchronized de cet objet",
-            "Pour cela, on utilise wait() ... il suffit de lui envoyer une InterrupException"
+            "Pour cela on utilise une méthode synchronized, cette méthode est automatiquement bloquante. Pour la débloquer, il suffit de lui envoyer une exception instanciant la classe InterruptedException"
         ],
         "answer": 2,
-        "explanation": "Le mécanisme standard d'attente/notification en Java repose sur le moniteur de l'objet : `synchronized` + `wait()` / `notify()`.",
+        "explanation": "Mécanisme de base de la communication inter-thread en Java : wait/notify au sein d'un bloc synchronisé.",
         "chapterId": 10
     },
     {
         "id": 1007,
-        "question": "Dans le contexte de JDBC, quel est le rôle principal d'une classe DAO ?",
+        "question": "Dans le contexte de JDBC, quel est le rôle principal d'une classe DAO dans une application Java ?",
         "options": [
             "Gérer la logique métier",
-            "Générer automatiquement du SQL",
+            "Générer automatiquement et fournir au programmeur du code SQL qu'il pourra alors exécuter à l'aide de JDBC",
             "Encapsuler l'accès à la base de données et les opérations CRUD",
-            "Fournir une interface graphique"
+            "Fournir une interface graphique à l'utilisateur"
         ],
         "answer": 2,
-        "explanation": "DAO = Data Access Object. Son but est d'abstraire la source de données pour le reste de l'application.",
+        "explanation": "DAO = Data Access Object. Isole la couche de persistence du reste de l'application.",
         "chapterId": 10
     },
     {
         "id": 1008,
-        "question": "Quel est l'avantage principal de la cryptographie asymétrique par rapport à la symétrique ?",
+        "question": "Quel est l'avantage principal de la cryptographie asymétrique par rapport à la cryptographie symétrique ?",
         "options": [
-            "Elle est plus rapide",
-            "Elle permet de générer des clés publiques partagées...",
-            "Elle permet de sécuriser les communications sans nécessiter un échange préalable de clé",
-            "Elle consomme moins de ressources"
+            "Elle est plus rapide et plus facile à implémenter.",
+            "Elle permet de générer des clés publiques partagées entre plusieurs utilisateurs.",
+            "Elle permet de sécuriser les communications sans nécessiter un échange préalable de clé.",
+            "Elle consomme moins de ressources matérielles."
         ],
         "answer": 2,
-        "explanation": "C'est la résolution du problème de l'échange de clés (Key Distribution Problem).",
+        "explanation": "Résout le problème de la distribution de clés (Key Exchange).",
         "chapterId": 10
     },
     {
         "id": 1009,
-        "question": "Dans un système asymétrique, quelle fonction la clé publique remplit-elle ?",
+        "question": "Dans un système de cryptographie asymétrique, quelle fonction la clé publique remplit-elle ?",
         "options": [
-            "Elle permet de déchiffrer les messages chiffrés par la clé privée",
-            "Elle est utilisée pour générer une clé privée",
-            "Elle est utilisée pour vérifier une signature numérique",
-            "Elle est utilisée pour signer des données"
+            "Elle permet de déchiffrer les messages chiffrés par la clé privée.",
+            "Elle est utilisée pour générer une clé privée correspondante.",
+            "Elle est utilisée pour vérifier une signature numérique.",
+            "Elle est utilisée pour signer des données."
         ],
         "answer": 2,
         "explanation": "La signature est générée avec la clé PRIVÉE (secret) et vérifiée par n'importe qui avec la clé PUBLIQUE.",
@@ -118,25 +118,25 @@
     },
     {
         "id": 1010,
-        "question": "La classe Java `HttpServer` permet de :",
+        "question": "La classe Java HttpServer permet de",
         "options": [
-            "créer un serveur HTTP simple en lui ajoutant des handlers gérant les différents chemins",
-            "créer un serveur multi-threads en pool...",
-            "se connecter à un serveur HTTP distant",
-            "représenter un chemin d'un serveur HTTP"
+            "créer un serveur HTTP simple en lui ajoutant des handlers gérant les différents chemins du serveur HTTP",
+            "créer un serveur multi-threads en pool gérant un protocole représenté par l'interface Java HttpHandler",
+            "se connecter à un serveur HTTP distant en lui passant en paramètre l'URL du serveur",
+            "représenter un chemin d'un serveur HTTP. L'objet HttpServer ainsi créé est alors ajouté au HttpHandler représentant le serveur proprement dit"
         ],
         "answer": 0,
-        "explanation": "C'est la classe de base du package `com.sun.net.httpserver` pour exposer des endpoints HTTP légers.",
+        "explanation": "C'est la classe de base du package `com.sun.net.httpserver` pour exposer des endpoints HTTP légers via des `HttpContext` (path -> handler).",
         "chapterId": 10
     },
     {
         "id": 1011,
-        "question": "Un cryptage par substitution consiste à :",
+        "question": "Un cryptage par substitution consiste à",
         "options": [
             "remplacer des blocs de données claires par des blocs de données cryptées",
-            "remplacer les clés publiques/privées...",
+            "remplacer les clés publiques/privées par une unique clé de session",
             "permuter des blocs de données claires",
-            "remplacer un fichier de clés..."
+            "remplacer un fichier de clés sérialisées par un keystore"
         ],
         "answer": 0,
         "explanation": "Substitution = Remplacement (ex: A devient D). Permutation = Changement d'ordre.",
@@ -144,12 +144,12 @@
     },
     {
         "id": 1012,
-        "question": "Lors de la création d'un serveur TCP en C, quels appels systèmes doivent être effectués dans l'ordre ?",
+        "question": "Lors de la création d'un serveur TCP en C, quels appels systèmes doivent être effectués dans l'ordre pour établir une connexion avec un client ?",
         "options": [
-            "socket -> connect -> listen -> accept",
-            "bind -> listen -> accept -> connect",
-            "socket -> bind -> listen -> accept",
-            "connect -> listen -> bind -> accept"
+            "`socket()` -> `connect()` -> `listen()` -> `accept()`",
+            "`bind()` -> `listen()` -> `accept()` -> `connect()`",
+            "`socket()` -> `bind()` -> `listen()` -> `accept()`",
+            "`connect()` -> `listen()` -> `bind()` -> `accept()`"
         ],
         "answer": 2,
         "explanation": "Cycle de vie canonique : Création (socket) -> Association port (bind) -> Mise en attente (listen) -> Acceptation client (accept).",
@@ -157,46 +157,46 @@
     },
     {
         "id": 1013,
-        "question": "En ce qui concerne la cryptographie et Java (JCA/JCE) :",
+        "question": "En ce qui concerne la cryptographie et Java :",
         "options": [
-            "Le JCA fournit les classes et interfaces de base... tandis que le JCE comporte l'implémentation...",
-            "Le JCE est développé et fourni par les providers car le JCA seul ne suffit pas...",
-            "Rien n'est fourni par Java de base...",
-            "Les providers sont des ensembles de programmeurs..."
+            "Le JCA fournit les classes et interfaces de base des concepts cryptographiques tandis que le JCE comporte l'implémentation de l'encryptage et de l'échange de données, le tout fourni et distribué dans le JDK standard de Java et cela pour tout le monde",
+            "Le JCE est développé et fourni par les providers car le JCA fourni par Java seul ne suffit pas à crypter/décrypter des données",
+            "Rien n'est fourni par Java de base. Chaque provider fournit ses propres classes et interfaces dans ses propres JCA et JCE",
+            "Les providers sont des ensembles de programmeurs Java qui sont les seuls autorisés à utiliser le JDK de base pour crypter/décrypter des données"
         ],
         "answer": 0,
-        "explanation": "Definition correcte : JCA = API/Architecture (java.security.*), JCE = Extensions/Implémentations (javax.crypto.*).",
+        "explanation": "JCA (Java Cryptography Architecture) = API standard. JCE (Java Cryptography Extension) = Implémentations (fourni dans le JDK standard depuis Java 1.4).",
         "chapterId": 10
     },
     {
         "id": 1014,
-        "question": "AJAX est une technologie...",
+        "question": "AJAX est une technologie",
         "options": [
             "permettant à un serveur HTTP de contacter une page HTML",
-            "Java conçue pour contacter une API...",
+            "Java conçue pour contacter une API web grâce à la classe XMLHttpRequest",
             "Javascript permettant d'envoyer des requêtes asynchrones à un serveur quelconque",
             "Javascript permettant d'envoyer des requêtes synchrones ou asynchrones à un serveur HTTP"
         ],
         "answer": 3,
-        "explanation": "AJAX (Asynchronous JavaScript and XML) utilise l'objet XMLHttpRequest (ou Fetch) pour dialoguer avec un serveur Web (HTTP).",
+        "explanation": "AJAX (Asynchronous JavaScript and XML) utilise l'objet XMLHttpRequest (ou Fetch) pour dialoguer avec un serveur Web (HTTP). Synchrone est possible (bien que déprécié), Asynchrone est le standard.",
         "chapterId": 10
     },
     {
         "id": 1015,
-        "question": "L'acronyme REST correspond à :",
+        "question": "L'acronyme REST correspond à",
         "options": [
-            "REssource pour les ressources, S pour le serveur, T pour le transfert",
-            "REpresentational pour la représentation, STate pour protocole à états...",
-            "REpresentational pour la représentation des données, State qui signifie que les ressources représentent l'état... et Transfert",
-            "REpresentational ... State qui signifie que le protocole est à états..."
+            "REssource pour les ressources du serveur, S pour le serveur proprement dit et T pour le transfert de données via le protocole HTTP",
+            "REpresentational pour la représentation des données dans le système et STate pour protocole à états",
+            "REpresentational pour la représentation des données dans le système, State qui signifie que les ressources représentent l'état d'un système à un moment donné et Transfert qui fait référence au transfert des données à l'aide du protocole HTTP",
+            "REpresentational pour la représentation des données dans le système, State qui signifie que le protocole est à états et Transfert qui fait référence au transfert des données à l'aide du protocole HTTP"
         ],
         "answer": 2,
-        "explanation": "Representational State Transfer. La clé est que les ressources transfèrent leur état. Le protocole HTTP, lui, reste sans état.",
+        "explanation": "Representational State Transfer. Les ressources (Représentations) transfèrent l'état. Le protocole HTTP est sans état (Stateless).",
         "chapterId": 10
     },
     {
         "id": 1016,
-        "question": "Une signature électronique jointe à des données claires assure :",
+        "question": "Une signature électronique jointe à des données claires (qui font l'objet de cette signature) assure",
         "options": [
             "la confidentialité des données",
             "l'authentification des données",
@@ -204,163 +204,163 @@
             "la non-remédiation des données"
         ],
         "answer": 1,
-        "explanation": "La signature assure avant tout l'Authenticité (qui a signé ?) et l'Intégrité. Sans chiffrement, pas de confidentialité.",
+        "explanation": "La signature assure l'authenticité (qui l'a envoyé) et l'intégrité (pas modifié).",
         "chapterId": 10
     },
     {
         "id": 1017,
-        "question": "Code serveur Java :\n```java\ncs = ss.accept();\nThread th = new ThreadC(cs);\nth.start();\n```\nIl s'agit d'un serveur :",
+        "question": "Dans le cadre de la conception d'un serveur multi-threads en Java, les lignes de code suivantes ont été extraites d'un serveur (correct) :\n```java\ncs = ss.accept();\nThread th = new ThreadC(cs);\nth.start();\n```\nIl s'agit d'un serveur",
         "options": [
             "En pool de threads où cs est la socket client",
-            "En pool de threads où cs est le moniteur...",
-            "À la demande où cs est la socket client",
-            "À la demande où cs est le protocole"
+            "En pool de threads où cs est le moniteur assurant un accès concurrent synchronisé au conteneur des sockets clients acceptées",
+            "A la demande où cs est la socket client",
+            "A la demande où cs est le protocole de communication"
         ],
         "answer": 2,
-        "explanation": "Un nouveau thread est créé pour CHAQUE client accepté (`ss.accept`). C'est le modèle 'A la demande' (Thread-per-client).",
+        "explanation": "La création explicite d'un nouveau Thread (`new Thread`) pour chaque accept indique un modèle 'À la demande' (Thread-per-client).",
         "chapterId": 10
     },
     {
         "id": 1018,
-        "question": "Dans le développement web, le DOM (Document Object Model) :",
+        "question": "Dans le développement web, le DOM (Document Object Model)",
         "options": [
-            "est responsable de la conception graphique",
-            "est un langage de programmation",
-            "représente la structure hiérarchique d'une page HTML sous forme d'arbre et permet la dynamique...",
-            "est un outil de gestion de bases de données"
+            "est responsable de la conception graphique et du style d'une page web",
+            "est un langage de programmation utilisé pour créer des pages web interactives",
+            "représente la structure hiérarchique d'une page HTML sous forme d'arbre et permet la modification dynamique des éléments de la page",
+            "est un outil de gestion de bases de données pour les sites web"
         ],
         "answer": 2,
-        "explanation": "Le DOM est l'interface standardisée permettant aux scripts (JS) de lire et modifier le contenu et la structure du document HTML.",
+        "explanation": "Le DOM est l'interface standardisée (API) représentant le document sous forme d'arbre de nœuds modifiables par JS.",
         "chapterId": 10
     },
     {
         "id": 1019,
-        "question": "Quelle est l'une des principales utilisations de la signature électronique en crypto asymétrique ?",
+        "question": "Quelle est l'une des principales utilisations de la signature électronique dans un système de cryptographie asymétrique ?",
         "options": [
-            "Assurer que l'expéditeur est authentique et que les données n'ont pas été modifiées",
-            "Chiffrer les données pour garantir la confidentialité",
-            "Permettre de générer une clé publique",
-            "Convertir une clé privée en certificat"
+            "Assurer que l'expéditeur est authentique et que les données n'ont pas été modifiées.",
+            "Chiffrer les données pour garantir la confidentialité.",
+            "Permettre à un utilisateur de générer une clé publique.",
+            "Convertir une clé privée en un certificat numérique."
         ],
         "answer": 0,
-        "explanation": "Authenticité (Origine) + Intégrité (Non-modification).",
+        "explanation": "La signature valide l'origine (Authenticité) et l'absence d'altération (Intégrité).",
         "chapterId": 10
     },
     {
         "id": 1020,
-        "question": "L'algorithme de Diffie et Hellman permet aux deux intervenants de :",
+        "question": "L'algorithme de Diffie et Hellman permet aux deux intervenants d'une communication sécurisée de",
         "options": [
-            "Crypter des données",
-            "Transmettre des données authentifiées",
-            "Signer des données",
+            "Crypter des données de manière symétrique ou asymétrique",
+            "Transmettre des données dont l'authenticité sera assurée",
+            "Signer des données par l'intermédiaire d'une clé de session générée localement",
             "Générer localement une clé de session sur base de renseignements échangés sur le réseau"
         ],
         "answer": 3,
-        "explanation": "C'est un protocole d'ÉCHANGE de clés, permettant d'aboutir à un secret partagé (clé de session) sur un canal non sécurisé.",
+        "explanation": "Protocole d'échange de clés (Key Exchange) permettant d'aboutir à un secret commun.",
         "chapterId": 10
     },
     {
         "id": 1021,
-        "question": "Qu'est-ce qu'une requête préparée en JDBC ?",
+        "question": "Qu'est-ce qu'une requête préparée en JDBC ? Il s'agit d'une requête SQL",
         "options": [
-            "Une requête SQL créée dynamiquement",
-            "Une requête SQL précompilée pouvant être exécutée plusieurs fois avec des paramètres différents",
-            "Une requête simple ne nécessitant pas de connexion",
-            "Une requête exécutée automatiquement"
+            "créée dynamiquement au moment de l'exécution.",
+            "précompilée pouvant être exécutée plusieurs fois avec des paramètres différents.",
+            "simple ne nécessitant pas de connexion à la base de données.",
+            "exécutée automatiquement sans intervention du développeur."
         ],
         "answer": 1,
-        "explanation": "La précompilation améliore les performances et les placeholder `?` sécurisent contre l'injection SQL.",
+        "explanation": "La précompilation par le SGBD est l'atout majeur de performance et de sécurité (vs injection) des PreparedStatements.",
         "chapterId": 10
     },
     {
         "id": 1022,
-        "question": "Un HMAC est créé grâce à :",
+        "question": "Un HMAC est créé grâce à",
         "options": [
-            "une clé privée et assure l'authenticité",
-            "une clé privée et assure la confidentialité",
-            "une clé de session et assure l'authenticité transactionnelle des données transmises",
-            "une clé de session et assure la confidentialité"
+            "une clé privée et assure l'authenticité des données transmises",
+            "une clé privée et assure la confidentialité des données transmises",
+            "une clé de session et assure l'authenticité des données transmises",
+            "une clé de session et assure la confidentialité des données transmises"
         ],
         "answer": 2,
-        "explanation": "HMAC = Hash-based Message Authentication Code. Il utilise une clé secrète (symétrique/session) pour signer.",
+        "explanation": "HMAC utilise une clé symétrique partagée (clé de session ou secret partagé) pour hasher et signer.",
         "chapterId": 10
     },
     {
         "id": 1023,
-        "question": "Dans une application SPA (Single Page Application) basée sur HTML, CSS et JS :",
+        "question": "Dans une application web de type « single page application », basée sur HTML, CSS et Javascript :",
         "options": [
-            "HTML et CSS font le frontend, JS le backend",
-            "HTML structure les données, CSS assure la présentation et Javascript assure la logique et l'interactivité",
-            "HTML assure structuration, JS la communication, CSS la réactivité",
-            "HTML est le protocole..."
+            "HTML et CSS constituent à eux seuls le frontend de l'application tandis Javascript en assure le backend",
+            "HTML structure les données de la page web, CSS en assure la présentation et Javascript en assure la logique et l'interactivité",
+            "HTML assure la structuration et la présentation des données, Javascript la réactivité et CSS s'occupe de la communication avec le serveur",
+            "HTML est le protocole de communication entre le client et le serveur, CSS assure la structuration des données et Javascript permet de personnaliser le rendu des composants de la page web"
         ],
         "answer": 1,
-        "explanation": "Rôles standards : HTML = Structure, CSS = Style, JS = Comportement.",
+        "explanation": "HTML = Structure/Données, CSS = Présentation/Style, JS = Logique/Comportement/Interactivité. Le Backend est ailleurs.",
         "chapterId": 10
     },
     {
         "id": 1024,
-        "question": "Un individu A souhaite envoyer des données confidentielles à B en asymétrique. Il doit :",
+        "question": "Un individu A souhaite envoyer des données à un individu B en utilisant un cryptage asymétrique. Pour cela,",
         "options": [
-            "Crypter avec la clé privée de B",
-            "Crypter avec la clé publique de B",
-            "Crypter avec la clé publique de A",
-            "Crypter avec la clé privée de A"
+            "A crypte les données avec la clé privée de B et B décrypte les données avec sa clé publique",
+            "A crypte les données avec la clé publique de B et B décrypte les données avec sa clé privée",
+            "A crypte les données avec sa clé publique et B décrypte les données avec sa clé privée",
+            "A crypte les données avec sa clé privée et B décrypte les données avec la clé publique de A"
         ],
         "answer": 1,
-        "explanation": "Pour que SEUL B puisse lire, il faut fermer le coffre avec la clé publique de B (que tout le monde a). Seul B a la clé privée pour l'ouvrir.",
+        "explanation": "Confidentialité : On chiffre avec la clé PUBLIQUE du destinataire. Seul le destinataire (B) a la clé PRIVÉE pour ouvrir.",
         "chapterId": 10
     },
     {
         "id": 1025,
-        "question": "Lors de l'envoi via `write()` sur TCP, si la taille dépasse le MTU :",
+        "question": "Lors de l'envoi de données via write() sur une socket TCP en C, quel comportement peut être observé si la taille des données dépasse le MTU (Maximum Transmission Unit) du réseau ?",
         "options": [
-            "La fonction échoue (-1)",
-            "Les données sont automatiquement fragmentées en paquets conformes au MTU",
-            "L'appel est mis en pause",
-            "Erreur protocole"
+            "La fonction write() échoue et retourne -1.",
+            "Les données sont automatiquement fragmentées en paquets conformes au MTU.",
+            "L'appel write() est mis en pause jusqu'à ce que suffisamment de données soient libérées.",
+            "Une erreur de protocole TCP est déclenchée."
         ],
         "answer": 1,
-        "explanation": "C'est le rôle de la couche TCP/IP de découper le flux (Segmentation TCP / Fragmentation IP).",
+        "explanation": "Abstraction TCP : L'application écrit un flux. La couche TCP s'occupe de la segmentation et la couche IP de la fragmentation si nécessaire pour coller au MTU.",
         "chapterId": 10
     },
     {
         "id": 1026,
-        "question": "Dans l'URL `http://www.site.com/service/count?id=5&q=31`, que représente chaque partie ?",
+        "question": "Dans l'URL suivante\n`http://www.lesitenumeroun.com/service/count?id=5&quantity=31`",
         "options": [
-            "http = domaine...",
-            "http = port...",
-            "http = protocole, /service... = chemin, ?... = query",
-            "http correspond au protocole, www.site.com au domaine, /service/count au chemin et la fin à la query"
+            "`http://www.lesitenumeroun.com` correspond au domaine et `/service/count?id=5&quantity=31` correspond au chemin",
+            "`http` correspond au port, `www.lesitenumeroun.com` correspond au domaine et `/service/count` correspond à la query",
+            "`http://www.lesitenumeroun.com` correspond au protocole, `/service/count` correspond au chemin et `?id=5&quantity=31` correspond à la query",
+            "`http` correspond au protocole, `www.lesitenumeroun.com` correspond au domaine, `/service/count` correspond au chemin et `?id=5&quantity=31` correspond à la query"
         ],
         "answer": 3,
-        "explanation": "Anatomie standard d'une URL : Protocole :// Hôte / Chemin ? Paramètres (Query).",
+        "explanation": "Anatomie : Protocole :// Hôte / Chemin ? Query.",
         "chapterId": 10
     },
     {
         "id": 1027,
-        "question": "Dans le code JDBC `ClientSearchVM csvm = ...; clientsDAO.load(csvm);`, quel est le rôle de la classe `ClientSearchVM` ?",
+        "question": "Dans le contexte de JDBC et des DAO, considérer l'extrait de code suivant :\n```java\nClientSearchVM csvm = new ClientSearchVM();\ncsvm.setName(\"Charlet\");\nArrayList<Client> clients = clientsDAO.load(csvm);\n```\nQuel est le rôle principal de la classe ClientSearchVM ?",
         "options": [
-            "Envoyer les résultats",
-            "Stocker les critères de recherche pour filtrer les résultats",
-            "Gérer la connexion",
-            "Mettre à jour la table"
+            "Envoyer les résultats de la recherche à l'interface utilisateur.",
+            "Stocker les critères de recherche pour filtrer les résultats de la base de données.",
+            "Gérer la connexion à la base de données.",
+            "Mettre à jour automatiquement la table clients."
         ],
         "answer": 1,
-        "explanation": "C'est un objet de transfert (DTO/ViewModel) qui encapsule les paramètres de la requête (ici le nom 'Charlet').",
+        "explanation": "VM signifie ici ViewModel ou ValueObject : il transporte les données de filtrage (critères) vers la couche DAO.",
         "chapterId": 10
     },
     {
         "id": 1028,
-        "question": "Le protocole HTTP est un protocole :",
+        "question": "Le protocole HTTP est un protocole",
         "options": [
-            "Orienté texte, type client-serveur et à états représentés par les codes...",
-            "Orienté binaire...",
-            "Orienté texte, sans état, crypté...",
+            "Orienté texte, de type client-serveur et à états représentés par les codes des requêtes et réponses (404, 200, ...)",
+            "Orienté binaire, de type client-serveur et sans état",
+            "Orienté texte, sans état et dont les données transitent le réseau de manière cryptée",
             "Orienté texte, de type client-serveur et sans état"
         ],
         "answer": 3,
-        "explanation": "HTTP/1.1 est textuel (lisible), Stateless (chaque requête est indépendante) et Client-Serveur.",
+        "explanation": "HTTP est Stateless. Il est texte (ASCII) et Client-Serveur.",
         "chapterId": 10
     }
 ]
