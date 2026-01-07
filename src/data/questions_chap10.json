@@ -362,5 +362,18 @@
         "answer": 3,
         "explanation": "HTTP est Stateless. Il est texte (ASCII) et Client-Serveur.",
         "chapterId": 10
+    },
+    {
+        "id": 1029,
+        "question": "Les deux techniques pour créer un thread en Java sont",
+        "options": [
+            "soit créer une classe héritant de la classe Thread et instancier un objet de cette classe, soit créer un objet implémentant l’interface Runnable, instancier un objet de la classe Thread en passant à son constructeur l’objet implémentant Runnable. Dans les 2 cas, le sous-processus est effectivement lancé par la méthode run() de l’objet instancié",
+            "soit créer une classe implémentant l’interface Thread et instancier un objet de cette classe, soit créer un objet héritant de la classe Runnable, instancier un objet de la classe Thread en passant à son constructeur l’objet héritant de Runnable. Dans les 2 cas, le sous-processus est effectivement lancé par la méthode start() de l’objet instancié",
+            "soit créer une classe implémentant l’interface Thread et instancier un objet de cette classe, soit créer un objet implémentant l’interface Runnable, instancier un objet de la classe Thread en passant à son constructeur l’objet implémentant Runnable. Dans les 2 cas, le sous-processus est effectivement lancé par la méthode start() de l’objet instancié",
+            "soit créer une classe héritant de la classe Thread et instancier un objet de cette classe, soit créer un objet implémentant l’interface Runnable, instancier un objet de la classe Thread en passant à son constructeur l’objet implémentant Runnable. Dans les 2 cas, le sous-processus est effectivement lancé par la méthode start() de l’objet instancié"
+        ],
+        "answer": 3,
+        "explanation": "On hérite d'une CLASSE (extends Thread) ou on implémente une INTERFACE (implements Runnable). Dans tous les cas, c'est la méthode `start()` qui démarre le thread.",
+        "chapterId": 10
     }
 ]
