@@ -8,6 +8,7 @@ import questionsChap5 from './data/questions_chap5.json'
 import questionsChap6 from './data/questions_chap6.json'
 import questionsChap7 from './data/questions_chap7.json'
 import questionsChap9 from './data/questions_chap9.json'
+import questionsChap10 from './data/questions_chap10.json'
 import chaptersData from './data/chapters.json'
 import QuizCard from './components/QuizCard.vue'
 import ResultCard from './components/ResultCard.vue'
@@ -32,7 +33,8 @@ const questionsMap = {
   5: questionsChap5,
   6: questionsChap6,
   7: questionsChap7,
-  9: questionsChap9
+  9: questionsChap9,
+  10: questionsChap10
 }
 
 // --- State Management ---

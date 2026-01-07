@@ -52,5 +52,11 @@
         "title": "Examen Final version très difficile 😈😈 ",
         "description": "Qcm sur tout les parties en version très difficile",
         "status": "active"
+    },
+    {
+        "id": 10,
+        "title": "Annales Examens (Images)",
+        "description": "Questions tirées des photos d'examen fournies.",
+        "status": "active"
     }
 ]
