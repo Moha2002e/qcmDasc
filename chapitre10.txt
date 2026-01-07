@@ -1,0 +1,262 @@
+Voici la transcription complète des questions et des choix de réponses présents sur les documents, sans les solutions :
+
+### Document 1
+
+**Quelle est l'une des principales utilisations de la signature électronique dans un système de cryptographie asymétrique ?**
+
+1. Assurer que l'expéditeur est authentique et que les données n'ont pas été modifiées.
+2. Chiffrer les données pour garantir la confidentialité.
+3. Permettre à un utilisateur de générer une clé publique.
+4. Convertir une clé privée en un certificat numérique.
+
+**L'algorithme de Diffie et Hellman permet aux deux intervenants d'une communication sécurisée de**
+
+1. Crypter des données de manière symétrique ou asymétrique
+2. Transmettre des données dont l'authenticité sera assurée
+3. Signer des données par l'intermédiaire d'une clé de session générée localement
+4. Générer localement une clé de session sur base de renseignements échangés sur le réseau
+
+**Qu'est-ce qu'une requête préparée en JDBC ? Il s'agit d'une requête SQL**
+
+1. créée dynamiquement au moment de l'exécution.
+2. précompilée pouvant être exécutée plusieurs fois avec des paramètres différents.
+3. simple ne nécessitant pas de connexion à la base de données.
+4. exécutée automatiquement sans intervention du développeur.
+
+**Un HMAC est créé grâce à**
+
+1. une clé privée et assure l'authenticité des données transmises
+2. une clé privée et assure la confidentialité des données transmises
+3. une clé de session et assure l'authenticité des données transmises
+4. une clé de session et assure la confidentialité des données transmises
+
+**Dans une application web de type « single page application », basée sur HTML, CSS et Javascript :**
+
+1. HTML et CSS constituent à eux seuls le frontend de l'application tandis Javascript en assure le backend
+2. HTML structure les données de la page web, CSS en assure la présentation et Javascript en assure la logique et l'interactivité
+3. HTML assure la structuration et la présentation des données, Javascript la réactivité et CSS s'occupe de la communication avec le serveur
+4. HTML est le protocole de communication entre le client et le serveur, CSS assure la structuration des données et Javascript permet de personnaliser le rendu des composants de la page web
+
+---
+
+### Document 2
+
+**L'acronyme REST correspond à**
+
+1. **RE**ssource pour les ressources du serveur, **S** pour le serveur proprement dit et **T** pour le transfert de données via le protocole HTTP
+2. **RE**presentational pour la représentation des données dans le système et **ST**ate pour protocole à états
+3. **RE**presentational pour la représentation des données dans le système, **S**tate qui signifie que les ressources représentent l'état d'un système à un moment donné et **T**ransfert qui fait référence au transfert des données à l'aide du protocole HTTP
+4. **RE**presentational pour la représentation des données dans le système, **S**tate qui signifie que le protocole est à états et **T**ransfert qui fait référence au transfert des données à l'aide du protocole HTTP
+
+**Une signature électronique jointe à des données claires (qui font l'objet de cette signature) assure**
+
+1. la confidentialité des données
+2. l'authentification des données
+3. l'intégrité des données
+4. la non-remédiation des données
+
+**Dans le cadre de la conception d'un serveur multi-threads en Java, les lignes de code suivantes ont été extraites d'un serveur (correct) :**
+
+```java
+cs = ss.accept();
+Thread th = new ThreadC(cs);
+th.start();
+
+```
+
+**Il s'agit d'un serveur**
+
+1. En pool de threads où cs est la socket client
+2. En pool de threads où cs est le moniteur assurant un accès concurrent synchronisé au conteneur des sockets clients acceptées
+3. A la demande où cs est la socket client
+4. A la demande où cs est le protocole de communication
+
+**Dans le développement web, le DOM (Document Object Model)**
+
+1. est responsable de la conception graphique et du style d'une page web
+2. est un langage de programmation utilisé pour créer des pages web interactives
+3. représente la structure hiérarchique d'une page HTML sous forme d'arbre et permet la modification dynamique des éléments de la page
+4. est un outil de gestion de bases de données pour les sites web
+
+Voici la suite de la transcription pour les deux nouveaux documents (images 5 et 4).
+
+### Document 3 (Image 5.jpg)
+
+**Un individu A souhaite envoyer des données à un individu B en utilisant un cryptage asymétrique. Pour cela,**
+
+1. A crypte les données avec la clé privée de B et B décrypte les données avec sa clé publique
+2. A crypte les données avec la clé publique de B et B décrypte les données avec sa clé privée
+3. A crypte les données avec sa clé publique et B décrypte les données avec sa clé privée
+4. A crypte les données avec sa clé privée et B décrypte les données avec la clé publique de A
+
+**Lors de l'envoi de données via write() sur une socket TCP en C, quel comportement peut être observé si la taille des données dépasse le MTU (Maximum Transmission Unit) du réseau ?**
+
+1. La fonction write() échoue et retourne -1.
+2. Les données sont automatiquement fragmentées en paquets conformes au MTU.
+3. L'appel write() est mis en pause jusqu'à ce que suffisamment de données soient libérées.
+4. Une erreur de protocole TCP est déclenchée.
+
+**Dans l'URL suivante**
+`http://www.lesitenumeroun.com/service/count?id=5&quantity=31`
+
+1. `http://www.lesitenumeroun.com` correspond au domaine et `/service/count?id=5&quantity=31` correspond au chemin
+2. `http` correspond au port, `www.lesitenumeroun.com` correspond au domaine et `/service/count` correspond à la query
+3. `http://www.lesitenumeroun.com` correspond au protocole, `/service/count` correspond au chemin et `?id=5&quantity=31` correspond à la query
+4. `http` correspond au protocole, `www.lesitenumeroun.com` correspond au domaine, `/service/count` correspond au chemin et `?id=5&quantity=31` correspond à la query
+
+**Dans le contexte de JDBC et des DAO, considérer l'extrait de code suivant :**
+
+```java
+ClientSearchVM csvm = new ClientSearchVM();
+csvm.setName("Charlet");
+ArrayList<Client> clients = clientsDAO.load(csvm);
+
+```
+
+**Quel est le rôle principal de la classe ClientSearchVM ?**
+
+1. Envoyer les résultats de la recherche à l'interface utilisateur.
+2. Stocker les critères de recherche pour filtrer les résultats de la base de données.
+3. Gérer la connexion à la base de données.
+4. Mettre à jour automatiquement la table clients.
+
+**Le protocole HTTP est un protocole**
+
+1. Orienté texte, de type client-serveur et à états représentés par les codes des requêtes et réponses (404, 200, ...)
+2. Orienté binaire, de type client-serveur et sans état
+3. Orienté texte, sans état et dont les données transitent le réseau de manière cryptée
+4. Orienté texte, de type client-serveur et sans état
+
+---
+
+### Document 4 (Image 4.jpg)
+
+**Le morceau de code Java suivant**
+
+```java
+Cipher chiffrement = Cipher.getInstance("Rijndael/CBC/PKCS5Padding", "BC");
+byte[] vecteurInit = new byte[16];
+SecureRandom sr = new SecureRandom();
+sr.nextBytes(vecteurInit);
+chiffrement.init(Cipher.ENCRYPT_MODE, cle, new IvParameterSpec(vecteurInit));
+
+```
+
+**permet**
+
+1. de crypter la clé de session appelée cle en utilisant un cryptage asymétrique
+2. d'instancier et configurer un objet qui sera capable de décrypter asymétriquement des données
+3. d'instancier et configurer une clé de cryptage symétrique de manière aléatoire
+4. d'instancier et configurer un objet qui sera capable de crypter symétriquement des données
+
+**On souhaite mettre des threads programmés en Java en attente sur la réalisation d'un événement.**
+
+1. C'est impossible car la notion de variable de condition (des threads Posix) n'est pas disponible en Java
+2. Cela peut uniquement se faire à l'aide de la méthode join() de la classe Thread
+3. Pour cela, on peut utiliser la méthode wait() d'un objet appelée au sein d'une méthode synchronized de cet objet
+4. Pour cela on utilise une méthode synchronized, cette méthode est automatiquement bloquante. Pour la débloquer, il suffit de lui envoyer une exception instanciant la classe InterruptedException
+
+**Dans le contexte de JDBC, quel est le rôle principal d'une classe DAO dans une application Java ?**
+
+1. Gérer la logique métier
+2. Générer automatiquement et fournir au programmeur du code SQL qu'il pourra alors exécuter à l'aide de JDBC
+3. Encapsuler l'accès à la base de données et les opérations CRUD
+4. Fournir une interface graphique à l'utilisateur
+
+**Quel est l'avantage principal de la cryptographie asymétrique par rapport à la cryptographie symétrique ?**
+
+1. Elle est plus rapide et plus facile à implémenter.
+2. Elle permet de générer des clés publiques partagées entre plusieurs utilisateurs.
+3. Elle permet de sécuriser les communications sans nécessiter un échange préalable de clé.
+4. Elle consomme moins de ressources matérielles.
+
+**Dans un système de cryptographie asymétrique, quelle fonction la clé publique remplit-elle ?**
+
+1. Elle permet de déchiffrer les messages chiffrés par la clé privée.
+2. Elle est utilisée pour générer une clé privée correspondante.
+3. Elle est utilisée pour vérifier une signature numérique.
+4. Elle est utilisée pour signer des données.
+Voici la suite de la transcription pour les deux documents restants (images 3 et 2).
+
+### Document 5 (Image 3.jpg)
+
+**La classe Java HttpServer permet de**
+
+1. créer un serveur HTTP simple en lui ajoutant des handlers gérant les différents chemins du serveur HTTP
+2. créer un serveur multi-threads en pool gérant un protocole représenté par l'interface Java HttpHandler
+3. se connecter à un serveur HTTP distant en lui passant en paramètre l'URL du serveur
+4. représenter un chemin d'un serveur HTTP. L'objet HttpServer ainsi créé est alors ajouté au HttpHandler représentant le serveur proprement dit
+
+**Un cryptage par substitution consiste à**
+
+1. remplacer des blocs de données claires par des blocs de données cryptées
+2. remplacer les clés publiques/privées par une unique clé de session
+3. permuter des blocs de données claires
+4. remplacer un fichier de clés sérialisées par un keystore
+
+**Lors de la création d'un serveur TCP en C, quels appels systèmes doivent être effectués dans l'ordre pour établir une connexion avec un client ?**
+
+1. `socket()` -> `connect()` -> `listen()` -> `accept()`
+2. `bind()` -> `listen()` -> `accept()` -> `connect()`
+3. `socket()` -> `bind()` -> `listen()` -> `accept()`
+4. `connect()` -> `listen()` -> `bind()` -> `accept()`
+
+**En ce qui concerne la cryptographie et Java :**
+
+1. Le JCA fournit les classes et interfaces de base des concepts cryptographiques tandis que le JCE comporte l'implémentation de l'encryptage et de l'échange de données, le tout fourni et distribué dans le JDK standard de Java et cela pour tout le monde
+2. Le JCE est développé et fourni par les providers car le JCA fourni par Java seul ne suffit pas à crypter/décrypter des données
+3. Rien n'est fourni par Java de base. Chaque provider fournit ses propres classes et interfaces dans ses propres JCA et JCE
+4. Les providers sont des ensembles de programmeurs Java qui sont les seuls autorisés à utiliser le JDK de base pour crypter/décrypter des données
+
+**AJAX est une technologie**
+
+1. permettant à un serveur HTTP de contacter une page HTML
+2. Java conçue pour contacter une API web grâce à la classe XMLHttpRequest
+3. Javascript permettant d'envoyer des requêtes asynchrones à un serveur quelconque
+4. Javascript permettant d'envoyer des requêtes synchrones ou asynchrones à un serveur HTTP
+
+---
+
+### Document 6 (Image 2.jpg)
+
+**Voici une portion de l'échange de données entre un client et un serveur HTTP :**
+
+```http
+POST /index.html HTTP/1.1
+Accept: */*
+Host: 192.168.159.131:8080
+Content-length: 55
+
+[{"name":"wagner","age":50},{"name":"dupont","age":38}]
+
+```
+
+**Cela correspond à**
+
+1. Une requête HTTP dont le verbe permet d'obtenir la page index.html du serveur
+2. Une réponse HTTP contenant une donnée au format JSON
+3. Une requête HTTP permettant d'envoyer au serveur une donnée au format JSON
+4. Une réponse HTTP contenant une donnée au format x-www-form-urlencoded
+
+**Une communication TCP établie entre 2 programmes écrits en C peut être vue et manipulée comme**
+
+1. une file de messages
+2. un tube de communication bidirectionnel ayant 1 entrée et 1 sortie de chaque côté du tube toutes deux représentées par une socket d'écoute et l'autre par une socket de service dont disposent chacun les 2 intervenants de la communication
+3. deux tubes de communication dont les entrées et sorties sont gérées par une unique socket dont disposent chacun les 2 intervenants de la communication
+4. une mémoire partagée
+
+**Un message digest est créé grâce à**
+
+1. une clé privée et assure l'authenticité des données transmises
+2. une fonction de hachage et assure l'authenticité des données transmises
+3. un algorithme de cryptage symétrique et assure la confidentialité des données transmises
+4. une fonction de hachage et se manipule à l'aide d'une paire de clés privée/publique
+
+**En Java, pour instancier un objet Cipher pour crypter des données, il faut appeler**
+
+1. une méthode factory en lui passant en paramètres l'algorithme de cryptage, le mode de chiffrement (par blocs chainés ou non) et le type de padding
+2. une méthode factory en lui passant en paramètre l'algorithme de cryptage et la paire de clés privée/publique
+3. une méthode factory en lui précisant uniquement le provider
+4. le constructeur de la classe que je souhaite réellement instancier
+
+Souhaitez-vous que je vous fournisse les bonnes réponses pour ces questions maintenant ?

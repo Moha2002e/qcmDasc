@@ -9,7 +9,7 @@
             "Une réponse HTTP contenant une donnée au format x-www-form-urlencoded"
         ],
         "answer": 2,
-        "explanation": "Le verbe POST sert à envoyer des données. Le corps de la requête est clairement structuré comme un tableau JSON `[...]`.",
+        "explanation": "Le verbe POST sert à envoyer des données. Le corps de la requête est clairement structuré comme un tableau JSON.",
         "chapterId": 10
     },
     {
@@ -35,7 +35,7 @@
             "une fonction de hachage et se manipule à l'aide d'une paire de clés privée/publique"
         ],
         "answer": 1,
-        "explanation": "Le Message Digest est le résultat d'un hachage (MD5, SHA). Bien que 'authenticité' prête à débat (normalement intégrité), c'est la seule option décrivant la CRÉATION par hachage sans clés asymétriques.",
+        "explanation": "Le Message Digest est le résultat d'un hachage (MD5, SHA).",
         "chapterId": 10
     },
     {
@@ -87,7 +87,7 @@
             "Fournir une interface graphique à l'utilisateur"
         ],
         "answer": 2,
-        "explanation": "DAO = Data Access Object. Isole la couche de persistence du reste de l'application.",
+        "explanation": "DAO = Data Access Object.",
         "chapterId": 10
     },
     {
@@ -100,7 +100,7 @@
             "Elle consomme moins de ressources matérielles."
         ],
         "answer": 2,
-        "explanation": "Résout le problème de la distribution de clés (Key Exchange).",
+        "explanation": "Résout le problème de la distribution de clés.",
         "chapterId": 10
     },
     {
@@ -113,7 +113,7 @@
             "Elle est utilisée pour signer des données."
         ],
         "answer": 2,
-        "explanation": "La signature est générée avec la clé PRIVÉE (secret) et vérifiée par n'importe qui avec la clé PUBLIQUE.",
+        "explanation": "La signature est générée avec la clé PRIVÉE et vérifiée avec la clé PUBLIQUE.",
         "chapterId": 10
     },
     {
@@ -126,7 +126,7 @@
             "représenter un chemin d'un serveur HTTP. L'objet HttpServer ainsi créé est alors ajouté au HttpHandler représentant le serveur proprement dit"
         ],
         "answer": 0,
-        "explanation": "C'est la classe de base du package `com.sun.net.httpserver` pour exposer des endpoints HTTP légers via des `HttpContext` (path -> handler).",
+        "explanation": "Permet de créer un serveur HTTP simple avec des handlers.",
         "chapterId": 10
     },
     {
@@ -139,7 +139,7 @@
             "remplacer un fichier de clés sérialisées par un keystore"
         ],
         "answer": 0,
-        "explanation": "Substitution = Remplacement (ex: A devient D). Permutation = Changement d'ordre.",
+        "explanation": "Substitution = Remplacement.",
         "chapterId": 10
     },
     {
@@ -152,7 +152,7 @@
             "`connect()` -> `listen()` -> `bind()` -> `accept()`"
         ],
         "answer": 2,
-        "explanation": "Cycle de vie canonique : Création (socket) -> Association port (bind) -> Mise en attente (listen) -> Acceptation client (accept).",
+        "explanation": "socket -> bind -> listen -> accept.",
         "chapterId": 10
     },
     {
@@ -165,7 +165,7 @@
             "Les providers sont des ensembles de programmeurs Java qui sont les seuls autorisés à utiliser le JDK de base pour crypter/décrypter des données"
         ],
         "answer": 0,
-        "explanation": "JCA (Java Cryptography Architecture) = API standard. JCE (Java Cryptography Extension) = Implémentations (fourni dans le JDK standard depuis Java 1.4).",
+        "explanation": "JCA = API de base, JCE = Implémentations.",
         "chapterId": 10
     },
     {
@@ -178,7 +178,7 @@
             "Javascript permettant d'envoyer des requêtes synchrones ou asynchrones à un serveur HTTP"
         ],
         "answer": 3,
-        "explanation": "AJAX (Asynchronous JavaScript and XML) utilise l'objet XMLHttpRequest (ou Fetch) pour dialoguer avec un serveur Web (HTTP). Synchrone est possible (bien que déprécié), Asynchrone est le standard.",
+        "explanation": "Asynchronous JavaScript and XML.",
         "chapterId": 10
     },
     {
@@ -191,7 +191,7 @@
             "REpresentational pour la représentation des données dans le système, State qui signifie que le protocole est à états et Transfert qui fait référence au transfert des données à l'aide du protocole HTTP"
         ],
         "answer": 2,
-        "explanation": "Representational State Transfer. Les ressources (Représentations) transfèrent l'état. Le protocole HTTP est sans état (Stateless).",
+        "explanation": "REpresentational State Transfer.",
         "chapterId": 10
     },
     {
@@ -204,7 +204,7 @@
             "la non-remédiation des données"
         ],
         "answer": 1,
-        "explanation": "La signature assure l'authenticité (qui l'a envoyé) et l'intégrité (pas modifié).",
+        "explanation": "Authentification et Intégrité.",
         "chapterId": 10
     },
     {
@@ -217,7 +217,7 @@
             "A la demande où cs est le protocole de communication"
         ],
         "answer": 2,
-        "explanation": "La création explicite d'un nouveau Thread (`new Thread`) pour chaque accept indique un modèle 'À la demande' (Thread-per-client).",
+        "explanation": "Serveur à la demande (Thread per client).",
         "chapterId": 10
     },
     {
@@ -230,7 +230,7 @@
             "est un outil de gestion de bases de données pour les sites web"
         ],
         "answer": 2,
-        "explanation": "Le DOM est l'interface standardisée (API) représentant le document sous forme d'arbre de nœuds modifiables par JS.",
+        "explanation": "Structure hiérarchique d'une page HTML sous forme d'arbre.",
         "chapterId": 10
     },
     {
@@ -243,7 +243,7 @@
             "Convertir une clé privée en un certificat numérique."
         ],
         "answer": 0,
-        "explanation": "La signature valide l'origine (Authenticité) et l'absence d'altération (Intégrité).",
+        "explanation": "Authenticité et Intégrité.",
         "chapterId": 10
     },
     {
@@ -256,7 +256,7 @@
             "Générer localement une clé de session sur base de renseignements échangés sur le réseau"
         ],
         "answer": 3,
-        "explanation": "Protocole d'échange de clés (Key Exchange) permettant d'aboutir à un secret commun.",
+        "explanation": "Génération de clé de session.",
         "chapterId": 10
     },
     {
@@ -269,7 +269,7 @@
             "exécutée automatiquement sans intervention du développeur."
         ],
         "answer": 1,
-        "explanation": "La précompilation par le SGBD est l'atout majeur de performance et de sécurité (vs injection) des PreparedStatements.",
+        "explanation": "Précompilée, plus performante et sécurisée.",
         "chapterId": 10
     },
     {
@@ -282,7 +282,7 @@
             "une clé de session et assure la confidentialité des données transmises"
         ],
         "answer": 2,
-        "explanation": "HMAC utilise une clé symétrique partagée (clé de session ou secret partagé) pour hasher et signer.",
+        "explanation": "Clé de session (symétrique) et assure l'authenticité.",
         "chapterId": 10
     },
     {
@@ -295,7 +295,7 @@
             "HTML est le protocole de communication entre le client et le serveur, CSS assure la structuration des données et Javascript permet de personnaliser le rendu des composants de la page web"
         ],
         "answer": 1,
-        "explanation": "HTML = Structure/Données, CSS = Présentation/Style, JS = Logique/Comportement/Interactivité. Le Backend est ailleurs.",
+        "explanation": "HTML=structure, CSS=présentation, JS=logique.",
         "chapterId": 10
     },
     {
@@ -308,7 +308,7 @@
             "A crypte les données avec sa clé privée et B décrypte les données avec la clé publique de A"
         ],
         "answer": 1,
-        "explanation": "Confidentialité : On chiffre avec la clé PUBLIQUE du destinataire. Seul le destinataire (B) a la clé PRIVÉE pour ouvrir.",
+        "explanation": "Chiffre avec publique destinataire, déchiffre avec privée destinataire.",
         "chapterId": 10
     },
     {
@@ -321,7 +321,7 @@
             "Une erreur de protocole TCP est déclenchée."
         ],
         "answer": 1,
-        "explanation": "Abstraction TCP : L'application écrit un flux. La couche TCP s'occupe de la segmentation et la couche IP de la fragmentation si nécessaire pour coller au MTU.",
+        "explanation": "Segmentation/Fragmentation automatique.",
         "chapterId": 10
     },
     {
@@ -334,7 +334,7 @@
             "`http` correspond au protocole, `www.lesitenumeroun.com` correspond au domaine, `/service/count` correspond au chemin et `?id=5&quantity=31` correspond à la query"
         ],
         "answer": 3,
-        "explanation": "Anatomie : Protocole :// Hôte / Chemin ? Query.",
+        "explanation": "http=proto, domaine=site, path=/service..., query=?...",
         "chapterId": 10
     },
     {
@@ -347,7 +347,7 @@
             "Mettre à jour automatiquement la table clients."
         ],
         "answer": 1,
-        "explanation": "VM signifie ici ViewModel ou ValueObject : il transporte les données de filtrage (critères) vers la couche DAO.",
+        "explanation": "DTO/ViewModel contenant les critères.",
         "chapterId": 10
     },
     {
@@ -360,7 +360,7 @@
             "Orienté texte, de type client-serveur et sans état"
         ],
         "answer": 3,
-        "explanation": "HTTP est Stateless. Il est texte (ASCII) et Client-Serveur.",
+        "explanation": "Texte, Client-Serveur, Sans état.",
         "chapterId": 10
     },
     {
@@ -373,7 +373,7 @@
             "soit créer une classe héritant de la classe Thread et instancier un objet de cette classe, soit créer un objet implémentant l’interface Runnable, instancier un objet de la classe Thread en passant à son constructeur l’objet implémentant Runnable. Dans les 2 cas, le sous-processus est effectivement lancé par la méthode start() de l’objet instancié"
         ],
         "answer": 3,
-        "explanation": "On hérite d'une CLASSE (extends Thread) ou on implémente une INTERFACE (implements Runnable). Dans tous les cas, c'est la méthode `start()` qui démarre le thread.",
+        "explanation": "Héritage Thread ou Implémentation Runnable. Toujours start().",
         "chapterId": 10
     }
 ]
